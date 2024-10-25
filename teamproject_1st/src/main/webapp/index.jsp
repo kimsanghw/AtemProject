@@ -286,12 +286,12 @@
       <div class="swiper-slide">
 
         
-        <div class="wallpaper"><img src="/TimeProject/img/common.png"></div>
+        <div class="wallpaper"><img src="/teamproject_1lst/img/common.png"></div>
         <div class="index_loginPage headerSlide">
           <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
           <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
         </div>
-        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="/TimeProject/img/로고1.png"></a></h1>
+        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="/teamproject_1lst/img/로고1.png"></a></h1>
         <div class="index_nav headerSlide">
           <ul>
             <li><a href="#">수강신청</a></li>
@@ -321,7 +321,7 @@
             <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
             <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
           </div>
-          <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="/TimeProject/img/로고1.png"></a></h1>
+          <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="/teamproject_1lst/img/로고1.png"></a></h1>
           <div class="index_nav headerSlide">
             <ul>
               <li><a href="#">수강신청</a></li>
@@ -361,12 +361,12 @@
           </div>
           <div class="index_photo">
             <div>
-              <p><a href="#"><img src="/TimeProject/img/선생1.png"></a></p>
-              <p><a href="#"><img src="/TimeProject/img/선생2.png"></a></p>
+              <p><a href="#"><img src="/teamproject_1lst/img/선생1.png"></a></p>
+              <p><a href="#"><img src="/teamproject_1lst/img/선생2.png"></a></p>
             </div>
             <div>
-              <p><a href="#"><img src="/TimeProject/img/선생3.png"></a></p>
-              <p><a href="#"><img src="/TimeProject/img/선생4.png"></a></p>
+              <p><a href="#"><img src="/teamproject_1lst/img/선생3.png"></a></p>
+              <p><a href="#"><img src="/teamproject_1lst/img/선생4.png"></a></p>
             </div>
           </div>
           <div class="index_footer">
@@ -378,7 +378,7 @@
                   <li><a href="#">청소년 보호정책</a></li>
               </ul>
           </div>
-          <div class="footer_logo"><img src="/TimeProject/img/로고1.png"></div>
+          <div class="footer_logo"><img src="/teamproject_1lst/img/로고1.png"></div>
           <div class="footer_address">
               <p>(54930)전북특별자치도 전주시 덕진구 백제대로 572 4층</p>
               <p>대표번호 : 063-276-2381</p>
