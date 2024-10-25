@@ -1,4 +1,4 @@
-package frontController.util;
+package FrontController.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,8 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class DBConn {
-	public static final String URL
-			=	"jdbc:mysql://localhost:3306/board";
+	public static final String URL= "jdbc:mysql://localhost:3306/board";
 	public static final String USER = "tester";
 	public static final String PASSWORD = "ezen";
 	
@@ -16,21 +15,19 @@ public class DBConn {
 		return DriverManager.getConnection( URL, USER, PASSWORD);
 	}
 	
-	public static void close(ResultSet rs
-			, PreparedStatement psmt, Connection conn)
-					throws Exception {
-		
+	
+	//close오버로딩
+	public static void close(ResultSet rs, PreparedStatement psmt, Connection conn) throws Exception {
 		if(rs != null) rs.close();
 		if(psmt != null) psmt.close();
 		if(conn != null) conn.close();
 		
 	}
 	
-	public static void close(PreparedStatement psmt
-			, Connection conn)throws Exception {
-		
+	public static void close(PreparedStatement psmt, Connection conn) throws Exception{
 		if(psmt != null) psmt.close();
 		if(conn != null) conn.close();
-		
 	}
+	
+	
 }
