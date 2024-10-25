@@ -19,6 +19,7 @@ public class UserController {
 		
 		if(comments[comments.length-1].equals("login.do")) {
 			if(request.getMethod().equals("GET")) {
+				System.out.println("login.do!!!");
 			login(request,response);
 			}else if( request.getMethod().equals("POST")) {
 				loginOk(request,response);

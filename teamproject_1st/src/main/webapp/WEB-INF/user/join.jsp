@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>join</title>
-    <script src="/TimeProject/js/jquery-3.7.1.min.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
     <script>
       function idCheck(){
             var id = $(".id")[0];
@@ -250,6 +250,7 @@
 	 <div class="joinForm">
     <div>
     <a href="idex.jsp"><img src="../img/로고시안흑백.PNG"></a>
+
     </div>
     <div><h2>회원가입</h2></div>
     <form actoin="/user/join.do" method="post" onsubmit="return DoJoin();">

@@ -29,10 +29,16 @@ public class FrontController extends HttpServlet {
 		String comment =  uri.substring(contextPath.length()+1);
 		System.out.println("comment:"+comment);
 		String[] comments = comment.split("/");
+
 		System.out.println("comments[0] : "+comments[0]);
 		
 		
+
+		
+		System.out.println("team project!!");
+
 		if(comments[0].equals("user")) {
+			System.out.println("login.do!!!");
 			UserController user = new UserController(request, response,comments);
 		}else if(comments[0].equals("attendance")) {
 			AttendanceController attendance = new AttendanceController(request, response,comments);
