@@ -222,7 +222,7 @@
         margin-bottom: 10px;
       }
       .join_btn{
-        width: 100px;
+        width: 330px;
         height: 50px;
         border: 2px solid;
         background-color: #CEECF5;
@@ -279,7 +279,7 @@
     <div class="msgbox"></div>
     <div class="msgbox"></div>
     <div>
-      <button type="submit" class="join_btn">회원가입</button>
+      <input type="submit" class="join_btn" value="회원가입">
     </div>
   </form>
 </div>
