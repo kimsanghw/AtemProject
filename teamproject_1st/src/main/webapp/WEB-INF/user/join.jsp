@@ -249,7 +249,7 @@
 <body>
 	 <div class="joinForm">
     <div>
-    <a href="idex.jsp"><img src="/TimeProject/img/로고시안흑백.PNG"></a>
+    <a href="idex.jsp"><img src="../img/로고시안흑백.PNG"></a>
     </div>
     <div><h2>회원가입</h2></div>
     <form actoin="/user/join.do" method="post" onsubmit="return DoJoin();">
