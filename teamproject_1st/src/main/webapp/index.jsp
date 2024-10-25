@@ -286,7 +286,7 @@
       <div class="swiper-slide">
 
         
-        <div class="wallpaper"><img src="/TimeProject/img/common.png"></div>
+        <div class="wallpaper"><img src="img/common.png"></div>
         <div class="index_loginPage headerSlide">
           <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
           <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
