@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="../include/header.jsp" %>
+<%@ include file="../../include/header.jsp" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -213,7 +213,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr class="admin_page_my"> <!--formíê·¸ë¥¼ ìì ê³  ë±ë¡ ë²í¼ì ëë ì ë ajaxë¡ selectê°ì ëê²¨ì£¼ê² í´ì¼í¨.-->
+                    <tr class="admin_page_my">
                         <td width="120px">qortmddn567</td>
                         <td width="90px">ë°±ì¹ì°</td>
                         <td width="300px">qortmddn567@naver.com</td>
@@ -228,7 +228,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr class="admin_page_my"> <!--formíê·¸ë¥¼ ìì ê³  ë±ë¡ ë²í¼ì ëë ì ë ajaxë¡ selectê°ì ëê²¨ì£¼ê² í´ì¼í¨.-->
+                    <tr class="admin_page_my">
                         <td width="120px">qortmddn567</td>
                         <td width="90px">ë°±ì¹ì°</td>
                         <td width="300px">qortmddn567@naver.com</td>
@@ -245,7 +245,7 @@
                     </tr>
                 </tbody>
             </table>
-            <form><!--ì¬ê¸°ë formíê·¸ ìì ê³  ê²ì ë²í¼ ëë ì ë ajaxë¡ selectê° ëê²¨ì£¼ê².-->
+            <form>
                 <select class="search_options" name="search_option">
                     <option value="id">ìì´ë</option>
                     <option value="name">ì´ë¦</option>
@@ -257,6 +257,6 @@
             </form>
         </div>
     </section>
-<%@ include file="../include/footer.jsp" %>
+<%@ include file="../../include/footer.jsp" %>
 </body>
 </html>

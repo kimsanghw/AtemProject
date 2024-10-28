@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="../include/header.jsp" %>
+<%@ include file="../../include/header.jsp" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -170,7 +170,7 @@
             <div></div>
         </div>
       </section>
-      <%@ include file="../include/footer.jsp" %>
+      <%@ include file="../../include/footer.jsp" %>
     <script>
         // ê¶íì ë°ë¥¸ ê´ë¦¬ì íì´ì§ ë³´ì´ê¸°
         const userRole = 'admin'; // ì¬ì©ì ê¶í (ì: 'admin' ëë 'user')
