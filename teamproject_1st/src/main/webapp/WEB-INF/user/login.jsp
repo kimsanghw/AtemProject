@@ -54,7 +54,7 @@
       <a href="../../index.jsp"><img src="../img/로고시안흑백.PNG"></a>
       </div>
       <div><h2>로그인</h2></div>
-    <form actoin="/user/login.do" method="post">
+    <form action="<%=request.getContextPath()%>/user/login.do" method="post">
       <div>
         <input type="text" name="id" placeholder="아이디를 입력해주세요">
       </div>

@@ -14,7 +14,6 @@ import FrontController.util.DBConn;
 import FrontController.vo.UserVO;
 
 public class UserController {
-	
 	public UserController(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException  {
 		
 		if(comments[comments.length-1].equals("login.do")) {
@@ -22,6 +21,7 @@ public class UserController {
 			login(request,response);
 			}else if( request.getMethod().equals("POST")) {
 				loginOk(request,response);
+				System.out.println("잘 넘어오는중입니다");
 			}
 		}else if(comments[comments.length-1].equals("join.do")) {
 			if(request.getMethod().equals("GET")) {
@@ -39,9 +39,9 @@ public class UserController {
 	
 	public void loginOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		
+		System.out.println("데이터 넘어오는 중");
 		String id = request.getParameter("id");
-		String password = request.getParameter("password");
+		String password = request.getParameter("pw");
 		
 		
 		Connection conn= null;
@@ -51,8 +51,7 @@ public class UserController {
 		try {
 			conn = DBConn.conn();
 			
-			String sql 
-			= " SELECT * FROM user WHERE id=? AND password=? ";
+			String sql = " SELECT * FROM user WHERE id=? AND password=? ";
 			
 			psmt = conn.prepareStatement(sql);
 			psmt.setString(1, id);
@@ -72,11 +71,14 @@ public class UserController {
 				HttpSession session = request.getSession();
 				session.setAttribute("loginUser", loginUser);
 				
-				
-				response.sendRedirect(request.getContextPath());
+				System.out.println("로그인 성공");
+				response.sendRedirect(request.getContextPath()+ "/index.jsp");
 				
 			}else {
-				response.sendRedirect(request.getContextPath()+"/login.do");
+				 System.out.println("로그인 실패");
+				 request.setAttribute("loginError", "아이디 또는 비밀번호가 올바르지 않습니다.");
+				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
+
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -102,25 +104,17 @@ public class UserController {
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		String phone = request.getParameter("phone");
-		String rdate = request.getParameter("rdate");
+//		String rdate = request.getParameter("rdate");
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		
 		try {
-			String sql = " INSERT INTO user( id"
-					   + "                  , password "
-					   + "                  , phone"
-					   + "                  , name "
-					   + "                  , email)values( "
-					   + "           ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + " )";	
+			conn = DBConn.conn();
+			
+			String sql = "insert into user (id, password, name, email, phone) VALUES (?, ?, ?, ?, ?)";
 					   
-					   
+			System.out.println("joinOk() :: SQL : " + sql);
 			psmt = conn.prepareStatement(sql);
 			
 			psmt.setString(1,id);
@@ -130,9 +124,20 @@ public class UserController {
 		    psmt.setString(5,phone);
     
 		    int result = psmt.executeUpdate();
+		    System.out.println("가입 결과 : " + result);
+		    if (result < 1 ) {
+		    	// 가입 안됨
+		    	// join 페이지로 보냄
+		    	System.out.println("가입 실패");
+		    }else {
+		    	// -> 로그인 페이지로 보냄
+		    	System.out.println("가입 성공");
+		    }
 			
+		    response.sendRedirect(request.getContextPath() + "/index.jsp");
 		}catch(Exception e){
 			e.printStackTrace();
+			System.out.println("sql 혹은 DB 오류");
 		}finally {
 			try {
 				DBConn.close( psmt, conn);
