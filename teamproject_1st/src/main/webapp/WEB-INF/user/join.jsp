@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>join</title>
-    <script src="../js/jquery-3.7.1.js"></script>
+    <script src="../../js/jquery-3.7.1.js"></script>
     <script>
   let idCheckFlag = false;
   let emailCheckFlag = false;
@@ -18,7 +18,7 @@
       msgBox.html("<span style='color:red'>아이디를 입력하세요</span>");
       idCheckFlag = false;
       return;
-    } else if(id.length < 4 || id.length >= 30){
+    } else if(id.length < 4 || id.length > 30){
       msgBox.html("<span style='color:red'>아이디는 4글자 이상 30자 미만으로 입력하세요</span>");
       idCheckFlag = false;
       return;
@@ -28,7 +28,7 @@
       return;
     } else {
       $.ajax({
-        url: "	join.do",
+        url: "join.do",
         type: "get",
         data: { id },
         success: function(data) {
@@ -45,23 +45,23 @@
   }
 
   function pwCheck(){
-    let pw = $(".pw").val();
-    let msgBox = $(".msgbox").eq(1);
-    let pwPattern = /^(?=.*[a-zA-Z])[a-zA-Z0-9]+$/;
-    if(pw.trim() === ""){
-      msgBox.html("<span style='color:red'>비밀번호를 입력하세요</span>");
-      return false;
-    } else if(pw.value.length < 8){
-      msgBox.html("<span style='color:red'>비밀번호는 8자 이상 입력하세요</span>");
-      return false;
-    } else if(!pwPattern.test(pw)){
-      msgBox.html("<span style='color:red'>비밀번호는 영문과 숫자만 입력하세요</span>");
-      return false;
-    } else {
-      msgBox.html("");
-      return true;
-    }
-  }
+	  let pw = $(".pw").val();
+	  let msgBox = $(".msgbox").eq(1);
+	  let pwPattern = /^(?=.*[a-zA-Z])[a-zA-Z0-9]+$/;
+	  if(pw.trim() === ""){
+	    msgBox.html("<span style='color:red'>비밀번호를 입력하세요</span>");
+	    return false;
+	  } else if(pw.length < 8){  // .value 제거
+	    msgBox.html("<span style='color:red'>비밀번호는 8자 이상 입력하세요</span>");
+	    return false;
+	  } else if(!pwPattern.test(pw)){
+	    msgBox.html("<span style='color:red'>비밀번호는 영문과 숫자만 입력하세요</span>");
+	    return false;
+	  } else {
+	    msgBox.html("");
+	    return true;
+	  }
+	}
 
   function pw2Check(){
     let pw = $(".pw").val();
@@ -75,33 +75,22 @@
       return true;
     }
   }
-  function pwMath() {
-		let upassword = document.getElementById("upassword");
-		let upasswordcheck = document.getElementById("upasswordcheck");
-		error_text = upasswordcheck.parentElement.getElementsByClassName("error_text")[0];
-		if( upassword.value != upasswordcheck.value )
-		{
-			error_text.innerHTML = "<span style='color:red'>비밀번호가 일치하지 않습니다.</span>";
-			upasswordcheck.value = "";
-			upasswordcheck.focus();
-			return false;
-		}
-		return true;
+
   function nameCheck(){
-      var name = $(".name")[0];
-      var msgBox = $(".msgbox")[4];
-      var namePattern = /^[가-힣]+$/;
-      if( name.value.trim() == "" ){
-          msgBox.innerHTML = "<span style='color:red'>이름을 입력하세요</span>";
-          return false;
-      }else if( name.value.length < 2 || !namePattern.test(name.value)) {
-			        msgBox.innerHTML = "<span style='color:red'>이름은 2글자 이상 한글만 입력하세요</span>";
-			        return false;
-      }else{
-        msgBox.innerHTML = "";
-      }
-      return true;
-}
+	    var name = $(".name").val();
+	    var msgBox = $(".msgbox").eq(4);
+	    var namePattern = /^[가-힣]+$/;
+	    if( name.trim() === "" ){
+	        msgBox.html("<span style='color:red'>이름을 입력하세요</span>");
+	        return false;
+	    }else if( name.length < 2 || !namePattern.test(name)) {
+	        msgBox.html("<span style='color:red'>이름은 2글자 이상 한글만 입력하세요</span>");
+	        return false;
+	    }else{
+	      msgBox.html("");
+	    }
+	    return true;
+	}
  
   function phoneCheck(){
       var phonePattern = /^\d{2,3}\d{3,4}\d{4}$/;
@@ -150,14 +139,32 @@
   }
 
   function DoJoin(){
-    if(!idCheckFlag || !emailCheckFlag) {
-      alert("아이디와 이메일을 확인하세요.");
-      return false;
-    }
-    if(!pwCheck()) return false;
-    if(!pw2Check()) return false;
-    return confirm("회원가입을 진행하시겠습니까?");
-  }
+	  if(!idCheckFlag) {
+	    alert("아이디를 확인하세요.");
+	    return false;
+	  }
+	  if(!emailCheckFlag) {
+	    alert("이메일을 확인하세요.");
+	    return false;
+	  }
+	  if(!pwCheck()) {
+	    alert("비밀번호를 확인하세요.");
+	    return false;
+	  }
+	  if(!pw2Check()) {
+	    alert("비밀번호 확인을 다시 해주세요.");
+	    return false;
+	  }
+	  if(!nameCheck()) {
+	    alert("이름을 확인하세요.");
+	    return false;
+	  }
+	  if(!phoneCheck()) {
+	    alert("전화번호를 확인하세요.");
+	    return false;
+	  }
+	  return confirm("회원가입을 진행하시겠습니까?");
+	}
 </script>
     <style>
       html,body{
@@ -220,6 +227,7 @@
     </style>
 </head>
 <body>
+    <img src="../../img/선생1.png">
 	 <div class="joinForm">
     <div>
     <a href="idex.jsp"><img src="../img/로고시안흑백.PNG"></a>
