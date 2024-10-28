@@ -33,6 +33,7 @@
 		<notation_level>0</notation_level>
 		<notation_expand_group>true</notation_expand_group>
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<view_mode>2</view_mode>
 		<outline_view_mode>1</outline_view_mode>
 		<view_order_by>1</view_order_by>
@@ -3619,6 +3620,8 @@
 					<primary_key>false</primary_key>
 					<unique_key>false</unique_key>
 =======
+=======
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 		<view_mode>1</view_mode>
 		<outline_view_mode>1</outline_view_mode>
 		<view_order_by>1</view_order_by>
@@ -7351,6 +7354,9 @@
 					<not_null>true</not_null>
 					<primary_key>false</primary_key>
 					<unique_key>true</unique_key>
+<<<<<<< HEAD
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+=======
 >>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 					<character_set></character_set>
 					<collation></collation>

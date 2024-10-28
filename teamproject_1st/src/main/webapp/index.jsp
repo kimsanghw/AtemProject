@@ -287,6 +287,7 @@
         <div class="wallpaper"><img src="img/common.png"></div>
         <div class="index_loginPage headerSlide">
           <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
+          <%System.out.println(request.getContextPath()); %>
           <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
         </div>
         <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="img/로고1.png"></a></h1>
