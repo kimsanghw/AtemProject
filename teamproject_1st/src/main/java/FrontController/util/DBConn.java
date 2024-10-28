@@ -33,11 +33,10 @@ public class DBConn {
 		if(conn != null) conn.close();
 		
 	}
-<<<<<<< HEAD
+
 	
 	public static void excuteQuery(String sql) {
 		
 	}
-=======
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+
 }

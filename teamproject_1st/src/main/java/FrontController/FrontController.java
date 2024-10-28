@@ -21,21 +21,16 @@ public class FrontController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("fontcontroller ����, url:"
-				+request.getRequestURI());
+		
 		String uri =request.getRequestURI();
 		String contextPath = request.getContextPath();
 		
 		String comment =  uri.substring(contextPath.length()+1);
-		System.out.println("comment:"+comment);
+		
 		String[] comments = comment.split("/");
 
 		System.out.println("comments[0] : "+comments[0]);
 		
-		
-
-		
-		System.out.println("team project!!");
 
 		if(comments[0].equals("user")) {
 			System.out.println("login.do!!!");
