@@ -27,7 +27,7 @@ public class UserController {
 			if(request.getMethod().equals("GET")) {
 				join(request,response);
 				}else if( request.getMethod().equals("POST")) {
-					loginOk(request,response);
+					joinOk(request,response);
 				}
 		}	
 	}
