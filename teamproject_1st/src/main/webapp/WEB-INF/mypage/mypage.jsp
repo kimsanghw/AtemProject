@@ -114,22 +114,6 @@
         </style>
 </head>
 <body>
-    <header>
-        <h1 class="index_logo headerSlide"><a href="index.html"><img src="ë¡ê³ 1.png"></a></h1>
-      <div class="index_nav headerSlide">
-        <ul>
-          <li><a href="#">ìê°ì ì²­</a></li>
-          <li><a href="#">ì¶ê²°ê´ë¦¬</a></li>
-          <li><a href="#">ê³µì§ì¬í­</a></li>
-          <li><a href="#">QnA</a></li>
-          <li><a href="#">ìë£ì¤</a></li>
-        </ul>
-      </div>
-      <div class="index_loginPage headerSlide">
-        <div class="index_login"><a href="#">ë¡ê·¸ì¸</a>ã|ã<a href="#">íìê°ì</a></div>
-        <div class="index_logOut"><a href="#">ë¡ê·¸ìì</a>ã|ã<a href="#">ë§ì´íì´ì§</a></div> <!-- ë¡ê·¸ì¸ ì ëì¤ë div ìì­ -->
-      </div>
-      </header>
       <section>
         <div class="mypage">ë§ì´íì´ì§</div>
         <div class="mypage_flex">
@@ -159,7 +143,7 @@
                             <button class="email_button_modify" onclick="toggleEmailForm()">ë³ê²½</button>
                             <form>
                                 <div class="email_text_modify">
-                                    <input type="text" placeholder="ì´ë©ì¼ì ìë ¥í´ì£¼ì¸ì." name="email_modify" class="mypage_email">
+                                    <input type="text" placeholder="이메일을 입력해주세요." name="email_modify" class="mypage_email">
                                     <button type="submit" class="email_modify_button mypage_email">ìì </button>
                                     <button type="button" class="email_modify_back mypage_email" onclick="toggleEmailForm()">ì·¨ì</button>
                                 </div>
@@ -173,7 +157,7 @@
                             <button class="number_button_modify" onclick="toggleNumberForm()">ë³ê²½</button>
                             <form>
                                 <div class="email_text_modify">
-                                    <input type="text" placeholder="ì°ë½ì²ë¥¼ ìë ¥í´ì£¼ì¸ì." name="number_modify" class="mypage_number">
+                                    <input type="text" placeholder="번호를 입력해주세요" name="number_modify" class="mypage_number">
                                     <button type="submit" class="email_modify_button mypage_number">ìì </button>
                                     <button type="button" class="email_modify_back mypage_number" onclick="toggleNumberForm()">ì·¨ì</button>
                                 </div>
@@ -186,27 +170,7 @@
             <div></div>
         </div>
       </section>
-    <footer>
-      <div class="index_footer">
-        <div class="footer_menu">
-            <ul>
-                <li><a href="#">íì¬ìê°</a></li>
-                <li><a href="#">ì´ì©ì½ê´</a></li>
-                <li><a href="#">ê°ì¸ì ë³´ì²ë¦¬ë°©ì¹¨</a></li>
-                <li><a href="#">ì²­ìë ë³´í¸ì ì±</a></li>
-            </ul>
-        </div>
-        <div class="footer_logo"><img src="ë¡ê³ 1.png"></div>
-        <div class="footer_address">
-            <p>(54930)ì ë¶í¹ë³ìì¹ë ì ì£¼ì ëì§êµ¬ ë°±ì ëë¡ 572 4ì¸µ</p>
-            <p>ëíë²í¸ : 063-276-2381</p>
-            <p>ë¬¸ììê° : 09:00~18:00 (ì~ê¸)</p>
-        </div>
-        <div class="footer_copy">
-            <p>Copyright Â© ezen Corp. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+      <%@ include file="../include/footer.jsp" %>
     <script>
         // ê¶íì ë°ë¥¸ ê´ë¦¬ì íì´ì§ ë³´ì´ê¸°
         const userRole = 'admin'; // ì¬ì©ì ê¶í (ì: 'admin' ëë 'user')
