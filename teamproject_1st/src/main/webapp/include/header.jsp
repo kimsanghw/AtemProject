@@ -64,6 +64,7 @@
       color: white;
     }
         /* header 부분 끝 */
+<<<<<<< HEAD
 </style>
 </head>
 <body>
@@ -308,3 +309,5 @@
         <div class="index_logOut"><a href="#">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
       </div>
       </header>
+=======
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
