@@ -4,7 +4,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<<<<<<< HEAD
 <title>Insert title here</title>
 <style>
 	        /* header 부분 시작*/
@@ -71,7 +70,6 @@
 
 </body>
 </html>
-=======
 <title>attendance</title>
  <style>
     html, body {
@@ -310,4 +308,3 @@
         <div class="index_logOut"><a href="#">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
       </div>
       </header>
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
