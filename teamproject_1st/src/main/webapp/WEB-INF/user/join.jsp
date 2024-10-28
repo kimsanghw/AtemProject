@@ -138,15 +138,7 @@
     }
   }
 
-  function DoJoin(){
-    if(!idCheckFlag || !emailCheckFlag) {
-      alert("아이디와 이메일을 확인하세요.");
-      return false;
-    }
-    if(!pwCheck()) return false;
-    if(!pw2Check()) return false;
-    return confirm("회원가입을 진행하시겠습니까?");
-  }
+  
 </script>
     <style>
       html,body{

@@ -27,7 +27,7 @@ public class UserController {
 			if(request.getMethod().equals("GET")) {
 				join(request,response);
 				}else if( request.getMethod().equals("POST")) {
-					loginOk(request,response);
+					joinOk(request,response);
 				}
 		}	
 	}
@@ -108,11 +108,14 @@ public class UserController {
 		PreparedStatement psmt = null;
 		
 		try {
+			
+			conn = DBConn.conn();
+			
 			String sql = " INSERT INTO user( id"
 					   + "                  , password "
-					   + "                  , phone"
-					   + "                  , name "
-					   + "                  , email)values( "
+					   + "                  , name"
+					   + "                  , email "
+					   + "                  , phone)values( "
 					   + "           ?"
 					   + "         , ?"
 					   + "         , ?"
