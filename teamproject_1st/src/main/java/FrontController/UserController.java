@@ -21,7 +21,11 @@ public class UserController {
 			login(request,response);
 			}else if( request.getMethod().equals("POST")) {
 				loginOk(request,response);
+<<<<<<< HEAD
 				
+=======
+				System.out.println("�옒 �꽆�뼱�삤�뒗以묒엯�땲�떎");
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 			}
 		}else if(comments[comments.length-1].equals("join.do")) {
 			if(request.getMethod().equals("GET")) {
@@ -39,7 +43,11 @@ public class UserController {
 	
 	public void loginOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
+<<<<<<< HEAD
 
+=======
+		System.out.println("�뜲�씠�꽣 �꽆�뼱�삤�뒗 以�");
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 		String id = request.getParameter("id");
 		String password = request.getParameter("pw");
 		
@@ -71,12 +79,21 @@ public class UserController {
 				HttpSession session = request.getSession();
 				session.setAttribute("loginUser", loginUser);
 				
+<<<<<<< HEAD
 				
+=======
+				System.out.println("濡쒓렇�씤 �꽦怨�");
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				response.sendRedirect(request.getContextPath()+ "/index.jsp");
 				
 			}else {
+<<<<<<< HEAD
 				
 				
+=======
+				 System.out.println("濡쒓렇�씤 �떎�뙣");
+				 request.setAttribute("loginError", "�븘�씠�뵒 �삉�뒗 鍮꾨�踰덊샇媛� �삱諛붾Ⅴ吏� �븡�뒿�땲�떎.");
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
 
 			}
@@ -110,6 +127,7 @@ public class UserController {
 		PreparedStatement psmt = null;
 		
 		try {
+			
 			conn = DBConn.conn();
 			
 			String sql = "insert into user (id, password, name, email, phone) VALUES (?, ?, ?, ?, ?)";
@@ -124,18 +142,37 @@ public class UserController {
 		    psmt.setString(5,phone);
     
 		    int result = psmt.executeUpdate();
+<<<<<<< HEAD
 		   
+=======
+		    System.out.println("媛��엯 寃곌낵 : " + result);
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 		    if (result < 1 ) {
+<<<<<<< HEAD
 		    	
+=======
+		    	// 媛��엯 �븞�맖
+		    	// join �럹�씠吏�濡� 蹂대깂
+		    	System.out.println("媛��엯 �떎�뙣");
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 		    }else {
+<<<<<<< HEAD
 		    	
 		    	
+=======
+		    	// -> 濡쒓렇�씤 �럹�씠吏�濡� 蹂대깂
+		    	System.out.println("媛��엯 �꽦怨�");
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 		    }
 			
 		    response.sendRedirect(request.getContextPath() + "/index.jsp");
 		}catch(Exception e){
 			e.printStackTrace();
+<<<<<<< HEAD
 			
+=======
+			System.out.println("sql �샊�� DB �삤瑜�");
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 		}finally {
 			try {
 				DBConn.close( psmt, conn);

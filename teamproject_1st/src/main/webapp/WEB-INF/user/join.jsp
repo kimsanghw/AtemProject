@@ -93,6 +93,7 @@
     return true;
   }
 
+<<<<<<< HEAD
   function nameCheck(){
         var name = $(".name")[0];
         var msgBox = $(".msgbox")[4];
@@ -163,6 +164,9 @@
 		}
 	}
    
+=======
+  
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 </script>
     <style>
       html,body{
