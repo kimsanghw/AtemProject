@@ -4,9 +4,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>join</title>
-    <script src="../../js/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script>
+<<<<<<< HEAD
   let idCheckFlag = false;
   let emailCheckFlag = false;
 
@@ -39,9 +39,12 @@
             msgBox.html("<span style='color:green'>사용할 수 있는 아이디입니다</span>");
             idCheckFlag = true;
           }
+          
+          
+
+			
         }
-      });
-    }
+        
   }
 
   function pwCheck(){
@@ -63,6 +66,7 @@
 	  }
 	}
 
+
   function pw2Check(){
     let pw = $(".pw").val();
     let pw2 = $(".pw2").val();
@@ -75,7 +79,20 @@
       return true;
     }
   }
-
+  function pwMath(){
+	    var pw = $(".pw")[0];
+	    var pw2 = $(".pw2")[0];
+	    var msgBox = $(".msgbox")[3];
+				if( pw.value != pw2.value )
+				{
+					msgBox.innerHTML = "<span style='color:red'>비밀번호가 일치하지 않습니다</span>";
+					pw2.value = "";
+					return false;
+				}else {
+	      msgBox.innerHTML = "";
+	    }
+	    return true;
+	  }
   function nameCheck(){
 	    var name = $(".name").val();
 	    var msgBox = $(".msgbox").eq(4);
@@ -133,10 +150,6 @@
             msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
             emailCheckFlag = true;
           }
-        }
-      });
-    }
-  }
 
   function DoJoin(){
 	  if(!idCheckFlag) {
@@ -165,6 +178,92 @@
 	  }
 	  return confirm("회원가입을 진행하시겠습니까?");
 	}
+=======
+<<<<<<< HEAD
+  function nameCheck(){
+        var name = $(".name")[0];
+        var msgBox = $(".msgbox")[4];
+        var namePattern = /^[가-힣]+$/;
+        if( name.value.trim() == "" ){
+            msgBox.innerHTML = "<span style='color:red'>이름을 입력하세요</span>";
+            return false;
+        }else if( name.value.length < 2 || !namePattern.test(name.value)) {
+			        msgBox.innerHTML = "<span style='color:red'>이름은 2글자 이상 한글만 입력하세요</span>";
+			        return false;
+        }else{
+          msgBox.innerHTML = "";
+        }
+        return true;
+  }
+
+  function emailCheck(){
+        var emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+        var email = $(".email")[0];
+        var msgBox = $(".msgbox")[5];
+        if( email.value.trim() == "" ){
+            msgBox.innerHTML = "<span style='color:red'>이메일을 입력하세요</span>";
+            return false;
+        }else if( !emailPattern.test(email.value) ) {
+			        msgBox.innerHTML = "<span style='color:red'>유효한 이메일 주소를 입력하세요</span>";
+			        return false;
+        }else{
+        	$.ajax({
+                url: "/user/checkEmail.do",
+                type: "get",
+                data: { email },
+                success: function(data) {
+                  if(data.trim() === "isemail"){
+                    msgBox.html("<span style='color:red'>사용할 수 없는 이메일입니다.</span>");
+                    emailCheckFlag = false;
+                  } else {
+                    msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
+                    emailCheckFlag = true;
+                  }
+                }
+              });
+        }
+       
+  }
+  function phoneCheck(){
+        var phonePattern = /^\d{2,3}\d{3,4}\d{4}$/;
+        var phone = $(".phone")[0];
+        var msgBox = $(".msgbox")[6];
+        if( phone.value.trim() == "" ){
+            msgBox.innerHTML = "<span style='color:red'>연락처를 입력하세요</span>";
+            return false;
+        }else if( !phonePattern.test(phone.value)  || phone.value.length >12) {
+			        msgBox.innerHTML = "<span style='color:red'>연락처를 올바르게 입력하세요</span>";
+			        return false;
+        }else{
+          msgBox.innerHTML = "";
+        }
+        return true;
+  }
+  function DoJoin(){
+		
+		if(idCheck() == false) return false;
+	
+		if(pwCheck() == false) return false;
+	
+		if(pw2Check() == false) return false;
+		
+		if(pwMath() == false) return false;
+		
+		if(phoneCheck() == false) return false;
+		
+		if(nameCheck() == false) return false;
+		
+		if(emailCheck() == false) return false;
+
+		
+		if( confirm("회원가입을 진행하시겠습니까?") == false ) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+   
+
 </script>
     <style>
       html,body{
@@ -227,7 +326,6 @@
     </style>
 </head>
 <body>
-    <img src="../../img/선생1.png">
 	 <div class="joinForm">
     <div>
     <a href="idex.jsp"><img src="../img/로고시안흑백.PNG"></a>
