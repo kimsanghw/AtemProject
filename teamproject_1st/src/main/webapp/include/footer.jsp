@@ -65,7 +65,7 @@
                     <li><a href="#">청소년 보호정책</a></li>
                 </ul>
             </div>
-            <div class="footer_logo"><img src="./로고1.png"></div>
+            <div class="footer_logo"><img src="../img/로고1.png"></div>
             <div class="footer_address">
                 <p>(54930)전북특별자치도 전주시 덕진구 백제대로 572 4층</p>
                 <p>대표번호 : 063-276-2381</p>

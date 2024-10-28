@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<%@ include file="../include/header.jsp" %>
+<%@ include file="../../include/header.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -80,22 +80,6 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1 class="index_logo headerSlide"><a href="#"><img src="./로고1.png"></a></h1>
-        <div class="index_nav headerSlide">
-            <ul>
-                <li><a href="#">수강신청</a></li>
-                <li><a href="#">출결관리</a></li>
-                <li><a href="#">공지사항</a></li>
-                <li><a href="#">QnA</a></li>
-                <li><a href="#">자료실</a></li>
-            </ul>
-        </div>
-        <div class="index_loginPage headerSlide">
-            <a href="#">로그인</a>　|　<a href="#">회원가입</a>
-            <div class="index_logOut"><a href="#">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
-        </div>
-      </header>
       <section>
         <h2 class="notice_title">공지사항 상세</h2>
         <div class="notice_board_title">첫 번째 제목입니다.</div>
@@ -110,27 +94,6 @@
             <button type="button">취소</button>
         </div>
       </section>
-      <footer>
-        <div class="index_footer">
-            <div class="footer_menu">
-                <ul>
-                    <li><a href="#">회사소개</a></li>
-                    <li><a href="#">이용약관</a></li>
-                    <li><a href="#">개인정보처리방침</a></li>
-                    <li><a href="#">청소년 보호정책</a></li>
-                </ul>
-            </div>
-            <div class="footer_logo"><img src="./로고1.png"></div>
-            <div class="footer_address">
-                <p>(54930)전북특별자치도 전주시 덕진구 백제대로 572 4층</p>
-                <p>대표번호 : 063-276-2381</p>
-                <p>문의시간 : 09:00~18:00 (월~금)</p>
-            </div>
-            <div class="footer_copy">
-                <p>Copyright © ezen Corp. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
 </body>
 </html>
-<%@ include file="../include/footer.jsp" %>
+<%@ include file="../../include/footer.jsp" %>
