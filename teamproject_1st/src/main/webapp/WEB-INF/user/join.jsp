@@ -94,7 +94,6 @@
     return true;
   }
 
-<<<<<<< HEAD
   function nameCheck(){
         var name = $(".name")[0];
         var msgBox = $(".msgbox")[4];
@@ -123,7 +122,7 @@
 			        return false;
         }else{
         	$.ajax({
-                url: "/user/checkEmail.do",
+                url: "/user/join.do",
                 type: "get",
                 data: { email },
                 success: function(data) {
@@ -177,10 +176,6 @@
 			return true;
 		}
 	}
-   
-=======
-  
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 </script>
     <style>
       html,body{
