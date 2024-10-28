@@ -110,7 +110,6 @@
             margin: 40px 50px;
         }
         /*ì¹ì ìì­ ë*/
-<%@ include file="../../include/footer.jsp" %>
         </style>
 </head>
 <body>
