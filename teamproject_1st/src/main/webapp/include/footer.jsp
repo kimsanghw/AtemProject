@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,9 +56,6 @@
 </style>
 </head>
 <body>
-
-=======
-
       <footer>
         <div class="index_footer">
           <div class="footer_menu">
@@ -81,6 +77,5 @@
           </div>
       </div>
     </footer>
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 </body>
 </html>

@@ -21,8 +21,7 @@ public class FrontController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("fontcontroller ����, url:"
-				+request.getRequestURI());
+		System.out.println("fontcontroller 확인, url:"+request.getRequestURI());
 		String uri =request.getRequestURI();
 		String contextPath = request.getContextPath();
 		
@@ -42,6 +41,8 @@ public class FrontController extends HttpServlet {
 			UserController user = new UserController(request, response,comments);
 		}else if(comments[0].equals("attendance")) {
 			AttendanceController attendance = new AttendanceController(request, response,comments);
+		}else if(comments[0].equals("class")) {
+			ClassController class = new ClassController(request, response,comments);
 		}
 	}
 
