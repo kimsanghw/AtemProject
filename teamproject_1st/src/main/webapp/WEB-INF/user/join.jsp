@@ -28,7 +28,7 @@
       return;
     } else {
       $.ajax({
-        url: "checkID.jsp",
+        url: "	join.do",
         type: "get",
         data: { id },
         success: function(data) {
@@ -51,7 +51,7 @@
     if(pw.trim() === ""){
       msgBox.html("<span style='color:red'>비밀번호를 입력하세요</span>");
       return false;
-    } else if(pw.length < 8){
+    } else if(pw.value.length < 8){
       msgBox.html("<span style='color:red'>비밀번호는 8자 이상 입력하세요</span>");
       return false;
     } else if(!pwPattern.test(pw)){
@@ -75,7 +75,18 @@
       return true;
     }
   }
-
+  function pwMath() {
+		let upassword = document.getElementById("upassword");
+		let upasswordcheck = document.getElementById("upasswordcheck");
+		error_text = upasswordcheck.parentElement.getElementsByClassName("error_text")[0];
+		if( upassword.value != upasswordcheck.value )
+		{
+			error_text.innerHTML = "<span style='color:red'>비밀번호가 일치하지 않습니다.</span>";
+			upasswordcheck.value = "";
+			upasswordcheck.focus();
+			return false;
+		}
+		return true;
   function nameCheck(){
       var name = $(".name")[0];
       var msgBox = $(".msgbox")[4];
@@ -111,7 +122,7 @@
   function emailCheck(){
     let email = $(".email").val();
     let msgBox = $(".msgbox").eq(5);
-    let emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    let emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/;
     if(email.trim() === ""){
       msgBox.html("<span style='color:red'>이메일을 입력하세요</span>");
       emailCheckFlag = false;
@@ -207,7 +218,7 @@
 
     </div>
     <div><h2>회원가입</h2></div>
-    <form action="/user/join.do" method="post" onsubmit="return DoJoin();">
+    <form action="<%=request.getContextPath() %>/user/join.do" method="post" onsubmit="return DoJoin();">
     <div>
       <input type="text" name="id"  class="id" onblur="idCheck();" placeholder="아이디를 입력해주세요">
     </div>

@@ -14,7 +14,6 @@ import FrontController.util.DBConn;
 import FrontController.vo.UserVO;
 
 public class UserController {
-	
 	public UserController(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException  {
 		
 		if(comments[comments.length-1].equals("login.do")) {
@@ -22,6 +21,7 @@ public class UserController {
 			login(request,response);
 			}else if( request.getMethod().equals("POST")) {
 				loginOk(request,response);
+				System.out.println("�옒 �꽆�뼱�삤�뒗以묒엯�땲�떎");
 			}
 		}else if(comments[comments.length-1].equals("join.do")) {
 			if(request.getMethod().equals("GET")) {
@@ -39,9 +39,9 @@ public class UserController {
 	
 	public void loginOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		
+		System.out.println("�뜲�씠�꽣 �꽆�뼱�삤�뒗 以�");
 		String id = request.getParameter("id");
-		String password = request.getParameter("password");
+		String password = request.getParameter("pw");
 		
 		
 		Connection conn= null;
@@ -51,8 +51,7 @@ public class UserController {
 		try {
 			conn = DBConn.conn();
 			
-			String sql 
-			= " SELECT * FROM user WHERE id=? AND password=? ";
+			String sql = " SELECT * FROM user WHERE id=? AND password=? ";
 			
 			psmt = conn.prepareStatement(sql);
 			psmt.setString(1, id);
@@ -72,11 +71,14 @@ public class UserController {
 				HttpSession session = request.getSession();
 				session.setAttribute("loginUser", loginUser);
 				
-				
-				response.sendRedirect(request.getContextPath());
+				System.out.println("濡쒓렇�씤 �꽦怨�");
+				response.sendRedirect(request.getContextPath()+ "/index.jsp");
 				
 			}else {
-				response.sendRedirect(request.getContextPath()+"/login.do");
+				 System.out.println("濡쒓렇�씤 �떎�뙣");
+				 request.setAttribute("loginError", "�븘�씠�뵒 �삉�뒗 鍮꾨�踰덊샇媛� �삱諛붾Ⅴ吏� �븡�뒿�땲�떎.");
+				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
+
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -102,7 +104,7 @@ public class UserController {
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		String phone = request.getParameter("phone");
-		String rdate = request.getParameter("rdate");
+//		String rdate = request.getParameter("rdate");
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -111,19 +113,9 @@ public class UserController {
 			
 			conn = DBConn.conn();
 			
-			String sql = " INSERT INTO user( id"
-					   + "                  , password "
-					   + "                  , name"
-					   + "                  , email "
-					   + "                  , phone)values( "
-					   + "           ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + " )";	
+			String sql = "insert into user (id, password, name, email, phone) VALUES (?, ?, ?, ?, ?)";
 					   
-					   
+			System.out.println("joinOk() :: SQL : " + sql);
 			psmt = conn.prepareStatement(sql);
 			
 			psmt.setString(1,id);
@@ -133,9 +125,20 @@ public class UserController {
 		    psmt.setString(5,phone);
     
 		    int result = psmt.executeUpdate();
+		    System.out.println("媛��엯 寃곌낵 : " + result);
+		    if (result < 1 ) {
+		    	// 媛��엯 �븞�맖
+		    	// join �럹�씠吏�濡� 蹂대깂
+		    	System.out.println("媛��엯 �떎�뙣");
+		    }else {
+		    	// -> 濡쒓렇�씤 �럹�씠吏�濡� 蹂대깂
+		    	System.out.println("媛��엯 �꽦怨�");
+		    }
 			
+		    response.sendRedirect(request.getContextPath() + "/index.jsp");
 		}catch(Exception e){
 			e.printStackTrace();
+			System.out.println("sql �샊�� DB �삤瑜�");
 		}finally {
 			try {
 				DBConn.close( psmt, conn);

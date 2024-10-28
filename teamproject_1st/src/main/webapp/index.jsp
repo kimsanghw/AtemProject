@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="FrontController.vo.UserVO" %>
+<%@ page import="java.sql.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,9 +55,6 @@
       text-decoration: none;
       color: white;
       font-weight: 800px;
-    }
-    .index_logOut{
-      display: none;
     }
     .index_logo {
       position: absolute; /* Absolute로 변경 */
@@ -252,6 +251,7 @@
       margin: 0 0 0 20px;
       font-size: 15px;
     }
+    
     .footer_menu a{
       text-decoration: none;
       color: white;
@@ -281,15 +281,20 @@
 </head>
 <body>
 	 <!-- Swiper -->
+	 <%
+	 	UserVO userId = (UserVO) session.getAttribute("loginUser");
+	 %>
   <div class="swiper mySwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
-        <div class="wallpaper"><img src="img/common.png"></div>
+        <div class="wallpaper"><img src="./img/common.png"></div>
         <div class="index_loginPage headerSlide">
-          <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
-          <%System.out.println(request.getContextPath()); %>
-          <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
-        </div>
+        <% if(userId == null) { %>
+            <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
+        <% } else { %>
+            <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
+        <% } %>
+          </div>
         <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="img/로고1.png"></a></h1>
         <div class="index_nav headerSlide">
           <ul>
@@ -314,8 +319,11 @@
       <div class="swiper-slide">
         <div class="index_slide2_header">
           <div class="index_loginPage headerSlide">
+            <% if(userId == null) { %>
             <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
+        <% } else { %>
             <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
+        <% } %>
           </div>
           <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="img/로고1.png"></a></h1>
           <div class="index_nav headerSlide">

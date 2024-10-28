@@ -55,7 +55,11 @@
         /* footer 부분 끝 */
 </style>
 <body>
+<<<<<<< HEAD
+      <footer>
+=======
 	      <footer>
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
         <div class="index_footer">
             <div class="footer_menu">
                 <ul>
@@ -76,4 +80,9 @@
             </div>
         </div>
     </footer>
+<<<<<<< HEAD
 </body>
+</html>
+=======
+</body>
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
