@@ -190,7 +190,14 @@ public class UserController {
 			}
 		}
 	}
-	
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//세션 초기화
+		HttpSession session = request.getSession();
+		UserVO userId = (UserVO) session.getAttribute("loginUser");
+		session.invalidate();
+		response.sendRedirect(request.getContextPath()+"/index.jsp");//메인페이지로이동
+		//response.sendRedirect(request.getContextPath());//메인페이지로이동
+	}
 	public void checkId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");	
 
