@@ -21,7 +21,7 @@ public class UserController {
 			login(request,response);
 			}else if( request.getMethod().equals("POST")) {
 				loginOk(request,response);
-				System.out.println("�옒 �꽆�뼱�삤�뒗以묒엯�땲�떎");
+
 			}
 		}else if(comments[comments.length-1].equals("join.do")) {
 			if(request.getMethod().equals("GET")) {
@@ -39,7 +39,7 @@ public class UserController {
 	
 	public void loginOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		System.out.println("�뜲�씠�꽣 �꽆�뼱�삤�뒗 以�");
+
 		String id = request.getParameter("id");
 		String password = request.getParameter("pw");
 		
@@ -63,20 +63,19 @@ public class UserController {
 				
 				UserVO loginUser = new UserVO();
 				loginUser.setUno(rs.getInt("uno"));
-				loginUser.setUname(rs.getString("name"));
-				loginUser.setUauthorization(rs.getString("authorization"));
-				loginUser.setUid(id);
+				loginUser.setName(rs.getString("name"));
+				loginUser.setAuthorization(rs.getString("authorization"));
+				loginUser.setId(id);
 				
 				
 				HttpSession session = request.getSession();
 				session.setAttribute("loginUser", loginUser);
 				
-				System.out.println("濡쒓렇�씤 �꽦怨�");
+
 				response.sendRedirect(request.getContextPath()+ "/index.jsp");
 				
 			}else {
-				 System.out.println("濡쒓렇�씤 �떎�뙣");
-				 request.setAttribute("loginError", "�븘�씠�뵒 �삉�뒗 鍮꾨�踰덊샇媛� �삱諛붾Ⅴ吏� �븡�뒿�땲�떎.");
+
 				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
 
 			}
@@ -125,20 +124,17 @@ public class UserController {
 		    psmt.setString(5,phone);
     
 		    int result = psmt.executeUpdate();
-		    System.out.println("媛��엯 寃곌낵 : " + result);
+
 		    if (result < 1 ) {
-		    	// 媛��엯 �븞�맖
-		    	// join �럹�씠吏�濡� 蹂대깂
-		    	System.out.println("媛��엯 �떎�뙣");
+
 		    }else {
-		    	// -> 濡쒓렇�씤 �럹�씠吏�濡� 蹂대깂
-		    	System.out.println("媛��엯 �꽦怨�");
-		    }
-			
-		    response.sendRedirect(request.getContextPath() + "/index.jsp");
+
+		    	
+
+		    response.sendRedirect(request.getContextPath() + "/index.jsp");}
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println("sql �샊�� DB �삤瑜�");
+
 		}finally {
 			try {
 				DBConn.close( psmt, conn);

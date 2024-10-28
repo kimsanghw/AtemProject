@@ -1,78 +1,138 @@
 package FrontController.vo;
 
 public class UserVO {
+
 	private int uno;
-	private String uid;
-	private String upassword;
-	private String uname;
-	private String uphone;
-	private String uemail;
+	private String id;
+	private String password;
+	private String name;
+	private String phone;
+	private String email;
 	private String rdate;
-	private String ustate;
-	private String uauthorization;
-	private String udate;
+	private String state;
+	private String authorization;
+	private String date;
 	
+	/**
+	 * @return the uno
+	 */
 	public int getUno() {
 		return uno;
 	}
+	/**
+	 * @param uno the uno to set
+	 */
 	public void setUno(int uno) {
 		this.uno = uno;
 	}
-	public String getUid() {
-		return uid;
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
 	}
-	public void setUid(String uid) {
-		this.uid = uid;
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
-	public String getUpassword() {
-		return upassword;
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
 	}
-	public void setUpassword(String upassword) {
-		this.upassword = upassword;
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
-	public String getUname() {
-		return uname;
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
 	}
-	public void setUname(String uname) {
-		this.uname = uname;
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getUphone() {
-		return uphone;
+	/**
+	 * @return the phone
+	 */
+	public String getPhone() {
+		return phone;
 	}
-	public void setUphone(String uphone) {
-		this.uphone = uphone;
+	/**
+	 * @param phone the phone to set
+	 */
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
-	public String getUemail() {
-		return uemail;
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
 	}
-	public void setUemail(String uemail) {
-		this.uemail = uemail;
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
+	/**
+	 * @return the rdate
+	 */
 	public String getRdate() {
 		return rdate;
 	}
+	/**
+	 * @param rdate the rdate to set
+	 */
 	public void setRdate(String rdate) {
 		this.rdate = rdate;
 	}
-	public String getUstate() {
-		return ustate;
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
 	}
-	public void setUstate(String ustate) {
-		this.ustate = ustate;
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
 	}
-	public String getUauthorization() {
-		return uauthorization;
+	/**
+	 * @return the authorization
+	 */
+	public String getAuthorization() {
+		return authorization;
 	}
-	public void setUauthorization(String uauthorization) {
-		this.uauthorization = uauthorization;
+	/**
+	 * @param authorization the authorization to set
+	 */
+	public void setAuthorization(String authorization) {
+		this.authorization = authorization;
 	}
-	public String getUdate() {
-		return udate;
+	/**
+	 * @return the date
+	 */
+	public String getDate() {
+		return date;
 	}
-	public void setUdate(String udate) {
-		this.udate = udate;
+	/**
+	 * @param date the date to set
+	 */
+	public void setDate(String date) {
+		this.date = date;
 	}
-	
 	
 	
 }
