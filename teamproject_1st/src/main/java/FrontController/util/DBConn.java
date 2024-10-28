@@ -29,5 +29,7 @@ public class DBConn {
 		if(conn != null) conn.close();
 	}
 	
-	
+	public static void excuteQuery(String sql) {
+		
+	}
 }
