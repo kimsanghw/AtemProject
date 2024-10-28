@@ -142,6 +142,90 @@ public class UserController {
 			}
 		}
 	}
+	
+	public void checkEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");	
+
+		String email = request.getParameter("email");
 		
+		Connection conn = null; 
+		PreparedStatement psmt = null; 
+		ResultSet rs = null;	
+		
+		try{
+			
+			conn = DBConn.conn();
+			
+			String sql = "SELECT COUNT(*) AS cnt FROM user WHERE email=?";
+			
+			psmt = conn.prepareStatement(sql); 
+			psmt.setString(1,email); 
+			
+			rs = psmt.executeQuery();
+			
+			if(rs.next()){
+				int result = rs.getInt("cnt");
+				if(result > 0){
+					System.out.print("isemail"); 
+				}else{
+					System.out.print("isNotemail");
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.print("error"); 
+		}finally{
+			try {
+				DBConn.close(rs, psmt, conn);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void checkId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");	
+
+		String id = request.getParameter("id");
+		
+		Connection conn = null; 
+		PreparedStatement psmt = null; 
+		ResultSet rs = null;	
+		
+		try{
+			
+			conn = DBConn.conn();
+			
+			String sql = "SELECT COUNT(*) AS cnt FROM user WHERE id=?";
+			
+			psmt = conn.prepareStatement(sql); 
+			psmt.setString(1,id); 
+			
+			rs = psmt.executeQuery();
+			
+			if(rs.next()){
+				int result = rs.getInt("cnt");
+				if(result > 0){
+					System.out.print("isid"); 
+				}else{
+					System.out.print("isNotId");
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.print("error"); 
+		}finally{
+			try {
+				DBConn.close(rs, psmt, conn);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }
 
