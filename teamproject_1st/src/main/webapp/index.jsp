@@ -252,6 +252,7 @@
       margin: 0 0 0 20px;
       font-size: 15px;
     }
+    
     .footer_menu a{
       text-decoration: none;
       color: white;
@@ -284,7 +285,7 @@
   <div class="swiper mySwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
-        <div class="wallpaper"><img src="img/common.png"></div>
+        <div class="wallpaper"><img src="./img/common.png"></div>
         <div class="index_loginPage headerSlide">
           <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
           <%System.out.println(request.getContextPath()); %>

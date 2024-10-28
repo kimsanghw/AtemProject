@@ -24,7 +24,7 @@ public class FrontController extends HttpServlet {
 		System.out.println("fontcontroller 확인, url:"+request.getRequestURI());
 		String uri =request.getRequestURI();
 		String contextPath = request.getContextPath();
-		
+		System.out.println("contextPath : "+contextPath);
 		String comment =  uri.substring(contextPath.length()+1);
 		System.out.println("comment:"+comment);
 		String[] comments = comment.split("/");
@@ -41,9 +41,9 @@ public class FrontController extends HttpServlet {
 			UserController user = new UserController(request, response,comments);
 		}else if(comments[0].equals("attendance")) {
 			AttendanceController attendance = new AttendanceController(request, response,comments);
-		}else if(comments[0].equals("class")) {
+		}/*else if(comments[0].equals("class")) {
 			ClassController class = new ClassController(request, response,comments);
-		}
+		}*/
 	}
 
 	/**
