@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>join</title>
-    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="<%=request.getContextPath() %>/js/jquery-3.7.1.min.js"></script>
     <script>
       function idCheck(){
             var id = $(".id")[0];
