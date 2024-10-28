@@ -23,7 +23,7 @@
         }else{
         	let value = $("#id").val();
 			$.ajax({
-				url : "checkID.jsp",
+				url : "/user/checkId.do",
 				type : "get",
 				data : "id=" +value,
 				success : function(data) {
@@ -36,6 +36,7 @@
 						}
 				}	
 			});
+			
         }
         
   }
@@ -121,9 +122,22 @@
 			        msgBox.innerHTML = "<span style='color:red'>유효한 이메일 주소를 입력하세요</span>";
 			        return false;
         }else{
-          msgBox.innerHTML = "";
+        	$.ajax({
+                url: "/user/checkEmail.do",
+                type: "get",
+                data: { email },
+                success: function(data) {
+                  if(data.trim() === "isemail"){
+                    msgBox.html("<span style='color:red'>사용할 수 없는 이메일입니다.</span>");
+                    emailCheckFlag = false;
+                  } else {
+                    msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
+                    emailCheckFlag = true;
+                  }
+                }
+              });
         }
-        return true;
+       
   }
   function phoneCheck(){
         var phonePattern = /^\d{2,3}\d{3,4}\d{4}$/;
