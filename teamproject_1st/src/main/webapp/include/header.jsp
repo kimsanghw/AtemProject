@@ -129,6 +129,10 @@
       background-color: #CEECF5;
       border-radius: 15px;
     }
+    .today_date{
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
      /*-----checkbox css부분*/
     input[type='checkbox'] {
       -webkit-appearance: none; 

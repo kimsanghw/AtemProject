@@ -26,8 +26,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                          <input type="submit" class="attendance_btn1" value="출석">
+                          <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -38,8 +40,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -50,8 +54,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -62,8 +68,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -74,8 +82,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -86,8 +96,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -98,8 +110,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -110,8 +124,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -122,8 +138,10 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
@@ -134,27 +152,25 @@
                       <td>출석</td>
                       <td>
                         <div class="check_button">
-                          <button type="submit" class="attendance_btn1" value="A">출석</button>
-                          <button type="submit" class="attendance_btn1" value="E">지각</button>
+                          <label>
+                            <input type="submit" class="attendance_btn1" value="출석">
+                            <input type="submit" class="attendance_btn1" value="지각">
+                          </label>
                         </div>
                       </td>
                     </tr>
                 </tbody>
               </table>
               <div class="button">
-                <button type="submit" class="attendance_btn1" value="A">출석</button>
-                <button type="submit" class="attendance_btn1" value="B">결석</button>
-                <button type="submit" class="attendance_btn1" value="C">조퇴</button>
-                <button type="submit" class="attendance_btn1" value="D">병결</button>
-                <button type="submit" class="attendance_btn1" value="E">지각</button>
+                <label>
+                  <input type="submit" class="attendance_btn1" value="출석">
+                  <input type="submit" class="attendance_btn1" value="지각">
+                  <input type="submit" class="attendance_btn1" value="조퇴">
+                  <input type="submit" class="attendance_btn1" value="결석">
+                  <input type="submit" class="attendance_btn1" value="병결">
+                </label>
                 </div>
             </form>
-              <div class="paging_inner">
-                <a href="">이전</a>
-                <a href="">1</a>
-                <a href="">2</a>
-                <a href="">다음</a>
-              </div>
             </div>
           </div>
         </article>
