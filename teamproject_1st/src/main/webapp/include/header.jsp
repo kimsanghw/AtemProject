@@ -64,3 +64,22 @@
       color: white;
     }
         /* header 부분 끝 */
+</style>
+<body>
+	   <header>
+        <h1 class="index_logo headerSlide"><a href="#"><img src="./로고1.png"></a></h1>
+      <div class="index_nav headerSlide">
+            <ul>
+                <li><a href="#">수강신청</a></li>
+                <li><a href="#">출결관리</a></li>
+                <li><a href="#">공지사항</a></li>
+                <li><a href="#">QnA</a></li>
+                <li><a href="#">자료실</a></li>
+            </ul>
+        </div>
+        <div class="index_loginPage headerSlide">
+            <a href="#">로그인</a>　|　<a href="#">회원가입</a>
+            <div class="index_logOut"><a href="#">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
+        </div>
+      </header>
+</body>
