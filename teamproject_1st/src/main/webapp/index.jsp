@@ -299,8 +299,6 @@
         <div class="index_nav headerSlide">
           <ul>
             <li><a href="#">수강신청</a></li>
-            <% if(userId == null || a) { %>
-            <li><a href="#">출결정보</a></li>
             <li><a href="#">출결관리</a></li>
             <li><a href="#">공지사항</a></li>
             <li><a href="#">QnA</a></li>
