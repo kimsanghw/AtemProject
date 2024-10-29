@@ -120,7 +120,7 @@
 	 	}
 %>
       <section>
-        <div class="mypage">마이페이지</div>
+        <div class="mypage">마이페이지</div>
         <div class="mypage_flex">
             <div class="mypage_mypage mypage_menu"><a href="#">마이페이지 ></a></div>
             <div class="mypage_line"></div>
@@ -140,6 +140,7 @@
             <div class="mypage_join">회원정보</div>
             <table border="1" class="mypage_border">
                 <tbody>
+
                     <tr class="mypage_tbody">
                         <th>아이디</th>
                         <td><%= userId2.getId() %></td>
