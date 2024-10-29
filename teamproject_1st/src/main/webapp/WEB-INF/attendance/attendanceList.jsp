@@ -19,7 +19,7 @@
               <div class="content_c">
                   <h3>[2025 수능 특강] 한병훈의 국어-화법과 작문</h3><br>
                      학생 10/20<br>
-                    <button type="button" class="app_btn"><a href="<%=request.getContextPath()%>/View.do">출결관리</a></button><br>
+                    <button type="button" class="app_btn"><a href="<%=request.getContextPath()%>/attedanceView.do">출결관리</a></button><br>
               </div>
               <div class="content_c">
                 <h3>[2025 수능 특강] 최서희의 문학</h3><br>

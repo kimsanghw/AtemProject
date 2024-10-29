@@ -21,7 +21,7 @@
             return false;
         } else {
             $.ajax({
-                url: "<%=request.getContextPath()%>/join.do",
+                url: "<%=request.getContextPath()%>/user/join.do?id=",
                 data: { id: id },
                 type: "get",        
                 success: function(data) {
@@ -81,9 +81,7 @@
       return true;
     }
   }
-<<<<<<< HEAD
 
-=======
   function pwMath(){
 	    var pw = $(".pw")[0];
 	    var pw2 = $(".pw2")[0];
@@ -98,9 +96,9 @@
 	    }
 	    return true;
 	  }
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+
   function nameCheck(){
-<<<<<<< HEAD
+
         var name = $(".name")[0];
         var msgBox = $(".msgbox")[4];
         var namePattern = /^[가-힣]+$/;
@@ -144,23 +142,9 @@
         }
        
   }
-=======
-	    var name = $(".name").val();
-	    var msgBox = $(".msgbox").eq(4);
-	    var namePattern = /^[가-힣]+$/;
-	    if( name.trim() === "" ){
-	        msgBox.html("<span style='color:red'>이름을 입력하세요</span>");
-	        return false;
-	    }else if( name.length < 2 || !namePattern.test(name)) {
-	        msgBox.html("<span style='color:red'>이름은 2글자 이상 한글만 입력하세요</span>");
-	        return false;
-	    }else{
-	      msgBox.html("");
-	    }
-	    return true;
-	}
+
  
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+
   function phoneCheck(){
 	  
       var phonePattern = /^\d{2,3}\d{3,4}\d{4}$/;
