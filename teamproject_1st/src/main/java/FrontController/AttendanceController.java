@@ -20,8 +20,23 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 				attendanceView(request,response);
 				}
+		}else if(comments[comments.length-1].equals("attendanceList.do")) {
+			if(request.getMethod().equals("GET")) {
+				attendanceList(request,response);
+				}
 		}
 	}
+	
+	
+	public void attendanceList(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException{
+		request.setCharacterEncoding("UTF-8");
+		int ano = Integer.parseInt(request.getParameter("ano"));
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+	}
+	
 	public void attendanceView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		int ano = Integer.parseInt(request.getParameter("ano"));
