@@ -21,11 +21,7 @@
             return false;
         } else {
             $.ajax({
-<<<<<<< HEAD
-                url: "<%=request.getContextPath()%>/user/join.do?id=",
-=======
                 url: "<%=request.getContextPath()%>/user/join.do?action=check",
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
                 data: { id: id },
                 type: "get",        
                 success: function(data) {
@@ -85,7 +81,6 @@
       return true;
     }
   }
-
   function pwMath(){
 	    var pw = $(".pw")[0];
 	    var pw2 = $(".pw2")[0];
@@ -100,9 +95,7 @@
 	    }
 	    return true;
 	  }
-
   function nameCheck(){
-
         var name = $(".name")[0];
         var msgBox = $(".msgbox")[4];
         var namePattern = /^[가-힣]+$/;
@@ -146,8 +139,6 @@
         }
        
   }
-
- 
 
   function phoneCheck(){
 	  
