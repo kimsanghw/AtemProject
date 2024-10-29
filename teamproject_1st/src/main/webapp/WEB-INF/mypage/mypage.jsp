@@ -153,8 +153,9 @@
                         <td>
                             <%= userId2.getEmail() %>
                             <button class="email_button_modify" onclick="toggleEmailForm()">변경</button>
-                            <form>
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
                                 <div class="email_text_modify">
+                                	<input type="hidden" name="action" value="modifyEmail">
                                     <input type="text" placeholder="이메일을 입력해주세요." name="email_modify" class="mypage_email">
                                     <button type="submit" class="email_modify_button mypage_email">수정</button>
                                     <button type="button" class="email_modify_back mypage_email" onclick="toggleEmailForm()">취소</button>
@@ -167,8 +168,9 @@
                         <td>
                             <%= userId2.getPhone() %>
                             <button class="number_button_modify" onclick="toggleNumberForm()">변경</button>
-                            <form>
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
                                 <div class="email_text_modify">
+                                	<input type="hidden" name="action" value="modifyPhone">
                                     <input type="text" placeholder="번호를 입력해주세요" name="number_modify" class="mypage_number">
                                     <button type="submit" class="email_modify_button mypage_number">수정</button>
                                     <button type="button" class="email_modify_back mypage_number" onclick="toggleNumberForm()">취소</button>
