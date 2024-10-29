@@ -3,14 +3,16 @@ package FrontController.vo;
 public class ClassVO {
 	
 
+	
 	private String title;
 	private String book;
 	private String rdate;
 	private String jdate;
 	private String duringclass;
 	private String subject;
-	private String difflcult;
+	private String diffcult;
 	private String state;
+	private String teacherName;
 	private int cno;
 	private int uno;
 	
@@ -89,14 +91,14 @@ public class ClassVO {
 	/**
 	 * @return the difflcult
 	 */
-	public String getDifflcult() {
-		return difflcult;
+	public String getDiffcult() {
+		return diffcult;
 	}
 	/**
 	 * @param difflcult the difflcult to set
 	 */
-	public void setDifflcult(String difflcult) {
-		this.difflcult = difflcult;
+	public void setDiffcult(String diffcult) {
+		this.diffcult = diffcult;
 	}
 	/**
 	 * @return the state
@@ -133,6 +135,18 @@ public class ClassVO {
 	 */
 	public void setUno(int uno) {
 		this.uno = uno;
+	}
+	/**
+	 * @return the teacherName
+	 */
+	public String getTeacherName() {
+		return teacherName;
+	}
+	/**
+	 * @param teacherName the teacherName to set
+	 */
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
 	}
 
 }

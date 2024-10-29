@@ -17,12 +17,14 @@ public class AttendanceController {
 	public AttendanceController(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException { 
 		
 		if(comments[comments.length-1].equals("attendanceView.do")) {
-			attendanceView(request,response);
+			if(request.getMethod().equals("GET")) {
+				attendanceView(request,response);
+				}
 		}
 	}
 	public void attendanceView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		int cno = Integer.parseInt(request.getParameter("cno"));
+		int ano = Integer.parseInt(request.getParameter("ano"));
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -33,7 +35,7 @@ public class AttendanceController {
 			
 			String sql = " SELECT c.*,u.id "
 						+"   FROM class c , user u "
-						+"  WHERE n.uno = u.uno"
+						+"  WHERE c.uno = u.uno"
 						+"    AND cno = ?";
 			
 			psmt = conn.prepareStatement(sql);
@@ -45,11 +47,14 @@ public class AttendanceController {
 				ClassVO vo = new ClassVO();
 				vo.setCno(rs.getInt("cno"));
 				vo.setTitle(rs.getString("title"));
-				vo.setId(rs.getString("id"));
 				vo.setRdate(rs.getString("rdate"));
-				vo.setHit(rs.getInt("hit"));
 				vo.setState(rs.getString("state"));
-				vo.setContent(rs.getString("content"));
+				vo.setSubject(rs.getString("subject"));
+				vo.setDiffcult(rs.getString("diffcult"));
+				vo.setDuringclass(rs.getString("duringclass"));
+				vo.setJdate(rs.getString("jdate"));
+				vo.setBook(rs.getString("book"));
+				vo.setTeacherName(rs.getString("teacherName"));
 				
 				request.setAttribute("vo", vo);
 			}
