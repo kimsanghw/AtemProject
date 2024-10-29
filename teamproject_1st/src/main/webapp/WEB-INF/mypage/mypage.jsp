@@ -114,7 +114,7 @@
 </head>
 <body>
       <section>
-        <div class="mypage">ë§ì´íì´ì§</div>
+        <div class="mypage">마이페이지</div>
         <div class="mypage_flex">
             <div class="mypage_mypage mypage_menu"><a href="#">ë§ì´íì´ì§ ></a></div>
             <div class="mypage_line"></div>
