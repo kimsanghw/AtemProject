@@ -21,7 +21,7 @@
             	<form action="/attendance/attendanceList.do" method="get" id="search_mode">
 	              <div>
 	                <select  name="search_mode" id="search_mode">
-	                	<option value="전체">전체</option>
+	                	<option value="">전체</option>
 	                  	<option value="강의">현재 강의 중인 강의</option>
 	                </select>
 	              </div>

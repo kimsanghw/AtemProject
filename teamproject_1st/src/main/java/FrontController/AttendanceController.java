@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import FrontController.util.DBConn;
-import FrontController.vo.ClassVO;
 
 public class AttendanceController {
 	
@@ -32,10 +31,17 @@ public class AttendanceController {
 	public void attendanceList(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
 		HttpSession session = request.getSession();
+		String search_mode = request.getParameter("search_mode");
 		
 		int ano = Integer.parseInt(request.getParameter("ano"));
 		
-		String 
+		int uno = (Integer)session.getAttribute("uno"); 
+		String title = request.getParameter("title"); 
+		String Tname = request.getParameter("name");
+		String subject = request.getParameter("subject");
+		String jdate = request.getParameter("jdate");
+		String diffcult = request.getParameter("diffcult");
+		String duringclass = request.getParameter("duringclass");
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -44,7 +50,11 @@ public class AttendanceController {
 		ResultSet rsTotal = null;
 		
 		try {
+			
+			
 			String sqlTotal = "select count(*) as total from class c inner join user u on c.uno = u.uno where  u.uno = ?";
+				if(search_mode.value("°­ÀÇ")) {}
+			
 			
 		}catch(Exception e) {
 			e.printStackTrace();
