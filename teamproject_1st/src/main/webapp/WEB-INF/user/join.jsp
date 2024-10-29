@@ -18,33 +18,43 @@
 			msgBox.html("<span style='color:red'>아이디는 4~30자의 영문과 숫자만 가능합니다</span>");
 			return false;
 		} else {
+			console.log("ajax 통신을 시작합니다")
 			$.ajax({
-				url: "<%=request.getContextPath()%>/user/checkid.do?action=check",
+				url: "<%=request.getContextPath()%>/user/checkid.do",
 				data: { id: id },
 				type: "get",        
 				success: function(data) {
-				data = data.trim();
-				console.log(data);
-				if(data === "isid") {
-					msgBox.html("<span style='color:red'>사용할 수 없는 아이디입니다.</span>");
-					idCheckFlag = false;
-				} else if(data === "isNotId") {
-					msgBox.html("<span style='color:green'>사용할 수 있는 아이디입니다</span>");
-					idCheckFlag = true;
-				} else {
-					msgBox.html("<span style='color:red'>서버 응답 오류: " + data + "</span>");
-					console.log("Unexpected server response:", data);
-					idCheckFlag = false;
-				}
-			},
+					console.log("통신이 성공했습니다");
+					data = data.trim();
+					console.log(data);
+					if(data === "isid") {
+						msgBox.html("<span style='color:red'>사용할 수 없는 아이디입니다.</span>");
+						idCheckFlag = false;
+					} else if(data === "isNotId") {
+						msgBox.html("<span style='color:green'>사용할 수 있는 아이디입니다</span>");
+						idCheckFlag = true;
+					} else {
+						msgBox.html("<span style='color:red'>서버 응답 오류: " + data + "</span>");
+						console.log("Unexpected server response:", data);
+						idCheckFlag = false;
+					}
+				},
 				error: function(error) {
-				console.error("AJAX error:", status, error);
-				msgBox.html("<span style='color:red'>서버 통신 오류</span>");
-				idCheckFlag = false;
+					console.log("통신이 실패했습니다");
+					console.error("AJAX error:", status, error);
+					msgBox.html("<span style='color:red'>서버 통신 오류</span>");
+					idCheckFlag = false;
+				},
+				complete: function(){
+					console.log("통신이 완료되어 플래그 값을 반환합니다");
+					return idCheckFlag;
 				}
 			});
-		return idCheckFlag;
+			console.log("플래그 값을 반환합니다");
+
 		}
+	}
+	
 
 	function pwCheck(){
 		let pw = $(".pw").val();
@@ -64,7 +74,7 @@
 			return true;
 		}
 	}
-
+	
 	function pw2Check(){
 		let pw = $(".pw").val();
 		let pw2 = $(".pw2").val();
@@ -122,6 +132,7 @@
 			msgBox.innerHTML = "";
 		}
 		return true;
+	}
 
 	function emailCheck(){
 		let email = $(".email").val();
@@ -150,38 +161,20 @@
 						msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
 						emailCheckFlag = true;
 					}
+				},
+				error: function(error) {
+					console.log("통신이 실패했습니다");
+					console.error("AJAX error:", status, error);
+					msgBox.html("<span style='color:red'>서버 통신 오류</span>");
+					emailCheckFlag = false;
+				},
+				complete: function(){
+					console.log("통신이 완료되어 플래그 값을 반환합니다");
+					return emailCheckFlag;
 				}
 			});
 		}
 	}
-
-/*   function DoJoin(){
-	  if(!idCheckFlag) {
-	    alert("아이디를 확인하세요.");
-	    return false;
-	  }
-	  if(!emailCheckFlag) {
-	    alert("이메일을 확인하세요.");
-	    return false;
-	  }
-	  if(!pwCheck()) {
-	    alert("비밀번호를 확인하세요.");
-	    return false;
-	  }
-	  if(!pw2Check()) {
-	    alert("비밀번호 확인을 다시 해주세요.");
-	    return false;
-	  }
-	  if(!nameCheck()) {
-	    alert("이름을 확인하세요.");
-	    return false;
-	  }
-	  if(!phoneCheck()) {
-	    alert("전화번호를 확인하세요.");
-	    return false;
-	  }
-	  return confirm("회원가입을 진행하시겠습니까?");
-	} */
 
 
 
@@ -194,9 +187,9 @@
 		
 		if(pwMath() == false) return false;
 		
-		if(phoneCheck() == false) return false;
-		
 		if(nameCheck() == false) return false;
+		
+		if(phoneCheck() == false) return false;
 		
 		if(emailCheck() == false) return false;
 		if( confirm("회원가입을 진행하시겠습니까?") == false ) {
@@ -274,7 +267,7 @@
 
     </div>
     <div><h2>회원가입</h2></div>
-    <form action="<%=request.getContextPath() %>/user/join.do" method="post" onsubmit="return DoJoin();">
+    <form action="<%=request.getContextPath()%>/user/join.do" method="post" onsubmit="return DoJoin();">
     <div>
       <input type="text" name="id"  class="id" onblur="idCheck();" placeholder="아이디를 입력해주세요">
     </div>

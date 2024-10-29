@@ -24,18 +24,9 @@ public class UserController {
 				loginOk(request,response);
 			}
 		} else if(comments[comments.length-1].equals("join.do")){
-		    if(request.getMethod().equals("GET")){
-		    	String action = request.getParameter("action");
-		        if ("check".equals(action))
-		        {
-		            checkId(request, response);
-		            System.out.println("데이터 전송중");
-		        } else
-		        {
-		            join(request, response);
-		        }
-		    } else if(request.getMethod().equals("POST"))
-		    {
+			 if(request.getMethod().equals("GET")) {
+				 join(request, response);
+		    } else if(request.getMethod().equals("POST")){
 		        joinOk(request, response);
 		    } else if(comments[comments.length-1].equals("logout.do")) {
 		    	if(request.getMethod().equals("GET")) {
@@ -45,9 +36,13 @@ public class UserController {
 		}else if(comments[comments.length-1].equals("checkEmail.do")){ 
 			if(request.getMethod().equals("GET")){
 			checkEmail(request, response);
+			} else if(request.getMethod().equals("POST")){
+				
 			}
-		} else if(request.getMethod().equals("POST")){
-			
+		} else if(comments[comments.length-1].equals("checkid.do")){
+			if(request.getMethod().equals("GET")){
+				checkId(request, response);
+			}
 		}
 	}
 
@@ -132,7 +127,6 @@ public class UserController {
 			
 			String sql = "insert into user (id, password, name, email, phone) VALUES (?, ?, ?, ?, ?)";
 					   
-			System.out.println("joinOk() :: SQL : " + sql);
 			psmt = conn.prepareStatement(sql);
 			
 			psmt.setString(1,id);
