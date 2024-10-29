@@ -21,7 +21,11 @@
             return false;
         } else {
             $.ajax({
+<<<<<<< HEAD
                 url: "<%=request.getContextPath()%>/user/join.do?id=",
+=======
+                url: "<%=request.getContextPath()%>/user/join.do?action=check",
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
                 data: { id: id },
                 type: "get",        
                 success: function(data) {
