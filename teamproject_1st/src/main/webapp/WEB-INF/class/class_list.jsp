@@ -121,75 +121,70 @@
     </style>
 </head>
 <body>
-    <!-- 상단 네비게이션 바 -->
-    
-
-    <!-- 강의 목록 검색 창 -->
-    <div class="search-bar">
-        <label for="category"></label>
-        <select class="search-options" id="category">
-            <option value="title">제목</option>
-            <option value="content">내용</option>
-        </select>
-        <input type="text" placeholder="검색">
-        <button>검색</button>
-    </div>
+	<div class="search-bar">
+		<label for="category"></label>
+		<select class="search-options" id="category">
+			<option value="title">제목</option>
+			<option value="content">내용</option>
+		</select>
+		<input type="text" placeholder="검색">
+		<button>검색</button>
+	</div>
 
     <!-- 강의 목록 -->
-    <section class="course-list">
-        <div>
-          <h1>강의 목록</h1>
-          <hr>
-        </div>
-        <div class="course-item">
-            <img src="강사사진1.png">
-            <div class="course-info">
-                <a href="study_view.html"><div><h2>[2025 수능특강] 한병훈의 국어 -화법과 작문 선택-</h2></div></a>
-                <div class="class_info">
-                <p>난이도: 상</p>
-                <p>강사: 김동영</p>
-                <p>강의 기간: 3개월</p>
-                </div>
-            </div>
-        </div>
-        <div class="course-item">
-            <img src="강사사진2.png">
-            <div class="course-info">
-                <a href="">
-                <div><h2>[2025 수능특강] 최서희의 문학</h2></div></a>
-                <div class="class_info">
-                <p>난이도: 중</p>
-                <p>강사: 김동영</p>
-                <p>강의 기간: 1개월</p>
-                </div>
-            </div>
-        </div>
-        <div class="course-item">
-            <img src="강사사진3.png">
-            <div class="course-info">
-                <a href=""><div><h2>[2025 수능특강] 정승제의 확률과 통계</h2></div></a>
-                <div class="class_info">
-                <p>난이도: 상</p>
-                <p>강사: 김동영</p>
-                <p>강의 기간: 6개월</p>
-                </div>
-            </div>
-        </div>
-        <div class="course-item">
-            <img src="강사사진4.png">
-            <div class="course-info">
-                <a href=""><div><h2>[2025 수능특강] 한병훈의 국어 -화법과 작문 선택-</h2></div></a>
-                <div class="class_info">
-                <p>난이도: 상</p>
-                <p>강사: 김동영</p>
-                <p>강의 기간: 1개월</p>
-                </div>
-            </div>
-        </div>
-        <div class="mother">
-          <button class="register-btn">등록</button>
-        </div>
-    </section>
+	<section class="course-list">
+		<div>
+			<h1>강의 목록</h1>
+			<hr>
+		</div>
+		<div class="course-item">
+			<img src="../img/강사사진1.png">
+			<div class="course-info">
+				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 한병훈의 국어 -화법과 작문 선택-</h2></div></a>
+				<div class="class_info">
+					<p>난이도: 상</p>
+					<p>강사: 김동영</p>
+					<p>강의 기간: 3개월</p>
+				</div>
+			</div>
+		</div>
+		<div class="course-item">
+			<img src="../img/강사사진2.png">
+			<div class="course-info">
+				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 최서희의 문학</h2></div></a>
+				<div class="class_info">
+					<p>난이도: 중</p>
+					<p>강사: 김동영</p>
+					<p>강의 기간: 1개월</p>
+				</div>
+			</div>
+		</div>
+		<div class="course-item">
+			<img src="../img/강사사진3.png">
+			<div class="course-info">
+				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 정승제의 확률과 통계</h2></div></a>
+				<div class="class_info">
+					<p>난이도: 상</p>
+					<p>강사: 김동영</p>
+					<p>강의 기간: 6개월</p>
+				</div>
+			</div>
+		</div>
+		<div class="course-item">
+			<img src="../img/강사사진4.png">
+			<div class="course-info">
+				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 한병훈의 국어 -화법과 작문 선택-</h2></div></a>
+				<div class="class_info">
+			      <p>난이도: 상</p>
+			      <p>강사: 김동영</p>
+			      <p>강의 기간: 1개월</p>
+			      </div>
+			</div>
+		</div>
+		<div class="mother">
+			<a href="<%=request.getContextPath()%>/class/register.do"><button class="register-btn">등록</button></a>
+		</div>
+	</section>
 
     <!-- 푸터 -->
     <%@ include file="../../include/footer.jsp" %>

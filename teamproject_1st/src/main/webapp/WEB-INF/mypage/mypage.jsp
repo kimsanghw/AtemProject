@@ -112,10 +112,15 @@
 </head>
 <body>
 <%
-	 	UserVO userId2 = (UserVO) session.getAttribute("loginUser");
+	 	UserVO userId2 = null;
+	 	userId2 = (UserVO)session.getAttribute("user");
+	 	if( userId2 == null )
+	 	{
+	 		System.out.println("세션에 정보가 없습니다");
+	 	}
 %>
       <section>
-        <div class="mypage">마이페이지</div>
+        <div class="mypage">마이페이지</div>
         <div class="mypage_flex">
             <div class="mypage_mypage mypage_menu"><a href="#">마이페이지 ></a></div>
             <div class="mypage_line"></div>
@@ -135,7 +140,7 @@
             <div class="mypage_join">회원정보</div>
             <table border="1" class="mypage_border">
                 <tbody>
-                <%= userId2.getEmail() %>
+
                     <tr class="mypage_tbody">
                         <th>아이디</th>
                         <td><%= userId2.getId() %></td>
@@ -149,8 +154,9 @@
                         <td>
                             <%= userId2.getEmail() %>
                             <button class="email_button_modify" onclick="toggleEmailForm()">변경</button>
-                            <form>
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
                                 <div class="email_text_modify">
+                                	<input type="hidden" name="action" value="modifyEmail">
                                     <input type="text" placeholder="이메일을 입력해주세요." name="email_modify" class="mypage_email">
                                     <button type="submit" class="email_modify_button mypage_email">수정</button>
                                     <button type="button" class="email_modify_back mypage_email" onclick="toggleEmailForm()">취소</button>
@@ -163,8 +169,9 @@
                         <td>
                             <%= userId2.getPhone() %>
                             <button class="number_button_modify" onclick="toggleNumberForm()">변경</button>
-                            <form>
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
                                 <div class="email_text_modify">
+                                	<input type="hidden" name="action" value="modifyPhone">
                                     <input type="text" placeholder="번호를 입력해주세요" name="number_modify" class="mypage_number">
                                     <button type="submit" class="email_modify_button mypage_number">수정</button>
                                     <button type="button" class="email_modify_back mypage_number" onclick="toggleNumberForm()">취소</button>

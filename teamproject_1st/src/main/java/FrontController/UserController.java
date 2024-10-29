@@ -17,32 +17,36 @@ import FrontController.vo.UserVO;
 public class UserController {
 	public UserController(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException  {
 		
-		if(comments[comments.length-1].equals("login.do")) {
-			if(request.getMethod().equals("GET")) {
-			login(request,response);
-			}else if( request.getMethod().equals("POST")) {
+		if(comments[comments.length-1].equals("login.do")){
+			if(request.getMethod().equals("GET")){
+				login(request,response);	
+			}else if( request.getMethod().equals("POST")){
 				loginOk(request,response);
-
 			}
-		}else if(comments[comments.length-1].equals("join.do")) {
-		    if(request.getMethod().equals("GET")) {
-		    	String action = request.getParameter("action");
-		        if ("check".equals(action)) {
-		            checkId(request, response);
-		            System.out.println("데이터 전송중");
-		        } else {
-		            join(request, response);
-		        }
-		    }
-		    } else if(request.getMethod().equals("POST")) {
+		} else if(comments[comments.length-1].equals("join.do")){
+			 if(request.getMethod().equals("GET")) {
+				 join(request, response);
+		    } else if(request.getMethod().equals("POST")){
 		        joinOk(request, response);
-		    } else if(comments[comments.length-1].equals("logout.do")) {
-		    	if(request.getMethod().equals("GET")) {
-		    		logout(request,response);
-		    	}
-		    }
+		    } 
+		} else if(comments[comments.length-1].equals("logout.do")) {
+	    	if(request.getMethod().equals("GET")) {
+	    		logout(request,response);
+	    	}
+	    } else if(comments[comments.length-1].equals("checkEmail.do")){ 
+			if(request.getMethod().equals("GET")){
+			checkEmail(request, response);
+			} else if(request.getMethod().equals("POST")){
+				
+			}
+		} else if(comments[comments.length-1].equals("checkid.do")){
+			if(request.getMethod().equals("GET")){
+				checkId(request, response);
+			}
 		}
-	
+	}
+
+
 	
 	public void login(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		
@@ -123,7 +127,6 @@ public class UserController {
 			
 			String sql = "insert into user (id, password, name, email, phone) VALUES (?, ?, ?, ?, ?)";
 					   
-			System.out.println("joinOk() :: SQL : " + sql);
 			psmt = conn.prepareStatement(sql);
 			
 			psmt.setString(1,id);
@@ -155,7 +158,9 @@ public class UserController {
 	
 	public void checkEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");	
-
+		response.setContentType("text/plain; charset=UTF-8");
+	    PrintWriter out = response.getWriter();
+	    
 		String email = request.getParameter("email");
 		
 		Connection conn = null; 
@@ -176,15 +181,15 @@ public class UserController {
 			if(rs.next()){
 				int result = rs.getInt("cnt");
 				if(result > 0){
-					System.out.print("isid"); 
+					out.print("isemail"); 
 				} else {
-					System.out.print("isNotId");
+					out.print("isNotemail");
 				}
 			}
 			
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.print("error"); 
+			out.print("error"); 
 		}finally{
 			try {
 				DBConn.close(rs, psmt, conn);
