@@ -297,7 +297,7 @@
             <li><a href="#">출결관리</a></li>
             <li><a href="#">공지사항</a></li>
             <li><a href="#">QnA</a></li>
-            <li><a href="#">자료실</a></li>
+            <li><a href="library_list.do">자료실</a></li>
           </ul>
         </div>
         <form action="#">
