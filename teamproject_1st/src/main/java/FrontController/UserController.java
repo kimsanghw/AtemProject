@@ -1,6 +1,7 @@
 package FrontController;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,13 +25,15 @@ public class UserController {
 
 			}
 		}else if(comments[comments.length-1].equals("join.do")) {
-			if(request.getMethod().equals("GET")) {
-				join(request,response);
-				}else if( request.getMethod().equals("POST")) {
-					joinOk(request,response);
-				}
-		}	
-	}
+		    if(request.getMethod().equals("GET")) {
+		    	join(request, response);
+		    	System.out.println("데이터 전송중");
+		       }
+		    } else if(request.getMethod().equals("POST")) {
+		        joinOk(request, response);
+		    }
+		}
+	
 	
 	public void login(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		
@@ -136,7 +139,6 @@ public class UserController {
 			try {
 				DBConn.close( psmt, conn);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -165,57 +167,8 @@ public class UserController {
 			if(rs.next()){
 				int result = rs.getInt("cnt");
 				if(result > 0){
-					System.out.print("isemail"); 
-				}else{
-					System.out.print("isNotemail");
-				}
-			}
-			
-		}catch(Exception e){
-			e.printStackTrace();
-			System.out.print("error"); 
-		}finally{
-			try {
-				DBConn.close(rs, psmt, conn);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//세션 초기화
-		HttpSession session = request.getSession();
-		UserVO userId = (UserVO) session.getAttribute("loginUser");
-		session.invalidate();
-		response.sendRedirect(request.getContextPath()+"/index.jsp");//메인페이지로이동
-		//response.sendRedirect(request.getContextPath());//메인페이지로이동
-	}
-	public void checkId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");	
-
-		String id = request.getParameter("id");
-		
-		Connection conn = null; 
-		PreparedStatement psmt = null; 
-		ResultSet rs = null;	
-		
-		try{
-			
-			conn = DBConn.conn();
-			
-			String sql = "SELECT COUNT(*) AS cnt FROM user WHERE id=?";
-			
-			psmt = conn.prepareStatement(sql); 
-			psmt.setString(1,id); 
-			
-			rs = psmt.executeQuery();
-			
-			if(rs.next()){
-				int result = rs.getInt("cnt");
-				if(result > 0){
 					System.out.print("isid"); 
-				}else{
+				} else {
 					System.out.print("isNotId");
 				}
 			}
@@ -227,11 +180,61 @@ public class UserController {
 			try {
 				DBConn.close(rs, psmt, conn);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	
-}
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//세션 초기화
+		HttpSession session = request.getSession();
+		UserVO userId = (UserVO) session.getAttribute("loginUser");
+		session.invalidate();
+		response.sendRedirect(request.getContextPath()+"index.jsp");//메인페이지로이동
+		//response.sendRedirect(request.getContextPath());//메인페이지로이동
+	}
+	public void checkId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    request.setCharacterEncoding("UTF-8");
+	    response.setContentType("text/plain; charset=UTF-8");
+	    PrintWriter out = response.getWriter();
+
+	    String id = request.getParameter("id");
+	    
+	    Connection conn = null; 
+	    PreparedStatement psmt = null; 
+	    ResultSet rs = null;    
+	    
+	    try {
+	        conn = DBConn.conn();
+	        
+	        String sql = "SELECT COUNT(*) AS cnt FROM user WHERE id=?";
+	        
+	        psmt = conn.prepareStatement(sql); 
+	        psmt.setString(1, id); 
+	        
+	        rs = psmt.executeQuery();
+	        
+	        if(rs.next()) {
+	            int result = rs.getInt("cnt");
+	            if(result > 0) {
+	                out.print("isid"); 
+	            } else {
+	                out.print("isNotId");
+	            }
+	        } else {
+	        	out.print(rs); 
+	        }
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	        out.print("error"); 
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+}	
+
 

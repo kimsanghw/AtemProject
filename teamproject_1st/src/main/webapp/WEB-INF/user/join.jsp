@@ -6,48 +6,50 @@
 <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script>
-<<<<<<< HEAD
-  let idCheckFlag = false;
-  let emailCheckFlag = false;
 
-  function idCheck(){
-    let id = $(".id").val();
-    let msgBox = $(".msgbox").eq(0);
-    let idPattern =/^(?=.*[a-zA-Z])[a-zA-Z0-9]+$/;
-    if(id.trim() === ""){
-      msgBox.html("<span style='color:red'>아이디를 입력하세요</span>");
-      idCheckFlag = false;
-      return;
-    } else if(id.length < 4 || id.length > 30){
-      msgBox.html("<span style='color:red'>아이디는 4글자 이상 30자 미만으로 입력하세요</span>");
-      idCheckFlag = false;
-      return;
-    } else if(!idPattern.test(id)){
-      msgBox.html("<span style='color:red'>아이디는 영문과 숫자만 가능합니다</span>");
-      idCheckFlag = false;
-      return;
-    } else {
-      $.ajax({
-        url: "join.do",
-        type: "get",
-        data: { id },
-        success: function(data) {
-          if(data.trim() === "isid"){
-            msgBox.html("<span style='color:red'>사용할 수 없는 아이디입니다.</span>");
-            idCheckFlag = false;
-          } else {
-            msgBox.html("<span style='color:green'>사용할 수 있는 아이디입니다</span>");
-            idCheckFlag = true;
-          }
-          
-          
+    function idCheck() {
+        let id = $(".id").val();
+        let msgBox = $(".msgbox").eq(0);
+        let idPattern = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{4,30}$/;
+        let idCheckFlag = false;
 
-			
+        if(id.trim() === "") {
+            msgBox.html("<span style='color:red'>아이디를 입력하세요</span>");
+            return false;
+        } else if(!idPattern.test(id)) {
+            msgBox.html("<span style='color:red'>아이디는 4~30자의 영문과 숫자만 가능합니다</span>");
+            return false;
+        } else {
+            $.ajax({
+                url: "<%=request.getContextPath()%>/join.do",
+                data: { id: id },
+                type: "get",        
+                success: function(data) {
+                    data = data.trim();
+                    if(data === "isid") {
+                        msgBox.html("<span style='color:red'>사용할 수 없는 아이디입니다.</span>");
+                        idCheckFlag = false;
+                    } else if(data === "isNotId") {
+                        msgBox.html("<span style='color:green'>사용할 수 있는 아이디입니다</span>");
+                        idCheckFlag = true;
+                    } else {
+                        msgBox.html("<span style='color:red'>서버 응답 오류: " + data + "</span>");
+                        console.log("Unexpected server response:", data);
+                        idCheckFlag = false;
+                    }
+                },
+                error: function(error) {
+                    console.error("AJAX error:", status, error);
+                    msgBox.html("<span style='color:red'>서버 통신 오류</span>");
+                    idCheckFlag = false;
+                }
+            });
+            return idCheckFlag;
         }
-        
-  }
+    }
 
   function pwCheck(){
+	  
 	  let pw = $(".pw").val();
 	  let msgBox = $(".msgbox").eq(1);
 	  let pwPattern = /^(?=.*[a-zA-Z])[a-zA-Z0-9]+$/;
@@ -110,6 +112,7 @@
 	}
  
   function phoneCheck(){
+	  
       var phonePattern = /^\d{2,3}\d{3,4}\d{4}$/;
       var phone = $(".phone")[0];
       var msgBox = $(".msgbox")[6];
@@ -126,32 +129,36 @@
 }
   
   function emailCheck(){
-    let email = $(".email").val();
-    let msgBox = $(".msgbox").eq(5);
-    let emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/;
-    if(email.trim() === ""){
-      msgBox.html("<span style='color:red'>이메일을 입력하세요</span>");
-      emailCheckFlag = false;
-      return;
-    } else if(!emailPattern.test(email)){
-      msgBox.html("<span style='color:red'>유효한 이메일 주소를 입력하세요</span>");
-      emailCheckFlag = false;
-      return;
-    } else {
-      $.ajax({
-        url: "checkEmail.jsp",
-        type: "get",
-        data: { email },
-        success: function(data) {
-          if(data.trim() === "isemail"){
-            msgBox.html("<span style='color:red'>사용할 수 없는 이메일입니다.</span>");
-            emailCheckFlag = false;
-          } else {
-            msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
-            emailCheckFlag = true;
-          }
+	    let email = $(".email").val();
+	    let msgBox = $(".msgbox").eq(5);
+	    let emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/;
+	    if(email.trim() === ""){
+	      msgBox.html("<span style='color:red'>이메일을 입력하세요</span>");
+	      emailCheckFlag = false;
+	      return;
+	    } else if(!emailPattern.test(email)){
+	      msgBox.html("<span style='color:red'>유효한 이메일 주소를 입력하세요</span>");
+	      emailCheckFlag = false;
+	      return;
+	    } else {
+	      $.ajax({
+	        url: "<%=request.getContextPath()%>/user/join.do?action=check",
+	        type: "get",
+	        data: { email: email },
+	        success: function(data) {
+	          if(data.trim() === "isemail"){
+	            msgBox.html("<span style='color:red'>사용할 수 없는 이메일입니다.</span>");
+	            emailCheckFlag = false;
+	          } else {
+	            msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
+	            emailCheckFlag = true;
+	          }
+	        }
+	      });
+	    }
+  }
 
-  function DoJoin(){
+/*   function DoJoin(){
 	  if(!idCheckFlag) {
 	    alert("아이디를 확인하세요.");
 	    return false;
@@ -177,70 +184,11 @@
 	    return false;
 	  }
 	  return confirm("회원가입을 진행하시겠습니까?");
-	}
-=======
-<<<<<<< HEAD
-  function nameCheck(){
-        var name = $(".name")[0];
-        var msgBox = $(".msgbox")[4];
-        var namePattern = /^[가-힣]+$/;
-        if( name.value.trim() == "" ){
-            msgBox.innerHTML = "<span style='color:red'>이름을 입력하세요</span>";
-            return false;
-        }else if( name.value.length < 2 || !namePattern.test(name.value)) {
-			        msgBox.innerHTML = "<span style='color:red'>이름은 2글자 이상 한글만 입력하세요</span>";
-			        return false;
-        }else{
-          msgBox.innerHTML = "";
-        }
-        return true;
-  }
+	} */
 
-  function emailCheck(){
-        var emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-        var email = $(".email")[0];
-        var msgBox = $(".msgbox")[5];
-        if( email.value.trim() == "" ){
-            msgBox.innerHTML = "<span style='color:red'>이메일을 입력하세요</span>";
-            return false;
-        }else if( !emailPattern.test(email.value) ) {
-			        msgBox.innerHTML = "<span style='color:red'>유효한 이메일 주소를 입력하세요</span>";
-			        return false;
-        }else{
-        	$.ajax({
-                url: "/user/checkEmail.do",
-                type: "get",
-                data: { email },
-                success: function(data) {
-                  if(data.trim() === "isemail"){
-                    msgBox.html("<span style='color:red'>사용할 수 없는 이메일입니다.</span>");
-                    emailCheckFlag = false;
-                  } else {
-                    msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
-                    emailCheckFlag = true;
-                  }
-                }
-              });
-        }
-       
-  }
-  function phoneCheck(){
-        var phonePattern = /^\d{2,3}\d{3,4}\d{4}$/;
-        var phone = $(".phone")[0];
-        var msgBox = $(".msgbox")[6];
-        if( phone.value.trim() == "" ){
-            msgBox.innerHTML = "<span style='color:red'>연락처를 입력하세요</span>";
-            return false;
-        }else if( !phonePattern.test(phone.value)  || phone.value.length >12) {
-			        msgBox.innerHTML = "<span style='color:red'>연락처를 올바르게 입력하세요</span>";
-			        return false;
-        }else{
-          msgBox.innerHTML = "";
-        }
-        return true;
-  }
+
+
   function DoJoin(){
-		
 		if(idCheck() == false) return false;
 	
 		if(pwCheck() == false) return false;
@@ -262,9 +210,8 @@
 			return true;
 		}
 	}
-   
-
 </script>
+
     <style>
       html,body{
         margin: 0px;
