@@ -304,7 +304,7 @@
             String authorization = userId.getAuthorization();
             if ("T".equals(authorization) || "A".equals(authorization)) { 
     %>
-                <li><a href="#">출결관리</a></li>
+                <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
     <% 
             } else { 
     %>

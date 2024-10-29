@@ -3,10 +3,14 @@
 <%@ include file="../../include/header.jsp" %>
 <%@ pave import="FrontController.vo.ClassVO" %>
 <%@ page import="FrontController.util.*" %>
-<%
-	List<ClassVO> classList = (List<ClassVO>)request.getAttribute("classList");
-%>
-<script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("select[name=search_mode]").change(function () {
+        $("#search_mode").submit();
+
+        });
+    });
 </script>
 <section>
         <article>
@@ -14,13 +18,13 @@
             <h2>출결 관리</h2>
             <div style="border-top: 5px solid #0b70b9; width: 86%;"></div>
             <div class="content_inner">
-            	<form action="list.jsp" method="get">
+            	<form action="/attendance/attendanceList.do" method="get" id="search_mode">
 	              <div>
-	                <select  name="searchType">
-	                  <option value="total">전체</option>
-	                  <option value="cours">현재 강의 중인 강의</option>
+	                <select  name="search_mode" id="search_mode">
+	                	<option value="전체">전체</option>
+	                  	<option value="강의">현재 강의 중인 강의</option>
 	                </select>
-	              </div>o
+	              </div>
 	              </form>
               <div class="content_c">
                   <h3>[2025 수능 특강] 한병훈의 국어-화법과 작문</h3><br>
