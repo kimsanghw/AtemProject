@@ -74,7 +74,24 @@
       <div class="index_nav headerSlide">
         <ul>
           <li><a href="#">수강신청</a></li>
-          <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
+          <% 
+        if (userId != null) {
+            String authorization = userId.getAuthorization();
+            if ("T".equals(authorization) || "A".equals(authorization)) { 
+    %>
+                <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
+    <% 
+            } else { 
+    %>
+                <li><a href="#">출결정보</a></li>
+    <% 
+            }
+        } else { 
+    %>
+        <li><a href="#">출결정보</a></li>
+    <% 
+        } 
+    %>
           <li><a href="#">공지사항</a></li>
           <li><a href="#">QnA</a></li>
           <li><a href="#">자료실</a></li>

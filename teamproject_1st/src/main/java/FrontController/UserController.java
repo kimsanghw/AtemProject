@@ -26,11 +26,20 @@ public class UserController {
 			}
 		}else if(comments[comments.length-1].equals("join.do")) {
 		    if(request.getMethod().equals("GET")) {
-		    	join(request, response);
-		    	System.out.println("데이터 전송중");
-		       }
+		    	String action = request.getParameter("action");
+		        if ("check".equals(action)) {
+		            checkId(request, response);
+		            System.out.println("데이터 전송중");
+		        } else {
+		            join(request, response);
+		        }
+		    }
 		    } else if(request.getMethod().equals("POST")) {
 		        joinOk(request, response);
+		    } else if(comments[comments.length-1].equals("logout.do")) {
+		    	if(request.getMethod().equals("GET")) {
+		    		logout(request,response);
+		    	}
 		    }
 		}
 	
@@ -187,10 +196,8 @@ public class UserController {
 	public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//세션 초기화
 		HttpSession session = request.getSession();
-		UserVO userId = (UserVO) session.getAttribute("loginUser");
-		session.invalidate();
-		response.sendRedirect(request.getContextPath()+"index.jsp");//메인페이지로이동
-		//response.sendRedirect(request.getContextPath());//메인페이지로이동
+		session.invalidate(); // 세션 무효화
+		response.sendRedirect(request.getContextPath() + "/index.jsp");
 	}
 	public void checkId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    request.setCharacterEncoding("UTF-8");

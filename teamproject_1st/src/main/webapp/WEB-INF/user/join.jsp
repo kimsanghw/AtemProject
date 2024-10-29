@@ -21,7 +21,8 @@
             return false;
         } else {
             $.ajax({
-                url: "<%=request.getContextPath()%>/user/checkId",
+
+                url: "<%=request.getContextPath()%>/user/join.do?action=check",
                 data: { id: id },
                 type: "get",        
                 success: function(data) {
@@ -96,21 +97,51 @@
 	    return true;
 	  }
   function nameCheck(){
-	    var name = $(".name").val();
-	    var msgBox = $(".msgbox").eq(4);
-	    var namePattern = /^[가-힣]+$/;
-	    if( name.trim() === "" ){
-	        msgBox.html("<span style='color:red'>이름을 입력하세요</span>");
-	        return false;
-	    }else if( name.length < 2 || !namePattern.test(name)) {
-	        msgBox.html("<span style='color:red'>이름은 2글자 이상 한글만 입력하세요</span>");
-	        return false;
-	    }else{
-	      msgBox.html("");
-	    }
-	    return true;
-	}
- 
+        var name = $(".name")[0];
+        var msgBox = $(".msgbox")[4];
+        var namePattern = /^[가-힣]+$/;
+        if( name.value.trim() == "" ){
+            msgBox.innerHTML = "<span style='color:red'>이름을 입력하세요</span>";
+            return false;
+        }else if( name.value.length < 2 || !namePattern.test(name.value)) {
+			        msgBox.innerHTML = "<span style='color:red'>이름은 2글자 이상 한글만 입력하세요</span>";
+			        return false;
+        }else{
+          msgBox.innerHTML = "";
+        }
+        return true;
+  }
+
+  function emailCheck(){
+        var emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+        var email = $(".email")[0];
+        var msgBox = $(".msgbox")[5];
+        if( email.value.trim() == "" ){
+            msgBox.innerHTML = "<span style='color:red'>이메일을 입력하세요</span>";
+            return false;
+        }else if( !emailPattern.test(email.value) ) {
+			        msgBox.innerHTML = "<span style='color:red'>유효한 이메일 주소를 입력하세요</span>";
+			        return false;
+        }else{
+        	$.ajax({
+                url: "/user/join.do",
+                type: "get",
+                data: { email },
+                success: function(data) {
+                  if(data.trim() === "isemail"){
+                    msgBox.html("<span style='color:red'>사용할 수 없는 이메일입니다.</span>");
+                    emailCheckFlag = false;
+                  } else {
+                    msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
+                    emailCheckFlag = true;
+                  }
+                }
+              });
+        }
+       
+  }
+
+
   function phoneCheck(){
 	  
       var phonePattern = /^\d{2,3}\d{3,4}\d{4}$/;
