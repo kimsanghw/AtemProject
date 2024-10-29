@@ -21,7 +21,6 @@
             return false;
         } else {
             $.ajax({
-
                 url: "<%=request.getContextPath()%>/user/join.do?action=check",
                 data: { id: id },
                 type: "get",        
@@ -140,7 +139,6 @@
         }
        
   }
-
 
   function phoneCheck(){
 	  

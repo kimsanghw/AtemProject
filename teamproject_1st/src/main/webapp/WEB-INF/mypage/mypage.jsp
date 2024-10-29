@@ -69,8 +69,7 @@
             height: 50px;
         }
         .email_button_modify{
-            position: absolute;
-            margin-left: 428px;
+            position: relative;
             width: 45px;
         }
         .email_text_modify{
@@ -96,8 +95,7 @@
             display: none;
         }
         .number_button_modify{
-            position: absolute;
-            margin-left: 506px;
+            position: relative;
             width: 45px;
         }
         .mypage_number{
@@ -124,7 +122,7 @@
             <div class="mypage_study mypage_menu"><a href="#">내 강의 목록 ></a></div>
             <div class="mypage_line"></div>
             <% if(userId2 != null) { 
-            	String authorization = userId.getAuthorization();
+            	String authorization = userId2.getAuthorization();
             	if("A".equals(authorization)) {
             %>
             <div class="mypage_admin mypage_menu" id="admin_page"><a href="#">관리자 페이지 ></a></div> <!-- ì´ëë¯¼ì¼ë¡ ë¡ê·¸ì¸ ì ë³´ì´ë divìì­-->
@@ -137,18 +135,19 @@
             <div class="mypage_join">회원정보</div>
             <table border="1" class="mypage_border">
                 <tbody>
+                <%= userId2.getEmail() %>
                     <tr class="mypage_tbody">
                         <th>아이디</th>
-                        <td>qortmddn567</td>
+                        <td><%= userId2.getId() %></td>
                     </tr>
                     <tr>
                         <th>이름</th>
-                        <td>백승우</td>
+                        <td><%= userId2.getName() %></td>
                     </tr>
                     <tr>
                         <th>이메일</th>
                         <td>
-                            qortmddn567@naver.com
+                            <%= userId2.getEmail() %>
                             <button class="email_button_modify" onclick="toggleEmailForm()">변경</button>
                             <form>
                                 <div class="email_text_modify">
@@ -162,7 +161,7 @@
                     <tr>
                         <th>연락처</th>
                         <td>
-                            010-4197-2216
+                            <%= userId2.getPhone() %>
                             <button class="number_button_modify" onclick="toggleNumberForm()">변경</button>
                             <form>
                                 <div class="email_text_modify">
@@ -186,7 +185,7 @@
 
         function showAdminPage() {
             if (userRole === 'admin') {
-                document.getElementById('adminPage').style.display = 'block';
+                document.getElementById('admin_page').style.display = 'block';
             }
         }
         showAdminPage();

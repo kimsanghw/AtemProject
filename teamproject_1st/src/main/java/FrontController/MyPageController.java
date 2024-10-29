@@ -49,10 +49,19 @@ public class MyPageController {
 				if(rs.next()) {
 					UserVO user = new UserVO();
 					user.setUno(rs.getInt("uno"));
-					user.set
+					user.setId(rs.getString("id"));
+					user.setPassword(rs.getString("password"));
+					user.setName(rs.getString("name"));
+					user.setPhone(rs.getString("phone"));
+					user.setEmail(rs.getString("email"));
+					user.setRdate(rs.getString("rdate"));
+					user.setState(rs.getString("state"));
+					user.setAuthorization(rs.getString("authorization"));
+					user.setDate(rs.getString("date"));
 					
+					System.out.println(user);
 					
-					 request.setAttribute("user", user);
+					 request.setAttribute("loginUser", loginUser);
 					 request.getRequestDispatcher("/mypage/mypage.do").forward(request, response);
 				}
 			}catch(Exception e){
