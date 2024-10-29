@@ -6,7 +6,6 @@
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 	<script>
-
 	function idCheck() {
 		let id = $(".id").val();
 		let msgBox = $(".msgbox").eq(0);
@@ -46,7 +45,6 @@
 			});
 		return idCheckFlag;
 		}
-	}
 
 	function pwCheck(){
 		let pw = $(".pw").val();
@@ -124,7 +122,6 @@
 			msgBox.innerHTML = "";
 		}
 		return true;
-}
 
 	function emailCheck(){
 		let email = $(".email").val();
