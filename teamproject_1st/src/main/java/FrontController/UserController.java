@@ -1,6 +1,7 @@
 package FrontController;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,23 +15,38 @@ import FrontController.util.DBConn;
 import FrontController.vo.UserVO;
 
 public class UserController {
-	
 	public UserController(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException  {
 		
-		if(comments[comments.length-1].equals("login.do")) {
-			if(request.getMethod().equals("GET")) {
-			login(request,response);
-			}else if( request.getMethod().equals("POST")) {
+		if(comments[comments.length-1].equals("login.do")){
+			if(request.getMethod().equals("GET")){
+				login(request,response);	
+			}else if( request.getMethod().equals("POST")){
 				loginOk(request,response);
 			}
-		}else if(comments[comments.length-1].equals("join.do")) {
-			if(request.getMethod().equals("GET")) {
-				join(request,response);
-				}else if( request.getMethod().equals("POST")) {
-					loginOk(request,response);
-				}
-		}	
+		} else if(comments[comments.length-1].equals("join.do")){
+			 if(request.getMethod().equals("GET")) {
+				 join(request, response);
+		    } else if(request.getMethod().equals("POST")){
+		        joinOk(request, response);
+		    } 
+		} else if(comments[comments.length-1].equals("logout.do")) {
+	    	if(request.getMethod().equals("GET")) {
+	    		logout(request,response);
+	    	}
+	    } else if(comments[comments.length-1].equals("checkEmail.do")){ 
+			if(request.getMethod().equals("GET")){
+			checkEmail(request, response);
+			} else if(request.getMethod().equals("POST")){
+				
+			}
+		} else if(comments[comments.length-1].equals("checkid.do")){
+			if(request.getMethod().equals("GET")){
+				checkId(request, response);
+			}
+		}
 	}
+
+
 	
 	public void login(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		
@@ -39,9 +55,9 @@ public class UserController {
 	
 	public void loginOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		
+
 		String id = request.getParameter("id");
-		String password = request.getParameter("password");
+		String password = request.getParameter("pw");
 		
 		
 		Connection conn= null;
@@ -51,8 +67,7 @@ public class UserController {
 		try {
 			conn = DBConn.conn();
 			
-			String sql 
-			= " SELECT * FROM user WHERE id=? AND password=? ";
+			String sql = " SELECT * FROM user WHERE id=? AND password=? ";
 			
 			psmt = conn.prepareStatement(sql);
 			psmt.setString(1, id);
@@ -64,19 +79,19 @@ public class UserController {
 				
 				UserVO loginUser = new UserVO();
 				loginUser.setUno(rs.getInt("uno"));
-				loginUser.setUname(rs.getString("name"));
-				loginUser.setUauthorization(rs.getString("authorization"));
-				loginUser.setUid(id);
+				loginUser.setName(rs.getString("name"));
+				loginUser.setAuthorization(rs.getString("authorization"));
+				loginUser.setId(id);
 				
 				
 				HttpSession session = request.getSession();
 				session.setAttribute("loginUser", loginUser);
 				
-				
-				response.sendRedirect(request.getContextPath());
+
+				response.sendRedirect(request.getContextPath()+ "/index.jsp");
 				
 			}else {
-				response.sendRedirect(request.getContextPath()+"/login.do");
+				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -102,24 +117,15 @@ public class UserController {
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		String phone = request.getParameter("phone");
-		String rdate = request.getParameter("rdate");
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		
 		try {
-			String sql = " INSERT INTO user( id"
-					   + "                  , password "
-					   + "                  , phone"
-					   + "                  , name "
-					   + "                  , email)values( "
-					   + "           ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + "         , ?"
-					   + " )";	
-					   
+			
+			conn = DBConn.conn();
+			
+			String sql = "insert into user (id, password, name, email, phone) VALUES (?, ?, ?, ?, ?)";
 					   
 			psmt = conn.prepareStatement(sql);
 			
@@ -130,14 +136,21 @@ public class UserController {
 		    psmt.setString(5,phone);
     
 		    int result = psmt.executeUpdate();
-			
+
+		    if (result < 1 ) {
+
+		    }else {
+
+		    	
+
+		    response.sendRedirect(request.getContextPath() + "/index.jsp");}
 		}catch(Exception e){
 			e.printStackTrace();
+
 		}finally {
 			try {
 				DBConn.close( psmt, conn);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -145,7 +158,9 @@ public class UserController {
 	
 	public void checkEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");	
-
+		response.setContentType("text/plain; charset=UTF-8");
+	    PrintWriter out = response.getWriter();
+	    
 		String email = request.getParameter("email");
 		
 		Connection conn = null; 
@@ -166,66 +181,72 @@ public class UserController {
 			if(rs.next()){
 				int result = rs.getInt("cnt");
 				if(result > 0){
-					System.out.print("isemail"); 
-				}else{
-					System.out.print("isNotemail");
+					out.print("isemail"); 
+				} else {
+					out.print("isNotemail");
 				}
 			}
 			
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.print("error"); 
+			out.print("error"); 
 		}finally{
 			try {
 				DBConn.close(rs, psmt, conn);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//세션 초기화
+		HttpSession session = request.getSession();
+		session.invalidate(); // 세션 무효화
+		response.sendRedirect(request.getContextPath() + "/index.jsp");
+	}
 	public void checkId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");	
+	    request.setCharacterEncoding("UTF-8");
+	    response.setContentType("text/plain; charset=UTF-8");
+	    PrintWriter out = response.getWriter();
 
-		String id = request.getParameter("id");
-		
-		Connection conn = null; 
-		PreparedStatement psmt = null; 
-		ResultSet rs = null;	
-		
-		try{
-			
-			conn = DBConn.conn();
-			
-			String sql = "SELECT COUNT(*) AS cnt FROM user WHERE id=?";
-			
-			psmt = conn.prepareStatement(sql); 
-			psmt.setString(1,id); 
-			
-			rs = psmt.executeQuery();
-			
-			if(rs.next()){
-				int result = rs.getInt("cnt");
-				if(result > 0){
-					System.out.print("isid"); 
-				}else{
-					System.out.print("isNotId");
-				}
-			}
-			
-		}catch(Exception e){
-			e.printStackTrace();
-			System.out.print("error"); 
-		}finally{
-			try {
-				DBConn.close(rs, psmt, conn);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	    String id = request.getParameter("id");
+	    
+	    Connection conn = null; 
+	    PreparedStatement psmt = null; 
+	    ResultSet rs = null;    
+	    
+	    try {
+	        conn = DBConn.conn();
+	        
+	        String sql = "SELECT COUNT(*) AS cnt FROM user WHERE id=?";
+	        
+	        psmt = conn.prepareStatement(sql); 
+	        psmt.setString(1, id); 
+	        
+	        rs = psmt.executeQuery();
+	        
+	        if(rs.next()) {
+	            int result = rs.getInt("cnt");
+	            if(result > 0) {
+	                out.print("isid"); 
+	            } else {
+	                out.print("isNotId");
+	            }
+	        } else {
+	        	out.print(rs); 
+	        }
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	        out.print("error"); 
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
-	
-}
+
+}	
+
 

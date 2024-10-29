@@ -17,26 +17,21 @@ public class FrontController extends HttpServlet {
        
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		String uri =request.getRequestURI();
 		String contextPath = request.getContextPath();
-		
 		String comment =  uri.substring(contextPath.length()+1);
-		
 		String[] comments = comment.split("/");
 
-		System.out.println("comments[0] : "+comments[0]);
-		
-
 		if(comments[0].equals("user")) {
-			System.out.println("login.do!!!");
 			UserController user = new UserController(request, response,comments);
 		}else if(comments[0].equals("attendance")) {
 			AttendanceController attendance = new AttendanceController(request, response,comments);
+		}else if(comments[0].equals("mypage")) {
+			MyPageController mypage = new MyPageController(request, response,comments);
+		} else if(comments[0].equals("class")) {
+			ClassController cours = new ClassController(request, response,comments);
 		}
 	}
 

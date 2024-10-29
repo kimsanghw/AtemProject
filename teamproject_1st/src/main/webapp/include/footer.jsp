@@ -55,7 +55,7 @@
         /* footer 부분 끝 */
 </style>
 <body>
-	      <footer>
+      <footer>
         <div class="index_footer">
             <div class="footer_menu">
                 <ul>
@@ -76,4 +76,6 @@
             </div>
         </div>
     </footer>
+</body>
+</html>
 </body>

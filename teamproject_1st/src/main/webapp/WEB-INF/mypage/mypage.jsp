@@ -69,8 +69,7 @@
             height: 50px;
         }
         .email_button_modify{
-            position: absolute;
-            margin-left: 428px;
+            position: relative;
             width: 45px;
         }
         .email_text_modify{
@@ -96,8 +95,7 @@
             display: none;
         }
         .number_button_modify{
-            position: absolute;
-            margin-left: 506px;
+            position: relative;
             width: 45px;
         }
         .mypage_number{
@@ -110,63 +108,80 @@
             margin: 40px 50px;
         }
         /*ì¹ì ìì­ ë*/
-<%@ include file="../../include/footer.jsp" %>
         </style>
 </head>
 <body>
+<%
+	 	UserVO userId2 = null;
+	 	userId2 = (UserVO)session.getAttribute("user");
+	 	if( userId2 == null )
+	 	{
+	 		System.out.println("세션에 정보가 없습니다");
+	 	}
+%>
       <section>
-        <div class="mypage">ë§ì´íì´ì§</div>
+        <div class="mypage">마이페이지</div>
         <div class="mypage_flex">
-            <div class="mypage_mypage mypage_menu"><a href="#">ë§ì´íì´ì§ ></a></div>
+            <div class="mypage_mypage mypage_menu"><a href="#">마이페이지 ></a></div>
             <div class="mypage_line"></div>
-            <div class="mypage_study mypage_menu"><a href="#">ë´ ê°ì ëª©ë¡ ></a></div>
+            <div class="mypage_study mypage_menu"><a href="#">내 강의 목록 ></a></div>
             <div class="mypage_line"></div>
-            <div class="mypage_admin mypage_menu" id="admin_page"><a href="#">ê´ë¦¬ì íì´ì§ ></a></div> <!-- ì´ëë¯¼ì¼ë¡ ë¡ê·¸ì¸ ì ë³´ì´ë divìì­-->
+            <% if(userId2 != null) { 
+            	String authorization = userId2.getAuthorization();
+            	if("A".equals(authorization)) {
+            %>
+            <div class="mypage_admin mypage_menu" id="admin_page"><a href="#">관리자 페이지 ></a></div> <!-- ì´ëë¯¼ì¼ë¡ ë¡ê·¸ì¸ ì ë³´ì´ë divìì­-->
             <div class="mypage_line mypage_admin"></div>
+            <% } 
+            }
+            %>
         </div>
         <div class="mypage_box mypage_flex">
-            <div class="mypage_join">íìì ë³´</div>
+            <div class="mypage_join">회원정보</div>
             <table border="1" class="mypage_border">
                 <tbody>
+
                     <tr class="mypage_tbody">
-                        <th>ìì´ë</th>
-                        <td>qortmddn567</td>
+                        <th>아이디</th>
+                        <td><%= userId2.getId() %></td>
                     </tr>
                     <tr>
-                        <th>ì´ë¦</th>
-                        <td>ë°±ì¹ì°</td>
+                        <th>이름</th>
+                        <td><%= userId2.getName() %></td>
                     </tr>
                     <tr>
-                        <th>ì´ë©ì¼</th>
+                        <th>이메일</th>
                         <td>
-                            qortmddn567@naver.com
-                            <button class="email_button_modify" onclick="toggleEmailForm()">ë³ê²½</button>
-                            <form>
+                            <%= userId2.getEmail() %>
+                            <button class="email_button_modify" onclick="toggleEmailForm()">변경</button>
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
                                 <div class="email_text_modify">
+                                	<input type="hidden" name="action" value="modifyEmail">
                                     <input type="text" placeholder="이메일을 입력해주세요." name="email_modify" class="mypage_email">
-                                    <button type="submit" class="email_modify_button mypage_email">ìì </button>
-                                    <button type="button" class="email_modify_back mypage_email" onclick="toggleEmailForm()">ì·¨ì</button>
+                                    <button type="submit" class="email_modify_button mypage_email">수정</button>
+                                    <button type="button" class="email_modify_back mypage_email" onclick="toggleEmailForm()">취소</button>
                                 </div>
                             </form>
                         </td>
                     </tr>
                     <tr>
-                        <th>ì°ë½ì²</th>
+                        <th>연락처</th>
                         <td>
-                            010-4197-2216
-                            <button class="number_button_modify" onclick="toggleNumberForm()">ë³ê²½</button>
-                            <form>
+                            <%= userId2.getPhone() %>
+                            <button class="number_button_modify" onclick="toggleNumberForm()">변경</button>
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
                                 <div class="email_text_modify">
+                                	<input type="hidden" name="action" value="modifyPhone">
                                     <input type="text" placeholder="번호를 입력해주세요" name="number_modify" class="mypage_number">
-                                    <button type="submit" class="email_modify_button mypage_number">ìì </button>
-                                    <button type="button" class="email_modify_back mypage_number" onclick="toggleNumberForm()">ì·¨ì</button>
+                                    <button type="submit" class="email_modify_button mypage_number">수정</button>
+                                    <button type="button" class="email_modify_back mypage_number" onclick="toggleNumberForm()">취소</button>
                                 </div>
                             </form>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="mypage_class">ìê°ì¤ì¸ ê°ì</div>
+            <div class="mypage_class">수강중인 강의</div>
             <div></div>
         </div>
       </section>
@@ -177,7 +192,7 @@
 
         function showAdminPage() {
             if (userRole === 'admin') {
-                document.getElementById('adminPage').style.display = 'block';
+                document.getElementById('admin_page').style.display = 'block';
             }
         }
         showAdminPage();

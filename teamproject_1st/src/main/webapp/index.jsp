@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="FrontController.vo.UserVO" %>
+<%@ page import="java.sql.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +11,7 @@
 
 <title>Insert title here</title>
 <!-- Demo styles -->
-  <style>
+  <style>  
     /*슬라이드 영역*/
     html,body {
       position: relative;
@@ -53,9 +55,6 @@
       text-decoration: none;
       color: white;
       font-weight: 800px;
-    }
-    .index_logOut{
-      display: none;
     }
     .index_logo {
       position: absolute; /* Absolute로 변경 */
@@ -252,6 +251,7 @@
       margin: 0 0 0 20px;
       font-size: 15px;
     }
+    
     .footer_menu a{
       text-decoration: none;
       color: white;
@@ -281,20 +281,42 @@
 </head>
 <body>
 	 <!-- Swiper -->
+	 <%
+	 	UserVO userId = (UserVO) session.getAttribute("loginUser");
+	 %>
   <div class="swiper mySwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
-        <div class="wallpaper"><img src="img/common.png"></div>
+        <div class="wallpaper"><img src="./img/common.png"></div>
         <div class="index_loginPage headerSlide">
-          <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
-          <%System.out.println(request.getContextPath()); %>
-          <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">">로그아웃</a>　|　<a href="#">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
-        </div>
-        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="img/로고1.png"></a></h1>
+        <% if(userId == null) { %>
+            <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
+        <% } else { %>
+            <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
+        <% } %>
+          </div>
+        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="img/로고1.png"></a></h1>
         <div class="index_nav headerSlide">
           <ul>
-            <li><a href="#">수강신청</a></li>
-            <li><a href="#">출결관리</a></li>
+            <li><a href="<%=request.getContextPath()%>/class/list.do">수강신청</a></li>
+           <% 
+        if (userId != null) {
+            String authorization = userId.getAuthorization();
+            if ("T".equals(authorization) || "A".equals(authorization)) { 
+    %>
+                <li><a href="#">출결관리</a></li>
+    <% 
+            } else { 
+    %>
+                <li><a href="#">출결정보</a></li>
+    <% 
+            }
+        } else { 
+    %>
+        <li><a href="#">출결정보</a></li>
+    <% 
+        } 
+    %>
             <li><a href="#">공지사항</a></li>
             <li><a href="#">QnA</a></li>
             <li><a href="library_list.do">자료실</a></li>
@@ -314,14 +336,34 @@
       <div class="swiper-slide">
         <div class="index_slide2_header">
           <div class="index_loginPage headerSlide">
+            <% if(userId == null) { %>
             <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
+        <% } else { %>
             <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
+        <% } %>
           </div>
           <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="img/로고1.png"></a></h1>
           <div class="index_nav headerSlide">
             <ul>
               <li><a href="#">수강신청</a></li>
-              <li><a href="#">출결관리</a></li>
+              <% 
+        if (userId != null) {
+            String authorization = userId.getAuthorization();
+            if ("T".equals(authorization) || "A".equals(authorization)) { 
+    %>
+                <li><a href="#">출결관리</a></li>
+    <% 
+            } else { 
+    %>
+                <li><a href="#">출결정보</a></li>
+    <% 
+            }
+        } else { 
+    %>
+        <li><a href="#">출결정보</a></li>
+    <% 
+        } 
+    %>
               <li><a href="#">공지사항</a></li>
               <li><a href="#">QnA</a></li>
               <li><a href="#">자료실</a></li>
