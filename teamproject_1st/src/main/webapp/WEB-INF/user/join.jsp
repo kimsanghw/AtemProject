@@ -21,7 +21,7 @@
             return false;
         } else {
             $.ajax({
-                url: "<%=request.getContextPath()%>/join.do",
+                url: "<%=request.getContextPath()%>/user/join.do?action=check",
                 data: { id: id },
                 type: "get",        
                 success: function(data) {

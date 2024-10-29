@@ -26,9 +26,14 @@ public class UserController {
 			}
 		}else if(comments[comments.length-1].equals("join.do")) {
 		    if(request.getMethod().equals("GET")) {
-		    	join(request, response);
-		    	System.out.println("데이터 전송중");
-		       }
+		    	String action = request.getParameter("action");
+		        if ("check".equals(action)) {
+		            checkId(request, response);
+		            System.out.println("데이터 전송중");
+		        } else {
+		            join(request, response);
+		        }
+		    }
 		    } else if(request.getMethod().equals("POST")) {
 		        joinOk(request, response);
 		    }
