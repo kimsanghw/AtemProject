@@ -1,7 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
+<%@ pave import='FrontController.vo.ClassVO.*' %>
 <%@ page import="FrontController.util.*" %>
+<%
+	List<ClassVO> nlist = (List<ClassVO>)request.getAttribute("classlist");
+%>
 <script>
 </script>
 <section>
@@ -19,18 +23,8 @@
               <div class="content_c">
                   <h3>[2025 수능 특강] 한병훈의 국어-화법과 작문</h3><br>
                      학생 10/20<br>
-                    <button type="button" class="app_btn"><a href="<%=request.getContextPath()%>/attedanceView.do">출결관리</a></button><br>
+                    <button type="button" class="app_btn"><a href="<%=request.getContextPath()%>/attendance/attedanceView.do">출결관리</a></button><br>
               </div>
-              <div class="content_c">
-                <h3>[2025 수능 특강] 최서희의 문학</h3><br>
-                   학생 20/20<br>
-                  <button type="button" class="app_btn"><a href="">출결관리</a></button><br>
-            </div>
-            <div class="content_c">
-              <h3>[2025 수능 특강] 정승제의 확률과 통계</h3><br>
-                 학생 12/20<br>
-                <button type="button" class="app_btn"><a href="">출결관리</a></button><br>
-          </div>
             </div>
             <div class="paging_inner">
 				<a href="">이전</a>
