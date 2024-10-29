@@ -112,7 +112,12 @@
 </head>
 <body>
 <%
-	 	UserVO userId2 = (UserVO) session.getAttribute("loginUser");
+	 	UserVO userId2 = null;
+	 	userId2 = (UserVO)session.getAttribute("user");
+	 	if( userId2 == null )
+	 	{
+	 		System.out.println("세션에 정보가 없습니다");
+	 	}
 %>
       <section>
         <div class="mypage">마이페이지</div>
@@ -135,8 +140,11 @@
             <div class="mypage_join">회원정보</div>
             <table border="1" class="mypage_border">
                 <tbody>
+<<<<<<< HEAD
                 <%= userId2.getEmail() %>
                 
+=======
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
                     <tr class="mypage_tbody">
                         <th>아이디</th>
                         <td><%= userId2.getId() %></td>
