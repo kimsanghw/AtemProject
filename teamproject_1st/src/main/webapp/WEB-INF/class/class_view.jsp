@@ -43,7 +43,7 @@
             width : 2rem;
             height: 16px;
             margin-right: 0.3rem;
-            background: url(ico_view_labels.png) no-repeat 0 0;
+            background: url(../img/ico_view_labels.png) no-repeat 0 0;
         }
         .cont_info .label01 ::before{
             background-position: 0 -2rm;
@@ -142,7 +142,7 @@
                 </div>
                 <div class="main_content">
                     <div class="img">
-                        <img src="강사사진5.png">
+                        <img src="../img/강사사진1.png">
                     </div>
                     <div class="cont_info">
                         <dl>
@@ -175,7 +175,7 @@
 
         <hr>
         <div class="mother">
-            <span class="center_button"><button class="register-btn">목록</button></span>
+            <span class="center_button"><a href="<%=request.getContextPath()%>/class/list.do"><button class="register-btn">목록</button></a></span>
             <span><button class="register-btn">수정</button></span>
             <span><button class="register-btn">삭제</button></span>
         </div>
