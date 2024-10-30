@@ -3,6 +3,7 @@
 <%@ include file="../../include/header.jsp" %>
 <%@ page import="FrontController.vo.ClassVO" %>
 <%@ page import="FrontController.util.*" %>
+<%@ page import="java.util.List" %>
 <%
 // 모델에서 데이터를 불러와서 유효성검사를 하고 변수에 저장한다
  String searchType = "";

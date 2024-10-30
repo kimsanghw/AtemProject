@@ -112,7 +112,7 @@ public class AttendanceController {
 				psmt = conn.prepareStatement(sql);
 				
 				
-				if(rs.next()) {
+				 while(rs.next()) {
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
 					vo.setUno(rs.getInt("uno"));
