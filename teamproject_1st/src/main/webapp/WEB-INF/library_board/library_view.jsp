@@ -87,11 +87,11 @@
         <div class="library_board_content">첫 번째 내용입니다.</div>
         <div class="library_board_file">등록된 첨부파일명.JPG</div>
         <div class="library_board_list_button">
-            <button><a href="#">목록</a></button>
+            <button onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">목록</button>
         </div>
         <div class="library_board_button">
-            <button type="submit"><a href="#">등록</a></button>
-            <button type="button">취소</button>
+            <button type="submit" onclick="location.href='<%=request.getContextPath()%>/library/library_modify.do'">등록</button>
+            <button type="button" onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">취소</button>
         </div>
       </section>
 </body>
