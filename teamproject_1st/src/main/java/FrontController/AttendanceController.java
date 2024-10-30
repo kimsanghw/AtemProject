@@ -43,6 +43,7 @@ public class AttendanceController {
 		HttpSession session = request.getSession();
 		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
 		String searchType = request.getParameter("searchType");
+		
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
 		
 		int nowPage = 1;
@@ -52,27 +53,15 @@ public class AttendanceController {
 			nowPage 
 			= Integer.parseInt(request.getParameter("nowPage"));
 		}
-
-		
-		
 		
 		int uno = loginUser.getUno(); 
-		String title = request.getParameter("title"); 
-		String Tname = request.getParameter("name");
-		String subject = request.getParameter("subject");
-		String jdate = request.getParameter("jdate");
-		String diffcult = request.getParameter("diffcult");
-		String duringclass = request.getParameter("duringclass");
-		
-		
-		
+
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		ResultSet rs = null;
 		PreparedStatement psmtTotal = null;
 		ResultSet rsTotal = null;
-		PreparedStatement psmtStudentTotal = null;
-		ResultSet rsStudentTotal = null;
+		
 		
 		try {
 			
@@ -122,6 +111,7 @@ public class AttendanceController {
 				}
 				psmt = conn.prepareStatement(sql);
 				
+				
 				if(rs.next()) {
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
@@ -135,12 +125,16 @@ public class AttendanceController {
 					
 					
 					clist.add(vo);
+					
 				}
 				request.setAttribute("clist", clist);
 				
+				System.out.println(request);
+				
+				
 				PagingUtil paging = new PagingUtil(nowPage,total,3);
 				
-				if(searchType != null && !searchType.equals("null")){//검색어가 있는 경우
+				if(searchType != null && !searchType.equals("null")){
 					psmt.setString(1,searchType);
 					psmt.setInt(2,paging.getStart());
 					psmt.setInt(3,paging.getPerPage());

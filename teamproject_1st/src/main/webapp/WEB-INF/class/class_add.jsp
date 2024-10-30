@@ -70,7 +70,7 @@
 	        </div>
 	        <div class="content">
 	            <div>
-	                강사이름 <input  type="text" name="name">
+	                강사이름 <input  type="text" name="teacher_name">
 	            </div>
 	            <div >
 	                과목
@@ -95,7 +95,7 @@
 	        </div>
 	        <div class="filse">
 	            <hr>
-	            <input type="file" name="orgFileName" >
+	            <input type="file" name="attach" >
 	            <hr> 
 	        </div>
 	        <div class="last_button">

@@ -3,10 +3,12 @@ package FrontController;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -18,7 +20,9 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import FrontController.util.DBConn;
+import FrontController.vo.ClassVO;
 import FrontController.vo.UserVO;
+
 
 public class ClassController {
 	public ClassController(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException  {
@@ -43,9 +47,46 @@ public class ClassController {
 	}
 	
 	public void view (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		request.getRequestDispatcher("/WEB-INF/class/class_view.jsp").forward(request, response);
 	}
 	public void list (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<ClassVO> coursList  = new ArrayList<ClassVO>();
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConn.conn();
+	        String sql = "SELECT c.*, cf.* FROM class c, cfile cf;";
+	        
+	        psmt = conn.prepareStatement(sql);
+	        rs = psmt.executeQuery();
+	        
+	        while(rs.next()) {
+				ClassVO vo = new ClassVO();
+				vo.setCno(rs.getInt("cno"));
+				vo.setTitle(rs.getString("title"));
+				vo.setDifficult(rs.getString("difficult"));
+				vo.setDuringclass(rs.getString("duringclass"));
+				vo.setName(rs.getString("name"));
+				vo.setOrgFileName(rs.getString("orgFileName"));
+				vo.setNewFileName(rs.getString("newFileName"));
+				
+				coursList.add(vo);
+			}
+	        
+	        request.setAttribute("coursList", coursList);
+	        
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+		}
 		request.getRequestDispatcher("/WEB-INF/class/class_list.jsp").forward(request, response);
 	}
 	public void register (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -75,22 +116,20 @@ public class ClassController {
 		String phyName = "";
 		String logiName = "";
 		
-		if( files != null ){
-			String fileId = (String) files.nextElement();
-			String fileName = (String)multi.getFilesystemName("attach");
-			if( fileName != null ){
-				String newFileName = UUID.randomUUID().toString();
-				String orgName = uploadPath + "\\" + fileName;
-				String newName = uploadPath + "\\" + newFileName;
-				File srcFile = new File(orgName);
-				File targetFile = new File(newName);
-				srcFile.renameTo(targetFile);	
-				System.out.println("원본파일명 : " + fileName);
-				System.out.println("새로운파일명 : " + newFileName);
-				System.out.println("저장경로 : " + uploadPath);
-				phyName = newFileName;
-				logiName = fileName;
-			}
+		if (files != null) {
+		    String fileId = (String) files.nextElement();
+		    String fileName = multi.getFilesystemName("attach");
+		    if (fileName != null) {
+		        String newFileName = UUID.randomUUID().toString();
+		        String orgName = uploadPath + "\\" + fileName;
+		        String newName = uploadPath + "\\" + newFileName;
+		        File srcFile = new File(orgName);
+		        File targetFile = new File(newName);
+		        if (srcFile.renameTo(targetFile)) {
+		            phyName = newFileName;
+		            logiName = multi.getOriginalFileName("attach"); // 원본 파일명 가져오기
+		        }
+		    }
 		}
 			request.setCharacterEncoding("UTF-8");
 			HttpSession session = request.getSession();
@@ -99,13 +138,13 @@ public class ClassController {
 
 			int uno = loginUser.getUno(); 
 			String title = multi.getParameter("title"); 
-			String Tname = multi.getParameter("name");
+			String teacher_name = multi.getParameter("teacher_name");
 			String subject = multi.getParameter("subject");
 			String jdate = multi.getParameter("jdate");
 			String diffcult = multi.getParameter("diffcult");
 			String book = multi.getParameter("book");
 			String duringclass = multi.getParameter("duringclass");
-			String orgFileName = multi.getParameter("orgFileName");
+			String orgFileName = multi.getOriginalFileName("attach");
 
 			
 			Connection conn = null;
@@ -113,7 +152,7 @@ public class ClassController {
 			ResultSet rs = null;
 			try {
 		        conn = DBConn.conn();
-		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, uno) VALUES(?, ?, ?, ?, ?, ?, ?)";
+		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 		        
 		        // Statement.RETURN_GENERATED_KEYS를 지정하여 PreparedStatement 생성
 		        psmt = conn.prepareStatement(classSql, Statement.RETURN_GENERATED_KEYS);
@@ -123,7 +162,9 @@ public class ClassController {
 		        psmt.setString(4, diffcult);
 		        psmt.setString(5, book);
 		        psmt.setString(6, duringclass);
-		        psmt.setInt(7, uno);
+		        psmt.setString(7, teacher_name);
+		        psmt.setInt(8, uno);
+		        
 		        
 		        int classResult = psmt.executeUpdate();
 		        
@@ -140,11 +181,11 @@ public class ClassController {
 		                int fileResult = psmt.executeUpdate();
 		            
 		                if (fileResult > 0) {
-		                    // 파일 삽입 성공 처리 (필요한 경우)
+		                	System.out.println("File inserted successfully: " + logiName + " -> " + phyName);
 		                }
 		            }
 		        }
-			        response.sendRedirect(request.getContextPath() + "/class/list.do");
+			        response.sendRedirect(request.getContextPath() + "/class/view.do");
 			    } catch (Exception e) {
 			        e.printStackTrace();
 			    } finally {

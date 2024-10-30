@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import ="FrontController.vo.ClassVO" %>
+<%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
+<%
+	List<ClassVO> coursList = (List<ClassVO>)request.getAttribute("coursList");
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -137,50 +142,22 @@
 			<h1>강의 목록</h1>
 			<hr>
 		</div>
+		<%
+			 for(ClassVO vo : coursList){
+		%>
 		<div class="course-item">
-			<img src="../img/강사사진1.png">
+			<img src="../img/<%=vo.getOrgFileName()%>">
 			<div class="course-info">
-				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 한병훈의 국어 -화법과 작문 선택-</h2></div></a>
+				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2><%= vo.getTitle() %></h2></div></a>
 				<div class="class_info">
-					<p>난이도: 상</p>
-					<p>강사: 김동영</p>
-					<p>강의 기간: 3개월</p>
+					<p>난이도: <%=vo.getDifficult() %></p>
+					<p>강사: <%=vo. getName() %></p>
+					<p>강의 기간: <%=vo.getDuringclass() %></p>
 				</div>
 			</div>
 		</div>
-		<div class="course-item">
-			<img src="../img/강사사진2.png">
-			<div class="course-info">
-				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 최서희의 문학</h2></div></a>
-				<div class="class_info">
-					<p>난이도: 중</p>
-					<p>강사: 김동영</p>
-					<p>강의 기간: 1개월</p>
-				</div>
-			</div>
-		</div>
-		<div class="course-item">
-			<img src="../img/강사사진3.png">
-			<div class="course-info">
-				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 정승제의 확률과 통계</h2></div></a>
-				<div class="class_info">
-					<p>난이도: 상</p>
-					<p>강사: 김동영</p>
-					<p>강의 기간: 6개월</p>
-				</div>
-			</div>
-		</div>
-		<div class="course-item">
-			<img src="../img/강사사진4.png">
-			<div class="course-info">
-				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2>[2025 수능특강] 한병훈의 국어 -화법과 작문 선택-</h2></div></a>
-				<div class="class_info">
-			      <p>난이도: 상</p>
-			      <p>강사: 김동영</p>
-			      <p>강의 기간: 1개월</p>
-			      </div>
-			</div>
-		</div>
+		<% } %>
+
 		<div class="mother">
 			<a href="<%=request.getContextPath()%>/class/register.do?uno="><button class="register-btn">등록</button></a>
 		</div>

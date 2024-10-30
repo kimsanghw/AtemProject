@@ -22,9 +22,19 @@ public class ClassVO {
 	private String jdate;
 	private String duringclass;
 	private String subject;
+
 	private String diffcult;
+
+	private String difficult;
+
 	private String state;
+
 	private String teacherName;
+
+	private String name;
+	private String orgFileName;
+	private String newFileName;
+
 	private int cno;
 	private int uno;
 	private int sTotal;
@@ -32,8 +42,27 @@ public class ClassVO {
 	/**
 	 * @return the title
 	 */
+	
 	public String getTitle() {
 		return title;
+	}
+	public String getOrgFileName() {
+		return orgFileName;
+	}
+	public void setOrgFileName(String orgFileName) {
+		this.orgFileName = orgFileName;
+	}
+	public String getNewFileName() {
+		return newFileName;
+	}
+	public void setNewFileName(String newFileName) {
+		this.newFileName = newFileName;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	/**
 	 * @param title the title to set
@@ -102,16 +131,22 @@ public class ClassVO {
 		this.subject = subject;
 	}
 	/**
-	 * @return the difflcult
+	 * @return the difficult
 	 */
-	public String getDiffcult() {
-		return diffcult;
+
+	
+	public String getDifficult() {
+		return difficult;
+
 	}
 	/**
 	 * @param difflcult the difflcult to set
 	 */
-	public void setDiffcult(String diffcult) {
-		this.diffcult = diffcult;
+
+	
+	public void setDifficult(String difficult) {
+		this.difficult = difficult;
+
 	}
 	/**
 	 * @return the state
