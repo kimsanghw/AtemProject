@@ -52,16 +52,25 @@
     </style>
 </head>
 <body>
+<%
+	UserVO userId2 = null;
+	userId2 = (UserVO)session.getAttribute("loginUser");
+ 	if( userId2 == null )
+ 	{
+ 		System.out.println("세션에 정보가 없습니다");
+ 	}
+%>
       <section>
         <h2>강의 등록</h2>
         <div class="title_hr"></div>
         <div class="title">
         <form action="<%= request.getContextPath()%>/class/register.do" method="POST" enctype="multipart/form-data">
+        	<input type="hidden" name="uno" value="<%= userId2.getUno()%>">
             <input type="text" name="title" placeholder="제목을 입력하세요.">
 	        </div>
 	        <div class="content">
 	            <div>
-	                강사이름 <input  type="text" name="name">
+	                강사이름 <input  type="text" name="teacher_name">
 	            </div>
 	            <div >
 	                과목
@@ -86,7 +95,7 @@
 	        </div>
 	        <div class="filse">
 	            <hr>
-	            <input type="file" name="orgFileName" >
+	            <input type="file" name="attach" >
 	            <hr> 
 	        </div>
 	        <div class="last_button">

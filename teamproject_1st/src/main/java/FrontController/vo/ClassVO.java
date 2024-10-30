@@ -3,22 +3,64 @@ package FrontController.vo;
 public class ClassVO {
 	
 
+	
+	
+	
 	private String title;
 	private String book;
 	private String rdate;
 	private String jdate;
 	private String duringclass;
 	private String subject;
-	private String difflcult;
+	private String difficult;
 	private String state;
+	private String teacherName;
+	private String name;
+	private String orgFileName;
+	private String newFileName;
 	private int cno;
 	private int uno;
+	private int cnt;
 	
+	
+	
+	/**
+	 * @return the cnt
+	 */
+	public int getCnt() {
+		return cnt;
+	}
+	/**
+	 * @param cnt the cnt to set
+	 */
+	public void setCnt(int cnt) {
+		this.cnt = cnt;
+	}
+//	
 	/**
 	 * @return the title
 	 */
+	
 	public String getTitle() {
 		return title;
+	}
+	public String getOrgFileName() {
+		return orgFileName;
+	}
+	public void setOrgFileName(String orgFileName) {
+		this.orgFileName = orgFileName;
+	}
+	public String getNewFileName() {
+		return newFileName;
+	}
+	public void setNewFileName(String newFileName) {
+		this.newFileName = newFileName;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	/**
 	 * @param title the title to set
@@ -87,16 +129,22 @@ public class ClassVO {
 		this.subject = subject;
 	}
 	/**
-	 * @return the difflcult
+	 * @return the difficult
 	 */
-	public String getDifflcult() {
-		return difflcult;
+
+	
+	public String getDifficult() {
+		return difficult;
+
 	}
 	/**
 	 * @param difflcult the difflcult to set
 	 */
-	public void setDifflcult(String difflcult) {
-		this.difflcult = difflcult;
+
+	
+	public void setDifficult(String difficult) {
+		this.difficult = difficult;
+
 	}
 	/**
 	 * @return the state
@@ -133,6 +181,18 @@ public class ClassVO {
 	 */
 	public void setUno(int uno) {
 		this.uno = uno;
+	}
+	/**
+	 * @return the teacherName
+	 */
+	public String getTeacherName() {
+		return teacherName;
+	}
+	/**
+	 * @param teacherName the teacherName to set
+	 */
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
 	}
 
 }
