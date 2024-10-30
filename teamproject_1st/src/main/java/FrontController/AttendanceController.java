@@ -78,13 +78,11 @@ public class AttendanceController {
 				
 			PagingUtil paging = new PagingUtil(nowPage,total,3);
 			
-			String sql = " select * , t.stotal "
-						+ "    from "
-						+ "        class as c "
-						+ "    inner join"
-						+ "        (select count(*) as stotal , cno  FROM app_class where state ='E' group by cno) as t "
-						+ "	on c.cno = t.cno"
-						+ "    where c.state = 'E'";
+			String sql = " select * ,"
+					   + "(select count(*) from app_class a where a.cno=c.cno ) as cnt"
+					   + "    from class as c , user u"
+					   + "    where c.teacherName = u.name"
+					   + "      and c.state = 'E' ";
 				if(searchType!= null &&searchType.equals("°­ÀÇ")) {
 					sql += "  order by  duringclass desc ";
 				}
@@ -95,7 +93,7 @@ public class AttendanceController {
 				psmt.setInt(2,paging.getPerPage());
 						
 				rs = psmt.executeQuery();
-				 if(rs.next()) {
+				 while(rs.next()) {
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
 					vo.setUno(rs.getInt("uno"));
@@ -103,7 +101,7 @@ public class AttendanceController {
 					vo.setState(rs.getString("state"));
 					vo.setSubject(rs.getString("subject"));
 					vo.setDuringclass(rs.getString("duringclass"));
-					vo.setsTotal(rs.getInt("stotal"));
+					vo.setCnt(rs.getInt("cnt"));
 					
 					
 					clist.add(vo);

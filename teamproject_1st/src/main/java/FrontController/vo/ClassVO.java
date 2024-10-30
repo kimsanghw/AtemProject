@@ -4,41 +4,39 @@ public class ClassVO {
 	
 
 	
-	/**
-	 * @return the sTotal
-	 */
-	public int getsTotal() {
-		return sTotal;
-	}
-	/**
-	 * @param sTotal the sTotal to set
-	 */
-	public void setsTotal(int sTotal) {
-		this.sTotal = sTotal;
-	}
+	
+	
 	private String title;
 	private String book;
 	private String rdate;
 	private String jdate;
 	private String duringclass;
 	private String subject;
-
-	private String diffcult;
-
 	private String difficult;
-
 	private String state;
-
 	private String teacherName;
-
 	private String name;
 	private String orgFileName;
 	private String newFileName;
-
 	private int cno;
 	private int uno;
-	private int sTotal;
+	private int cnt;
 	
+	
+	
+	/**
+	 * @return the cnt
+	 */
+	public int getCnt() {
+		return cnt;
+	}
+	/**
+	 * @param cnt the cnt to set
+	 */
+	public void setCnt(int cnt) {
+		this.cnt = cnt;
+	}
+//	
 	/**
 	 * @return the title
 	 */

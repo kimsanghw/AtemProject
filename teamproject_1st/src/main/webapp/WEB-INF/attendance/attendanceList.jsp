@@ -17,14 +17,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script type="text/javascript">
-    $(document).ready(function(){
-        $("select[name=searchType]").change(function () {
-        $("#searchType").submit();
 
-        });
-    });
-</script>
     <style>
     /*----------------------------------------------------------------section부분---------------------------------------*/
     .section {
@@ -95,7 +88,7 @@
             <h2>출결 관리</h2>
             <div style="border-top: 5px solid #0b70b9; width: 86%;"></div>
             <div class="content_inner">
-            	<form action="/attendance/attendanceList.do" method="post" id="searchType">
+            	<form action="/attendance/attendanceList.do" method="get" id="searchType">
 	              <div>
 	                <select  name="searchType" id="searchType">
 	                	<option value="">전체</option>
@@ -109,7 +102,7 @@
 			 %>
               <div class="content_c">
                   <h3><%=vo.getSubject() %> <%= vo.getTitle() %></h3><br>
-                     학생<%=vo.getsTotal() %> <br>
+                     학생<%=vo.getCnt() %> <br>
                     <button type="button" class="app_btn" onclick="location.href=/attendance/attedanceView.do?cno=">출결관리</button><br>
                     
               </div>
