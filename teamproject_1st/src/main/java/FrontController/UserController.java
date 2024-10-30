@@ -89,7 +89,6 @@ public class UserController {
 				
 
 				response.sendRedirect(request.getContextPath()+ "/index.jsp");
-				
 			}else {
 				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
 			}
