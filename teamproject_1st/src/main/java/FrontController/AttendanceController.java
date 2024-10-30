@@ -26,19 +26,11 @@ public class AttendanceController {
 				attendanceView(request,response);
 				}
 		}else if(comments[comments.length-1].equals("attendanceList.do")) {
-			if(request.getMethod().equals("GET")) {
-				attendanceList(request,response);
-				}else if(request.getMethod().equals("POST")) {
-					attendanceListOk(request,response);
-				}
+			attendanceList(request,response);
 		}
 	}
 	
 	public void attendanceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
-	}
-	
-	public void attendanceListOk(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
 		HttpSession session = request.getSession();
 		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
@@ -71,14 +63,12 @@ public class AttendanceController {
 			
 			int total = 0;
 			String sqlTotal = " select count(*) as total from class c inner join user u on c.uno = u.uno where  u.uno = ? ";
-				if(searchType.equals("강의")) {
-					sqlTotal += "  order by  duringclass desc limit ?, ? ";
+				if(searchType!= null &&searchType.equals("강의")) {
+					sqlTotal += "  order by  duringclass desc";
 				}
 				
 			psmtTotal = conn.prepareStatement(sqlTotal);
-				if(searchType != null && !searchType.equals("null")){
-					psmtTotal.setString(1,searchType);
-				}
+			psmtTotal.setInt(1,uno);
 				
 			rsTotal = psmtTotal.executeQuery();
 			
@@ -86,18 +76,7 @@ public class AttendanceController {
 					total = rsTotal.getInt("total");
 				}
 				
-//			int studentTotal = 0;
-//			
-//			String SqlStudentTotal = " SELECT count(*) as studentTotal FROM app_class where state ='E' and cno=?;";
-//			psmtStudentTotal = conn.prepareStatement(SqlStudentTotal);
-//			rsStudentTotal = psmtStudentTotal.executeQuery();
-//				if(rsStudentTotal.next()) {
-//					studentTotal = rsStudentTotal.getInt("studentTotal");
-//					request.setAttribute("stotal", studentTotal);
-//					
-//				}
-//			 
-//			
+			PagingUtil paging = new PagingUtil(nowPage,total,3);
 			
 			String sql = " select * , t.stotal "
 						+ "    from "
@@ -106,18 +85,21 @@ public class AttendanceController {
 						+ "        (select count(*) as stotal , cno  FROM app_class where state ='E' group by cno) as t "
 						+ "	on c.cno = t.cno"
 						+ "    where c.state = 'E'";
-				if(searchType.equals("강의")) {
-					sql += "  order by  duringclass desc limit ?, ? ";
+				if(searchType!= null &&searchType.equals("강의")) {
+					sql += "  order by  duringclass desc ";
 				}
+				sql += " limit ?, ?";
 				psmt = conn.prepareStatement(sql);
-				
-				
-				 while(rs.next()) {
+
+				psmt.setInt(1,paging.getStart());
+				psmt.setInt(2,paging.getPerPage());
+						
+				rs = psmt.executeQuery();
+				 if(rs.next()) {
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
 					vo.setUno(rs.getInt("uno"));
 					vo.setTitle(rs.getString("title"));
-					vo.setRdate(rs.getString("rdate"));
 					vo.setState(rs.getString("state"));
 					vo.setSubject(rs.getString("subject"));
 					vo.setDuringclass(rs.getString("duringclass"));
@@ -127,23 +109,9 @@ public class AttendanceController {
 					clist.add(vo);
 					
 				}
-				request.setAttribute("clist", clist);
-				
-				System.out.println(request);
+
 				
 				
-				PagingUtil paging = new PagingUtil(nowPage,total,3);
-				
-				if(searchType != null && !searchType.equals("null")){
-					psmt.setString(1,searchType);
-					psmt.setInt(2,paging.getStart());
-					psmt.setInt(3,paging.getPerPage());
-				}else{
-					psmt.setInt(1,paging.getStart());
-					psmt.setInt(2,paging.getPerPage());
-				}
-						
-				rs = psmt.executeQuery();
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -156,9 +124,10 @@ public class AttendanceController {
 			}
 		}
 		// 모델에 데이터를 저장
-		request.setAttribute(searchType, searchType);
+		request.setAttribute("searchType", searchType);
+		request.setAttribute("clist", clist);
 		// 뷰 페이지에 연결
-		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.do").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
 	}
 	
 	public void attendanceView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -5,15 +5,14 @@
 <%@ page import="FrontController.util.*" %>
 <%@ page import="java.util.List" %>
 <%
-// 모델에서 데이터를 불러와서 유효성검사를 하고 변수에 저장한다
+// 모델에서 데이터를 불러와서 유효성검사를 하고 변수에 저장
  String searchType = "";
 
   List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
- 
 %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -96,7 +95,7 @@
             <h2>출결 관리</h2>
             <div style="border-top: 5px solid #0b70b9; width: 86%;"></div>
             <div class="content_inner">
-            	<form action="/attendance/attendanceList.do" method="get" id="searchType">
+            	<form action="/attendance/attendanceList.do" method="post" id="searchType">
 	              <div>
 	                <select  name="searchType" id="searchType">
 	                	<option value="">전체</option>
@@ -104,22 +103,20 @@
 	                </select>
 	              </div>
 	              </form>
-	               <%
+
+	         <%
 			 for(ClassVO vo : clist){
 			 %>
               <div class="content_c">
                   <h3><%=vo.getSubject() %> <%= vo.getTitle() %></h3><br>
-                     학생 <br>
+                     학생<%=vo.getsTotal() %> <br>
                     <button type="button" class="app_btn" onclick="location.href=/attendance/attedanceView.do?cno=">출결관리</button><br>
                     
               </div>
               <%} %>
             </div>
             <div class="paging_inner">
-				<a href="">이전</a>
-                <a href="">1</a>
-                <a href="">2</a>
-                <a href="">다음</a>
+				
             </div>
           </div>
         </article>
