@@ -17,6 +17,7 @@ public class ClassVO {
 	private int cno;
 	private int uno;
 	
+	
 	/**
 	 * @return the title
 	 */
