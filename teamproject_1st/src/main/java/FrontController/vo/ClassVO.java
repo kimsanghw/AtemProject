@@ -3,19 +3,41 @@ package FrontController.vo;
 public class ClassVO {
 	
 
+	
+	/**
+	 * @return the sTotal
+	 */
+	public int getsTotal() {
+		return sTotal;
+	}
+	/**
+	 * @param sTotal the sTotal to set
+	 */
+	public void setsTotal(int sTotal) {
+		this.sTotal = sTotal;
+	}
 	private String title;
 	private String book;
 	private String rdate;
 	private String jdate;
 	private String duringclass;
 	private String subject;
+
+	private String diffcult;
+
 	private String difficult;
+
 	private String state;
+
+	private String teacherName;
+
 	private String name;
 	private String orgFileName;
 	private String newFileName;
+
 	private int cno;
 	private int uno;
+	private int sTotal;
 	
 	
 	/**
@@ -112,14 +134,20 @@ public class ClassVO {
 	/**
 	 * @return the difficult
 	 */
+
+	
 	public String getDifficult() {
 		return difficult;
+
 	}
 	/**
 	 * @param difflcult the difflcult to set
 	 */
+
+	
 	public void setDifficult(String difficult) {
 		this.difficult = difficult;
+
 	}
 	/**
 	 * @return the state
@@ -156,6 +184,18 @@ public class ClassVO {
 	 */
 	public void setUno(int uno) {
 		this.uno = uno;
+	}
+	/**
+	 * @return the teacherName
+	 */
+	public String getTeacherName() {
+		return teacherName;
+	}
+	/**
+	 * @param teacherName the teacherName to set
+	 */
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
 	}
 
 }
