@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import FrontController.util.DBConn;
 import FrontController.util.PagingUtil;
 import FrontController.vo.ClassVO;
+import FrontController.vo.UserVO;
 
 public class AttendanceController {
 	
@@ -27,15 +28,21 @@ public class AttendanceController {
 		}else if(comments[comments.length-1].equals("attendanceList.do")) {
 			if(request.getMethod().equals("GET")) {
 				attendanceList(request,response);
+				}else if(request.getMethod().equals("POST")) {
+					attendanceListOk(request,response);
 				}
 		}
 	}
 	
+	public void attendanceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
+	}
 	
-	public void attendanceList(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException{
+	public void attendanceListOk(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
 		HttpSession session = request.getSession();
-		String search_mode = request.getParameter("search_mode");
+		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		String searchType = request.getParameter("searchType");
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
 		
 		int nowPage = 1;
@@ -47,9 +54,9 @@ public class AttendanceController {
 		}
 
 		
-		int ano = Integer.parseInt(request.getParameter("ano"));
 		
-		int uno = (Integer)session.getAttribute("uno"); 
+		
+		int uno = loginUser.getUno(); 
 		String title = request.getParameter("title"); 
 		String Tname = request.getParameter("name");
 		String subject = request.getParameter("subject");
@@ -57,11 +64,15 @@ public class AttendanceController {
 		String diffcult = request.getParameter("diffcult");
 		String duringclass = request.getParameter("duringclass");
 		
+		
+		
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		ResultSet rs = null;
 		PreparedStatement psmtTotal = null;
 		ResultSet rsTotal = null;
+		PreparedStatement psmtStudentTotal = null;
+		ResultSet rsStudentTotal = null;
 		
 		try {
 			
@@ -71,13 +82,13 @@ public class AttendanceController {
 			
 			int total = 0;
 			String sqlTotal = " select count(*) as total from class c inner join user u on c.uno = u.uno where  u.uno = ? ";
-				if(search_mode.equals("강의")) {
+				if(searchType.equals("강의")) {
 					sqlTotal += "  order by  duringclass desc limit ?, ? ";
 				}
 				
 			psmtTotal = conn.prepareStatement(sqlTotal);
-				if(search_mode != null && !search_mode.equals("null")){
-					psmtTotal.setString(1,search_mode);
+				if(searchType != null && !searchType.equals("null")){
+					psmtTotal.setString(1,searchType);
 				}
 				
 			rsTotal = psmtTotal.executeQuery();
@@ -86,10 +97,27 @@ public class AttendanceController {
 					total = rsTotal.getInt("total");
 				}
 				
-			PagingUtil paging = new PagingUtil(nowPage,total,3);
+//			int studentTotal = 0;
+//			
+//			String SqlStudentTotal = " SELECT count(*) as studentTotal FROM app_class where state ='E' and cno=?;";
+//			psmtStudentTotal = conn.prepareStatement(SqlStudentTotal);
+//			rsStudentTotal = psmtStudentTotal.executeQuery();
+//				if(rsStudentTotal.next()) {
+//					studentTotal = rsStudentTotal.getInt("studentTotal");
+//					request.setAttribute("stotal", studentTotal);
+//					
+//				}
+//			 
+//			
 			
-			String sql = " select cno, title, subject from class c inner join app_class ap on user.uno = c.uno where (select count(*)  FROM app_class where state ='E' and cno=1)";
-				if(search_mode.equals("강의")) {
+			String sql = " select * , t.stotal "
+						+ "    from "
+						+ "        class as c "
+						+ "    inner join"
+						+ "        (select count(*) as stotal , cno  FROM app_class where state ='E' group by cno) as t "
+						+ "	on c.cno = t.cno"
+						+ "    where c.state = 'E'";
+				if(searchType.equals("강의")) {
 					sql += "  order by  duringclass desc limit ?, ? ";
 				}
 				psmt = conn.prepareStatement(sql);
@@ -97,22 +125,23 @@ public class AttendanceController {
 				if(rs.next()) {
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
+					vo.setUno(rs.getInt("uno"));
 					vo.setTitle(rs.getString("title"));
 					vo.setRdate(rs.getString("rdate"));
 					vo.setState(rs.getString("state"));
 					vo.setSubject(rs.getString("subject"));
-					vo.setDiffcult(rs.getString("diffcult"));
 					vo.setDuringclass(rs.getString("duringclass"));
-					vo.setJdate(rs.getString("jdate"));
-					vo.setBook(rs.getString("book"));
-					vo.setTeacherName(rs.getString("teacherName"));
+					vo.setsTotal(rs.getInt("stotal"));
+					
 					
 					clist.add(vo);
 				}
 				request.setAttribute("clist", clist);
 				
-				if(search_mode != null && !search_mode.equals("null")){//검색어가 있는 경우
-					psmt.setString(1,search_mode);
+				PagingUtil paging = new PagingUtil(nowPage,total,3);
+				
+				if(searchType != null && !searchType.equals("null")){//검색어가 있는 경우
+					psmt.setString(1,searchType);
 					psmt.setInt(2,paging.getStart());
 					psmt.setInt(3,paging.getPerPage());
 				}else{
@@ -130,7 +159,12 @@ public class AttendanceController {
 			} catch (Exception e) {
 				
 				e.printStackTrace();
-			}}
+			}
+		}
+		// 모델에 데이터를 저장
+		request.setAttribute(searchType, searchType);
+		// 뷰 페이지에 연결
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.do").forward(request, response);
 	}
 	
 	public void attendanceView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

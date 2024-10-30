@@ -4,6 +4,18 @@ public class ClassVO {
 	
 
 	
+	/**
+	 * @return the sTotal
+	 */
+	public int getsTotal() {
+		return sTotal;
+	}
+	/**
+	 * @param sTotal the sTotal to set
+	 */
+	public void setsTotal(int sTotal) {
+		this.sTotal = sTotal;
+	}
 	private String title;
 	private String book;
 	private String rdate;
@@ -15,6 +27,7 @@ public class ClassVO {
 	private String teacherName;
 	private int cno;
 	private int uno;
+	private int sTotal;
 	
 	/**
 	 * @return the title
