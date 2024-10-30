@@ -11,7 +11,7 @@
 
 <title>Insert title here</title>
 <!-- Demo styles -->
-  <style>
+  <style>  
     /*슬라이드 영역*/
     html,body {
       position: relative;
@@ -295,10 +295,10 @@
             <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
         <% } %>
           </div>
-        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="img/로고1.png"></a></h1>
+        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="img/로고1.png"></a></h1>
         <div class="index_nav headerSlide">
           <ul>
-            <li><a href="<%=request.getContextPath()%>/class/class_list.do">수강신청</a></li>
+            <li><a href="<%=request.getContextPath()%>/class/list.do">수강신청</a></li>
            <% 
         if (userId != null) {
             String authorization = userId.getAuthorization();

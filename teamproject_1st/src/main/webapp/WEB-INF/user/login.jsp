@@ -51,7 +51,7 @@
 <body>
 	<div class="loginForm">
     <div>
-      <a href="../../index.jsp"><img src="../img/로고시안흑백.PNG"></a>
+      <a href="<%=request.getContextPath()%>/index.jsp"><img src="../img/로고시안흑백.PNG"></a>
       </div>
       <div><h2>로그인</h2></div>
     <form action="<%=request.getContextPath()%>/user/login.do" method="post">
