@@ -22,7 +22,7 @@
 	              <div>
 	                <select  name="search_mode" id="search_mode">
 	                	<option value="">전체</option>
-	                  	<option value="강의">현재 강의 중인 강의</option>
+	                  	<option value="강의" <%=search_mode!=null&&search_mode.equals("강의")?"selected":"" %>>현재 강의 중인 강의</option>
 	                </select>
 	              </div>
 	              </form>

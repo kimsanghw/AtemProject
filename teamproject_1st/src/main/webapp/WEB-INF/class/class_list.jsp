@@ -182,7 +182,7 @@
 			</div>
 		</div>
 		<div class="mother">
-			<a href="<%=request.getContextPath()%>/class/register.do"><button class="register-btn">등록</button></a>
+			<a href="<%=request.getContextPath()%>/class/register.do?uno="><button class="register-btn">등록</button></a>
 		</div>
 	</section>
 
