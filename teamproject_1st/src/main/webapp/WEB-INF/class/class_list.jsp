@@ -148,7 +148,7 @@
 		<div class="course-item">
 			<img src="../img/<%=vo.getOrgFileName()%>">
 			<div class="course-info">
-				<a href="<%=request.getContextPath()%>/class/view.do"><div><h2><%= vo.getTitle() %></h2></div></a>
+				<a href="<%=request.getContextPath()%>/class/view.do?cno=<%=vo.getCno() %>"><div><h2><%= vo.getTitle() %></h2></div></a>
 				<div class="class_info">
 					<p>난이도: <%=vo.getDifficult() %></p>
 					<p>강사: <%=vo. getName() %></p>
@@ -159,7 +159,7 @@
 		<% } %>
 
 		<div class="mother">
-			<a href="<%=request.getContextPath()%>/class/register.do?uno="><button class="register-btn">등록</button></a>
+			<a href="<%=request.getContextPath()%>/class/writer.do?uno="><button class="register-btn">등록</button></a>
 		</div>
 	</section>
 

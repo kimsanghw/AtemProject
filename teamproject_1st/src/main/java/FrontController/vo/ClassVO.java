@@ -24,6 +24,7 @@ public class ClassVO {
 	private int cnt;
 	private int ano;
 	
+
 	/**
 	 * @return the ano
 	 */

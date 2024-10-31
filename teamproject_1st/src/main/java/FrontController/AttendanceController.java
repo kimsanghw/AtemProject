@@ -46,8 +46,12 @@ public class AttendanceController {
 		int nowPage = 1;
 		
 		if(request.getParameter("nowPage") != null){
+
+			nowPage = Integer.parseInt(request.getParameter("nowPage"));
+
 			nowPage 
 			= Integer.parseInt(request.getParameter("nowPage"));
+
 		}
 		
 		
@@ -65,34 +69,57 @@ public class AttendanceController {
 		try {
 			
 			conn = DBConn.conn();
-			
-			
-			/*   ÀüÃ¼ÆäÀÌÁö °¹¼ö¿¡ ´ëÇÑ Äõ¸®*/
+
 			int total = 0;
+
+			String sqlTotal = " select count(*) as total from class c inner join user u on c.uno = u.uno where  u.uno = ? ";
+
+				if(searchType.equals("ê°•ì˜")) {
+					sqlTotal += "  order by  duringclass desc limit ?, ? ";
+
+				if(searchType!= null &&searchType.equals("ï¿½ï¿½ï¿½ï¿½")) {
+					sqlTotal += "  order by  duringclass desc";
+
+				}
+
 			String sqlTotal = "SELECT count(*) as total "
                     		+ "FROM class c "
                     		+ "INNER JOIN user u ON c.uno = u.uno "
                     		+ "WHERE u.uno = ? "
                     		+ "AND u.name = ?";
-			if(searchType!= null &&searchType.equals("°­ÀÇ")) {
+			if(searchType!= null &&searchType.equals("ï¿½ï¿½ï¿½ï¿½")) {
 				sqlTotal += " order by  duringclass desc ";
 			}
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				
 			psmtTotal = conn.prepareStatement(sqlTotal);
 			psmtTotal.setInt(1,uno);
 			psmtTotal.setString(2, teacherName);
 				
 			rsTotal = psmtTotal.executeQuery();
-			
 				if(rsTotal.next()){
 					total = rsTotal.getInt("total");
 				}
 				
+<<<<<<< HEAD
+<<<<<<< HEAD
+			String sql = " select * , t.stotal "
+						+ "    from "
+						+ "        class as c "
+						+ "    inner join"
+						+ "        (select count(*) as stotal , cno  FROM app_class where state ='E' group by cno) as t "
+						+ "	on c.cno = t.cno"
+						+ "    where c.state = 'E'";
+				if(searchType.equals("ê°•ì˜")) {
+					sql += "  order by  duringclass desc limit ?, ? ";
+=======
+=======
 	
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 			PagingUtil paging = new PagingUtil(nowPage,total,3);
 			
 	
-			/*------ÀüÃ¼ ÆäÀÌÁö¿¡ ´ëÇÑ listÄõ¸®*/
+			/*------ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ listï¿½ï¿½ï¿½ï¿½*/
 			
 			String sql = " select * ,"
 					   + "(select count(*) from app_class a where a.cno = c.cno ) as cnt"
@@ -101,18 +128,34 @@ public class AttendanceController {
 					   + "      and c.state = 'E' "
 					   + "      and u.name = ?";
 					   
-				if(searchType!= null &&searchType.equals("°­ÀÇ")) {
+				if(searchType!= null &&searchType.equals("ï¿½ï¿½ï¿½ï¿½")) {
+<<<<<<< HEAD
+					sql += "  order by  duringclass desc ";
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+=======
 					sql += " order by  duringclass desc ";
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				}
 				sql += " limit ?, ?";
 				psmt = conn.prepareStatement(sql);
-				psmt.setString(1, teacherName);  // ÀÌ¸§ Á¶°Ç Ãß°¡
+<<<<<<< HEAD
+<<<<<<< HEAD
+				rs = psmt.executeQuery();
+				
+=======
+=======
+				psmt.setString(1, teacherName);  // ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 		        psmt.setInt(2, paging.getStart());
 		        psmt.setInt(3, paging.getPerPage());
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 
 				
 				rs = psmt.executeQuery();
+<<<<<<< HEAD
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+=======
 				
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				 while(rs.next()) {
 					 
 					ClassVO vo = new ClassVO();
@@ -130,6 +173,26 @@ public class AttendanceController {
 				}
 				
 
+<<<<<<< HEAD
+				
+				
+<<<<<<< HEAD
+				PagingUtil paging = new PagingUtil(nowPage,total,3);
+				
+				if(searchType != null && !searchType.equals("null")){
+					psmt.setString(1,searchType);
+					psmt.setInt(2,paging.getStart());
+					psmt.setInt(3,paging.getPerPage());
+				}else{
+					psmt.setInt(1,paging.getStart());
+					psmt.setInt(2,paging.getPerPage());
+				}
+						
+				
+=======
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+			
+=======
 				 request.setAttribute("paging", paging);
 				 request.setAttribute("searchType", searchType);
 				 request.setAttribute("clist", clist);
@@ -139,6 +202,7 @@ public class AttendanceController {
 
 				 request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
 				 
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 		}catch(Exception e) {
 			e.printStackTrace();
 			}finally {
@@ -149,15 +213,25 @@ public class AttendanceController {
 				e.printStackTrace();
 			}
 		}
-		// ¸ðµ¨¿¡ µ¥ÀÌÅÍ¸¦ ÀúÀå
+<<<<<<< HEAD
+		// ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+		request.setAttribute(searchType, searchType);
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.do").forward(request, response);
+=======
+		// ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 		/*
 		request.setAttribute("searchType", searchType);
 		request.setAttribute("clist", clist);
 		request.setAttribute("paging", paging);
 		
-		// ºä ÆäÀÌÁö¿¡ ¿¬°á
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
+<<<<<<< HEAD
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+=======
 		*/
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 	}
 	
 	public void attendanceView (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
