@@ -27,9 +27,10 @@ public class MyPageController {
 			}
 		}
 		if(comments[comments.length-1].equals("mypage2.do")) {
-			
+			if(request.getMethod().equals("GET")) {
+				mypage2(request,response);
 		}
-		
+	}
 		if(comments[comments.length-1].equals("mypage3.do")) {
 			if(request.getMethod().equals("GET")) {
 			mypage3(request,response);
@@ -184,6 +185,12 @@ public class MyPageController {
 				}
 			}
 		}
+		
+		public void mypage2(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+			request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
+		}
+		
+		
 		
 		public void mypage3(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 			int page = 1; // 기본 페이지는 1

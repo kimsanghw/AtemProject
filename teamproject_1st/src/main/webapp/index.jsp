@@ -323,7 +323,7 @@
             <li><a href="#">자료실</a></li>
           </ul>
         </div>
-        <form action="#">
+        <form action="<%=request.getContextPath()%>/search/search.do" method="GET">
           <div class="index_search">
             <select class="index_search_select" name="indexSearch">
               <option value="title">제목</option>

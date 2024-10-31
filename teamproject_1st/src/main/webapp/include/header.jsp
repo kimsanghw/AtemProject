@@ -70,7 +70,7 @@
 	 	UserVO userId = (UserVO) session.getAttribute("loginUser");
 	 %>
     <header>
-        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="../img/로고1.png"></a></h1>
+        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="<%= request.getContextPath() %>/img/로고1.png"></a></h1>
       <div class="index_nav headerSlide">
         <ul>
           <li><a href="#">수강신청</a></li>

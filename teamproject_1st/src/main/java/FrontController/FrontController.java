@@ -32,6 +32,8 @@ public class FrontController extends HttpServlet {
 			MyPageController mypage = new MyPageController(request, response,comments);
 		} else if(comments[0].equals("class")) {
 			ClassController cours = new ClassController(request, response,comments);
+		}else if(comments[0].equals("search")) {
+			SearchController search = new SearchController(request, response,comments);
 		}
 	}
 
