@@ -81,31 +81,31 @@
             margin-top: 20px;
         }
         .email_modify_button{
-            position: absolute;
-            right: 70px;
             width: 45px;
         }
         .email_modify_back{
-            position: absolute;
-            right: 13px;
             width: 45px;
         }
         .mypage_email{
-            margin-top: 15px;
+            margin-top: -17px;
             display: none;
         }
         .number_button_modify{
-            position: relative;
             width: 45px;
         }
         .mypage_number{
-            margin-top: 15px;
             display: none;
         }
         .mypage_class{
             font-size: 20px;
             font-weight: 900;
             margin: 40px 50px;
+        }
+        .email_modify_text{
+        	display: none;
+        }
+        .number_modify_text{
+        	display: none;
         }
         /*ì¹ì ìì­ ë*/
         </style>
@@ -124,13 +124,13 @@
         <div class="mypage_flex">
             <div class="mypage_mypage mypage_menu"><a href="#">마이페이지 ></a></div>
             <div class="mypage_line"></div>
-            <div class="mypage_study mypage_menu"><a href="#">내 강의 목록 ></a></div>
+            <div class="mypage_study mypage_menu"><a href="<%=request.getContextPath()%>/mypage/mypage2.do">내 강의 목록 ></a></div>
             <div class="mypage_line"></div>
             <% if(userId2 != null) { 
             	String authorization = userId2.getAuthorization();
             	if("A".equals(authorization)) {
             %>
-            <div class="mypage_admin mypage_menu" id="admin_page"><a href="#">관리자 페이지 ></a></div> <!-- ì´ëë¯¼ì¼ë¡ ë¡ê·¸ì¸ ì ë³´ì´ë divìì­-->
+            <div class="mypage_admin mypage_menu" id="admin_page"><a href="<%=request.getContextPath()%>/mypage/mypage3.do">관리자 페이지 ></a></div> <!-- ì´ëë¯¼ì¼ë¡ ë¡ê·¸ì¸ ì ë³´ì´ë divìì­-->
             <div class="mypage_line mypage_admin"></div>
             <% } 
             }
@@ -154,10 +154,11 @@
                         <td>
                             <%= userId2.getEmail() %>
                             <button class="email_button_modify" onclick="toggleEmailForm()">변경</button>
-                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST" onsubmit="return validateEmailForm()">
                                 <div class="email_text_modify">
                                 	<input type="hidden" name="action" value="modifyEmail">
                                     <input type="text" placeholder="이메일을 입력해주세요." name="email_modify" class="mypage_email">
+                                    <div class="email_modify_text" id="emailError">34982347923479823</div>
                                     <button type="submit" class="email_modify_button mypage_email">수정</button>
                                     <button type="button" class="email_modify_back mypage_email" onclick="toggleEmailForm()">취소</button>
                                 </div>
@@ -169,10 +170,11 @@
                         <td>
                             <%= userId2.getPhone() %>
                             <button class="number_button_modify" onclick="toggleNumberForm()">변경</button>
-                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST">
+                            <form action="<%=request.getContextPath()%>/mypage/mypage.do" method="POST" onsubmit="return validatePhoneForm()">
                                 <div class="email_text_modify">
                                 	<input type="hidden" name="action" value="modifyPhone">
                                     <input type="text" placeholder="번호를 입력해주세요" name="number_modify" class="mypage_number">
+                                    <div class="number_modify_text" id="phoneError">124124124124124</div>
                                     <button type="submit" class="email_modify_button mypage_number">수정</button>
                                     <button type="button" class="email_modify_back mypage_number" onclick="toggleNumberForm()">취소</button>
                                 </div>
@@ -210,5 +212,40 @@
             });
         }
     </script>
+    <script>
+	    function validateEmailForm() {
+	        const email = document.querySelector('input[name="email_modify"]').value;
+	        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	        const emailError = document.getElementById('emailError');
+	        
+	        if (!emailRegex.test(email)) {
+	            emailError.innerText = "유효한 이메일 주소를 입력해 주세요.";
+	            emailError.style.display = 'block'; // 오류 메시지를 표시
+	            emailError.style.color = 'red';
+	            return false;
+	        }
+	        
+	        emailError.innerText = ""; // 유효성 통과 시 에러 메시지 삭제
+	        emailError.style.display = 'none'; // 오류 메시지 숨김
+	        return true;
+	    }
+	
+	    function validatePhoneForm() {
+	        const phone = document.querySelector('input[name="number_modify"]').value;
+	        const phoneRegex = /^[0-9]{10,11}$/; // 10~11자리의 숫자만 허용
+	        const phoneError = document.getElementById('phoneError');
+	        
+	        if (!phoneRegex.test(phone)) {
+	            phoneError.innerText = "유효한 연락처 번호를 입력해 주세요. (숫자 10~11자리)";
+	            phoneError.style.display = 'block'; // 오류 메시지를 표시
+	            phoneError.style.color = 'red';
+	            return false;
+	        }
+	        
+	        phoneError.innerText = ""; // 유효성 통과 시 에러 메시지 삭제
+	        phoneError.style.display = 'none'; // 오류 메시지 숨김
+	        return true;
+	    }
+	</script>
 </body>
 </html>

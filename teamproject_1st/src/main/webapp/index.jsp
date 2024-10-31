@@ -313,13 +313,14 @@
             }
         } else { 
     %>
+    
         <li><a href="#">출결정보</a></li>
     <% 
         } 
     %>
             <li><a href="#">공지사항</a></li>
             <li><a href="#">QnA</a></li>
-            <li><a href="#">자료실</a></li>
+            <li><a href="<%=request.getContextPath() %>/library/library_list.do">자료실</a></li>
           </ul>
         </div>
         <form action="#">

@@ -26,19 +26,11 @@ public class AttendanceController {
 				attendanceView(request,response);
 				}
 		}else if(comments[comments.length-1].equals("attendanceList.do")) {
-			if(request.getMethod().equals("GET")) {
-				attendanceList(request,response);
-				}else if(request.getMethod().equals("POST")) {
-					attendanceListOk(request,response);
-				}
+			attendanceList(request,response);
 		}
 	}
 	
 	public void attendanceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
-	}
-	
-	public void attendanceListOk(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
 		HttpSession session = request.getSession();
 		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
@@ -66,20 +58,24 @@ public class AttendanceController {
 			conn = DBConn.conn();
 			int total = 0;
 			String sqlTotal = " select count(*) as total from class c inner join user u on c.uno = u.uno where  u.uno = ? ";
+<<<<<<< HEAD
 				if(searchType.equals("ê°•ì˜")) {
 					sqlTotal += "  order by  duringclass desc limit ?, ? ";
+=======
+				if(searchType!= null &&searchType.equals("°­ÀÇ")) {
+					sqlTotal += "  order by  duringclass desc";
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				}
 				
 			psmtTotal = conn.prepareStatement(sqlTotal);
-				if(searchType != null && !searchType.equals("null")){
-					psmtTotal.setString(1,searchType);
-				}
+			psmtTotal.setInt(1,uno);
 				
 			rsTotal = psmtTotal.executeQuery();
 				if(rsTotal.next()){
 					total = rsTotal.getInt("total");
 				}
 				
+<<<<<<< HEAD
 			String sql = " select * , t.stotal "
 						+ "    from "
 						+ "        class as c "
@@ -89,30 +85,48 @@ public class AttendanceController {
 						+ "    where c.state = 'E'";
 				if(searchType.equals("ê°•ì˜")) {
 					sql += "  order by  duringclass desc limit ?, ? ";
+=======
+			PagingUtil paging = new PagingUtil(nowPage,total,3);
+			
+			String sql = " select * ,"
+					   + "(select count(*) from app_class a where a.cno=c.cno ) as cnt"
+					   + "    from class as c , user u"
+					   + "    where c.teacherName = u.name"
+					   + "      and c.state = 'E' ";
+				if(searchType!= null &&searchType.equals("°­ÀÇ")) {
+					sql += "  order by  duringclass desc ";
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				}
+				sql += " limit ?, ?";
 				psmt = conn.prepareStatement(sql);
+<<<<<<< HEAD
 				rs = psmt.executeQuery();
 				
+=======
+
+				psmt.setInt(1,paging.getStart());
+				psmt.setInt(2,paging.getPerPage());
+						
+				rs = psmt.executeQuery();
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 				 while(rs.next()) {
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
 					vo.setUno(rs.getInt("uno"));
 					vo.setTitle(rs.getString("title"));
-					vo.setRdate(rs.getString("rdate"));
 					vo.setState(rs.getString("state"));
 					vo.setSubject(rs.getString("subject"));
 					vo.setDuringclass(rs.getString("duringclass"));
-					vo.setsTotal(rs.getInt("stotal"));
+					vo.setCnt(rs.getInt("cnt"));
 					
 					
 					clist.add(vo);
 					
 				}
-				request.setAttribute("clist", clist);
-				
-				System.out.println(request);
+
 				
 				
+<<<<<<< HEAD
 				PagingUtil paging = new PagingUtil(nowPage,total,3);
 				
 				if(searchType != null && !searchType.equals("null")){
@@ -125,6 +139,8 @@ public class AttendanceController {
 				}
 						
 				
+=======
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -136,10 +152,18 @@ public class AttendanceController {
 				e.printStackTrace();
 			}
 		}
+<<<<<<< HEAD
 		// ï¿½ðµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 		request.setAttribute(searchType, searchType);
 		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.do").forward(request, response);
+=======
+		// ¸ðµ¨¿¡ µ¥ÀÌÅÍ¸¦ ÀúÀå
+		request.setAttribute("searchType", searchType);
+		request.setAttribute("clist", clist);
+		// ºä ÆäÀÌÁö¿¡ ¿¬°á
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
+>>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 	}
 	
 	public void attendanceView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

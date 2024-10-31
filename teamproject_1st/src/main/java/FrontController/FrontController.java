@@ -30,8 +30,10 @@ public class FrontController extends HttpServlet {
 			AttendanceController attendance = new AttendanceController(request, response,comments);
 		}else if(comments[0].equals("mypage")) {
 			MyPageController mypage = new MyPageController(request, response,comments);
-		} else if(comments[0].equals("class")) {
+		}else if(comments[0].equals("class")) {
 			ClassController cours = new ClassController(request, response,comments);
+		}else if(comments[0].equals("library")) {
+			library_controller library = new library_controller(request, response,comments);
 		}
 	}
 

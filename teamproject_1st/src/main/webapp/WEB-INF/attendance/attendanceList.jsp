@@ -5,27 +5,19 @@
 <%@ page import="FrontController.util.*" %>
 <%@ page import="java.util.List" %>
 <%
-// 모델에서 데이터를 불러와서 유효성검사를 하고 변수에 저장한다
+// 모델에서 데이터를 불러와서 유효성검사를 하고 변수에 저장
  String searchType = "";
 
   List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
- 
 %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script type="text/javascript">
-    $(document).ready(function(){
-        $("select[name=searchType]").change(function () {
-        $("#searchType").submit();
 
-        });
-    });
-</script>
     <style>
     /*----------------------------------------------------------------section부분---------------------------------------*/
     .section {
@@ -104,22 +96,20 @@
 	                </select>
 	              </div>
 	              </form>
-	               <%
+
+	         <%
 			 for(ClassVO vo : clist){
 			 %>
               <div class="content_c">
                   <h3><%=vo.getSubject() %> <%= vo.getTitle() %></h3><br>
-                     학생 <br>
+                     학생<%=vo.getCnt() %> <br>
                     <button type="button" class="app_btn" onclick="location.href=/attendance/attedanceView.do?cno=">출결관리</button><br>
                     
               </div>
               <%} %>
             </div>
             <div class="paging_inner">
-				<a href="">이전</a>
-                <a href="">1</a>
-                <a href="">2</a>
-                <a href="">다음</a>
+				
             </div>
           </div>
         </article>

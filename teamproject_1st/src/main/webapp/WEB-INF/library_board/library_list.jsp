@@ -1,6 +1,11 @@
+<%@page import="FrontController.vo.libraryVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
+
+<%
+	List<libraryVO> list = (List<libraryVO>)request.getAttribute("list");
+%>
 
 <!DOCTYPE html> 
 <html lang="en">
@@ -112,69 +117,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
+          <%for(libraryVO vo : list){%>
+           <tr>
+				<td><%=vo.getLno() %></td>
+				<td>
+              		<a href="<%=request.getContextPath() %>/library/library_view.do">
+              		<%=vo.getTitle() %>
+              		</a>
+				</td>
+              <td><%=vo.getRdate() %></td>
+              <td><%=vo.getHit() %></td>
             </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>01</td>
-              <td><a href="#">첫번째 제목입니다.</a></td>
-              <td>2024-10-21</td>
-              <td>5</td>
-            </tr>
+          <%} %>
           </tbody>
         </table>
-            <button class="button">등록</button>
+            <button class="button" onclick="location.href='<%=request.getContextPath()%>/library/library_write.do'">등록</button>
       </section>
 </body>
 </html>
