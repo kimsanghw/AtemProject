@@ -1,6 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import="FrontController.vo.UserVO" %>
 <%@ include file="../../include/header.jsp" %>
+
+<%
+//세션에서 로그인 정보 확인하기
+UserVO loginUser;
+// 세션에서 값 가져오기
+loginUser = (UserVO)session.getAttribute("loginUser");
+
+// 로그인 정보가 없으면 내보냄
+if( loginUser == null) {	/* <!-- 로그인 정보가 없음 --> */
+	 response.sendRedirect(request.getContextPath()+"/user/login.do");
+}
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,7 +109,7 @@
 <body>
       <section>
         <h2 class="library_title">자료실 등록</h2>
-        <form action="">
+        <form action="<%=request.getContextPath()%>/library/library_write.do" method="post">
             <div class="library_title_write">
                 <input type="text" placeholder="제목을 입력해주세요." name="title">
             </div>
@@ -105,12 +117,12 @@
                 <textarea name="content" placeholder="내용을 입력해주세요."></textarea>
             </div>
             <div class="box">asfafaseqfkewqkf.jpg</div>
-            <div class="library_board_file">
+            <div class="library_board_file" name="attach">
                 <button>첨부파일</button>
             </div>
             <div class="library_board_button">
                 <button type="submit">등록</button>
-                <button type="button">취소</button>
+                <button type="button" onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">취소</button>
             </div>
         </form>
         <div class="library_board_line"></div>
