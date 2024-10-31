@@ -1,6 +1,11 @@
+<%@page import="FrontController.vo.libraryVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
+
+<%
+	libraryVO vo = (libraryVO)request.getAttribute("vo");
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -82,10 +87,12 @@
 <body>
       <section>
         <h2 class="library_title">자료실 상세</h2>
-        <div class="library_board_title">첫 번째 제목입니다.</div>
-        <div class="library_board">작성자 관리자 등록일 2024-10-22 조회수 33</div>
-        <div class="library_board_content">첫 번째 내용입니다.</div>
-        <div class="library_board_file">등록된 첨부파일명.JPG</div>
+       	<div class="library_board_title"><%=vo.getTitle() %></div>
+       	<div class="library_board">작성자 <%=vo.getId() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
+      		<div class="library_board_content"><%=vo.getContent() %></div>
+       	<div class="library_board_file"><%=vo.getOrgFileName() %></div>
+        
+        
         <div class="library_board_list_button">
             <button onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">목록</button>
         </div>

@@ -8,8 +8,8 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-	        /* header 부분 시작*/
-        html, body {
+ /* header 부분 시작*/
+    html, body {
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -70,7 +70,7 @@
 	 	UserVO userId = (UserVO) session.getAttribute("loginUser");
 	 %>
     <header>
-        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="../img/로고1.png"></a></h1>
+        <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="<%= request.getContextPath() %>/img/로고1.png"></a></h1>
       <div class="index_nav headerSlide">
         <ul>
           <li><a href="#">수강신청</a></li>
@@ -83,12 +83,12 @@
     <% 
             } else { 
     %>
-                <li><a href="#">출결정보</a></li>
+                <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
     <% 
             }
         } else { 
     %>
-        <li><a href="#">출결정보</a></li>
+        <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
     <% 
         } 
     %>

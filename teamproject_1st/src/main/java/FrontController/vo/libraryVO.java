@@ -8,6 +8,20 @@ public class libraryVO {
 	private int hit;
 	private String state;
 	private int uno;
+	private String id;
+	private String orgFileName;
+	public String getOrgFileName() {
+		return orgFileName;
+	}
+	public void setOrgFileName(String orgFileName) {
+		this.orgFileName = orgFileName;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public int getLno() {
 		return lno;
 	}

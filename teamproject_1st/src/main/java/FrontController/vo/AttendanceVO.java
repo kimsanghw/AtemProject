@@ -7,6 +7,7 @@ public class AttendanceVO {
 	private int ano;
 	private int uno;
 	private int acno;
+	private int cno;
 	
 	/**
 	 * @return the attendance

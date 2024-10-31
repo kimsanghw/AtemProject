@@ -121,7 +121,7 @@
            <tr>
 				<td><%=vo.getLno() %></td>
 				<td>
-              		<a href="<%=request.getContextPath() %>/library/library_view.do">
+              		<a href="<%=request.getContextPath() %>/library/library_view.do?lno=<%=vo.getLno() %>">
               		<%=vo.getTitle() %>
               		</a>
 				</td>

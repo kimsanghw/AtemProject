@@ -1,20 +1,20 @@
 package FrontController;
 
-import java.io.File;
 import java.io.IOException;
-import java.sql.*;
-import java.util.Enumeration;
-import java.util.UUID;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-import FrontController.util.*;
+import FrontController.util.DBConn;
 import FrontController.vo.UserVO;
+import FrontController.vo.libraryVO;
+
 
 
 
@@ -48,15 +48,121 @@ public class library_controller {
 	}
 
 	private void library_list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("/WEB-INF/library_board/library_list.jsp").forward(request, response);
+		
 		
 		request.setCharacterEncoding("UTF-8");
+		
+		/*
+		 * int lno = 0;
+		 * 
+		 * if(request.getParameter("lno") != null) { lno =
+		 * Integer.parseInt(request.getParameter("lno")); }
+		 */
+
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DBConn.conn();
+			
+			/*
+			 * // 조회수 증가 쿼리 String sql = "UPDATE library SET hit = hit + 1 WHERE lno = ?";
+			 * psmt = conn.prepareStatement(sql); psmt.setInt(1, lno); psmt.executeUpdate();
+			 * // 조회수 업데이트 실행
+			 */			
+			
+	        // 게시글 정보 가져오기 쿼리
+			String sql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') as rdate, l.hit FROM library l INNER JOIN user u ON l.uno = u.uno;";
+			psmt = conn.prepareStatement(sql);
+			rs = psmt.executeQuery();
+			
+			
+			// 리스트 생성
+			List<libraryVO> list = new ArrayList<libraryVO>();
+			
+			while(rs.next()){
+				// vo생성
+				libraryVO vo = new libraryVO();
+				// vo에 값 넣기
+				vo.setLno(rs.getInt("lno"));
+				vo.setTitle(rs.getString("title"));
+				vo.setRdate(rs.getString("rdate"));
+				vo.setHit(rs.getInt("hit"));
+				// 리스트에 vo 넣기
+				list.add(vo);
+			}	
+			
+			// 모델에 리스트 저장
+			request.setAttribute("list", list);
+			// 뷰페이지로 이동
+			request.getRequestDispatcher("/WEB-INF/library_board/library_list.jsp").forward(request, response);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+		}
+				
+			
 	}
 	private void library_write(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getRequestDispatcher("/WEB-INF/library_board/library_write.jsp").forward(request, response);
 		
 	}
 	private void library_view(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		request.setCharacterEncoding("UTF-8");
+		
+		
+		  int lno = 0;
+		  
+		  if(request.getParameter("lno") != null) { 
+			  lno = Integer.parseInt(request.getParameter("lno"));
+		  }
+		  
+			Connection conn = null;
+			PreparedStatement psmt = null;
+			ResultSet rs = null;
+		 
+			try {
+				conn = DBConn.conn();
+				
+				String sql = "SELECT l.*, u.id, f.orgFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?";
+				// 리스트 생성
+				psmt = conn.prepareStatement(sql);
+				psmt.setInt(1, lno);
+				rs = psmt.executeQuery();
+				
+				if(rs.next()) {
+					System.out.println("존재");
+					// vo생성
+					libraryVO vo = new libraryVO();
+					// vo에 값 넣기
+					vo.setLno(rs.getInt("lno"));
+					vo.setTitle(rs.getString("title"));
+					vo.setId(rs.getString("id"));
+					vo.setRdate(rs.getString("rdate"));
+					vo.setHit(rs.getInt("hit"));
+					vo.setState(rs.getString("state"));
+					vo.setContent(rs.getString("content"));
+					vo.setOrgFileName(rs.getString("orgFileName"));
+					
+					// 모델에 리스트 저장
+					request.setAttribute("vo", vo);
+				}
+				
+					
+					
+			}catch(Exception e) {
+				e.printStackTrace();
+			}finally {
+				try {
+					DBConn.close(rs, psmt, conn);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		
 		request.getRequestDispatcher("/WEB-INF/library_board/library_view.jsp").forward(request, response);
 		
 	}
