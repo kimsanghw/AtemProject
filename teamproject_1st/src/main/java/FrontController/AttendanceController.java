@@ -67,14 +67,14 @@ public class AttendanceController {
 			conn = DBConn.conn();
 			
 			
-			/*   ÀüÃ¼ÆäÀÌÁö °¹¼ö¿¡ ´ëÇÑ Äõ¸®*/
+			/*   ì „ì²´í˜ì´ì§€ ê°¯ìˆ˜ì— ëŒ€í•œ ì¿¼ë¦¬*/
 			int total = 0;
 			String sqlTotal = "SELECT count(*) as total "
                     		+ "FROM class c "
                     		+ "INNER JOIN user u ON c.uno = u.uno "
                     		+ "WHERE u.uno = ? "
                     		+ "AND u.name = ?";
-			if(searchType!= null &&searchType.equals("°­ÀÇ")) {
+			if(searchType!= null &&searchType.equals("ê°•ì˜")) {
 				sqlTotal += " order by  duringclass desc ";
 			}
 				
@@ -92,7 +92,7 @@ public class AttendanceController {
 			PagingUtil paging = new PagingUtil(nowPage,total,3);
 			
 	
-			/*------ÀüÃ¼ ÆäÀÌÁö¿¡ ´ëÇÑ listÄõ¸®*/
+			/*------ì „ì²´ í˜ì´ì§€ì— ëŒ€í•œ listì¿¼ë¦¬*/
 			
 			String sql = " select * ,"
 					   + "(select count(*) from app_class a where a.cno = c.cno ) as cnt"
@@ -101,12 +101,12 @@ public class AttendanceController {
 					   + "      and c.state = 'E' "
 					   + "      and u.name = ?";
 					   
-				if(searchType!= null &&searchType.equals("°­ÀÇ")) {
+				if(searchType!= null &&searchType.equals("ê°•ì˜")) {
 					sql += " order by  duringclass desc ";
 				}
 				sql += " limit ?, ?";
 				psmt = conn.prepareStatement(sql);
-				psmt.setString(1, teacherName);  // ÀÌ¸§ Á¶°Ç Ãß°¡
+				psmt.setString(1, teacherName);  // ì´ë¦„ ì¡°ê±´ ì¶”ê°€
 		        psmt.setInt(2, paging.getStart());
 		        psmt.setInt(3, paging.getPerPage());
 
@@ -149,13 +149,13 @@ public class AttendanceController {
 				e.printStackTrace();
 			}
 		}
-		// ¸ğµ¨¿¡ µ¥ÀÌÅÍ¸¦ ÀúÀå
+		// ëª¨ë¸ì— ë°ì´í„°ë¥¼ ì €ì¥
 		/*
 		request.setAttribute("searchType", searchType);
 		request.setAttribute("clist", clist);
 		request.setAttribute("paging", paging);
 		
-		// ºä ÆäÀÌÁö¿¡ ¿¬°á
+		// ë·° í˜ì´ì§€ì— ì—°ê²°
 		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.jsp").forward(request, response);
 		*/
 	}
