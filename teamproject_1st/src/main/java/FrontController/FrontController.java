@@ -33,13 +33,13 @@ public class FrontController extends HttpServlet {
 			MyPageController mypage = new MyPageController(request, response,comments);
 		}else if(comments[0].equals("class")) {
 			ClassController cours = new ClassController(request, response,comments);
-<<<<<<< HEAD
+
 		}else if(comments[0].equals("search")) {
 			SearchController search = new SearchController(request, response,comments);
-=======
+
 		}else if(comments[0].equals("library")) {
 			library_controller library = new library_controller(request, response,comments);
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
+
 		}
 	}
 
