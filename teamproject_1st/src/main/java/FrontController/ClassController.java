@@ -38,17 +38,17 @@ public class ClassController {
 			if(request.getMethod().equals("GET")){
 				list(request,response);
 			}
-		} else if(comments[comments.length-1].equals("register.do")) {
+		} else if(comments[comments.length-1].equals("writer.do")) {
 			if(request.getMethod().equals("GET")){
-				register(request,response);
+				writer(request,response);
 			} else if(request.getMethod().equals("POST")) {
-				registerOk(request,response);
+				writerOk(request,response);
 			}
 		}
 	}
 	
 	public void view (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		/*int cno = Integer.parseInt(request.getParameter("cno"));
+		int cno = Integer.parseInt(request.getParameter("cno"));
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -57,7 +57,7 @@ public class ClassController {
 		try {
 			conn = DBConn.conn();
 			
-			String sql = "SELECT c.*,u.name FROM class c , user u WHERE c.uno = u.uno AND nno = ?";
+			String sql = "SELECT c.*,u.name FROM class c , user u WHERE c.uno = u.uno AND cno = ?";
 			
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, cno);
@@ -69,8 +69,8 @@ public class ClassController {
 				vo.setCno(rs.getInt("cno"));
 				vo.setTitle(rs.getString("title"));
 				vo.setBook(rs.getString("book"));
-				vo.setRdate(rs.getString("rdate"));
 				vo.setDuringclass(rs.getString("duringclass"));
+				vo.setJdate(rs.getString("jdate"));
 				vo.setSubject(rs.getString("subject"));
 				vo.setDifficult(rs.getString("difficult"));
 				vo.setState(rs.getString("state"));
@@ -87,7 +87,7 @@ public class ClassController {
 	            e.printStackTrace();
 	        }
 		}
-	*/	
+		request.getRequestDispatcher("/WEB-INF/class/class_view.jsp").forward(request, response);
 	}
 	public void list (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<ClassVO> coursList  = new ArrayList<ClassVO>();
@@ -128,10 +128,10 @@ public class ClassController {
 		}
 		request.getRequestDispatcher("/WEB-INF/class/class_list.jsp").forward(request, response);
 	}
-	public void register (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void writer (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getRequestDispatcher("/WEB-INF/class/class_add.jsp").forward(request, response);
 	}
-	public void registerOk (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void writerOk (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		int size = 10*1024*1024; // 첨부파일의 크기 4MB?
 		String uploadPath = request.getSession().getServletContext().getRealPath("/upload"); //절대경로

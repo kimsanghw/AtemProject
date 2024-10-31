@@ -49,9 +49,7 @@ public class AttendanceController {
 		int nowPage = 1;
 		
 		if(request.getParameter("nowPage") != null){
-			//ÇÏ´Ü¿¡ ´Ù¸¥ ÆäÀÌÁö ¹øÈ£ Å¬¸¯½Ã ³Ñ¾î°¡´Â Á¶°Ç¹®
-			nowPage 
-			= Integer.parseInt(request.getParameter("nowPage"));
+			nowPage = Integer.parseInt(request.getParameter("nowPage"));
 		}
 		
 		int uno = loginUser.getUno(); 
@@ -66,12 +64,9 @@ public class AttendanceController {
 		try {
 			
 			conn = DBConn.conn();
-			
-			
-			
 			int total = 0;
 			String sqlTotal = " select count(*) as total from class c inner join user u on c.uno = u.uno where  u.uno = ? ";
-				if(searchType.equals("°­ÀÇ")) {
+				if(searchType.equals("ê°•ì˜")) {
 					sqlTotal += "  order by  duringclass desc limit ?, ? ";
 				}
 				
@@ -81,24 +76,10 @@ public class AttendanceController {
 				}
 				
 			rsTotal = psmtTotal.executeQuery();
-			
 				if(rsTotal.next()){
 					total = rsTotal.getInt("total");
 				}
 				
-//			int studentTotal = 0;
-//			
-//			String SqlStudentTotal = " SELECT count(*) as studentTotal FROM app_class where state ='E' and cno=?;";
-//			psmtStudentTotal = conn.prepareStatement(SqlStudentTotal);
-//			rsStudentTotal = psmtStudentTotal.executeQuery();
-//				if(rsStudentTotal.next()) {
-//					studentTotal = rsStudentTotal.getInt("studentTotal");
-//					request.setAttribute("stotal", studentTotal);
-//					
-//				}
-//			 
-//			
-			
 			String sql = " select * , t.stotal "
 						+ "    from "
 						+ "        class as c "
@@ -106,11 +87,11 @@ public class AttendanceController {
 						+ "        (select count(*) as stotal , cno  FROM app_class where state ='E' group by cno) as t "
 						+ "	on c.cno = t.cno"
 						+ "    where c.state = 'E'";
-				if(searchType.equals("°­ÀÇ")) {
+				if(searchType.equals("ê°•ì˜")) {
 					sql += "  order by  duringclass desc limit ?, ? ";
 				}
 				psmt = conn.prepareStatement(sql);
-				
+				rs = psmt.executeQuery();
 				
 				 while(rs.next()) {
 					ClassVO vo = new ClassVO();
@@ -143,7 +124,7 @@ public class AttendanceController {
 					psmt.setInt(2,paging.getPerPage());
 				}
 						
-				rs = psmt.executeQuery();
+				
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -155,9 +136,9 @@ public class AttendanceController {
 				e.printStackTrace();
 			}
 		}
-		// ¸ğµ¨¿¡ µ¥ÀÌÅÍ¸¦ ÀúÀå
+		// ï¿½ğµ¨¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 		request.setAttribute(searchType, searchType);
-		// ºä ÆäÀÌÁö¿¡ ¿¬°á
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		request.getRequestDispatcher("/WEB-INF/attendance/attendanceList.do").forward(request, response);
 	}
 	

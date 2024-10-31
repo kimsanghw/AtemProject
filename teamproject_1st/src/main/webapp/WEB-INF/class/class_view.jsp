@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import ="FrontController.vo.ClassVO" %>
+<%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
+<%
+ClassVO vo = (ClassVO)request.getAttribute("vo");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -132,7 +137,7 @@
         <div>
             <div>
                 <div class="second_title">
-                    <div><h3>[2025 수능특강] 한병훈의 국어 -화법과 작문 선택-</h3></div>
+                    <div><h3><%=vo.getTitle() %></h3></div>
                 <div class="second_title_info">
                     <span class="option">작성자</span> <span class="option_db">홍길동</span>
                     <span class="option">등록일</span> <span class="option_db">2024-10-21</span>
@@ -149,23 +154,23 @@
                             <dt>
                                 <span class="label01" ::before>과목</span>
                             </dt>
-                            <dd>호랑이 키우기</dd>
+                            <dd><%=vo.getSubject() %></dd>
                             <dt>
-                                <span class="label02" ::before>학습과정</span>
+                                <span class="label02" ::before>수강 신청 기간</span>
                             </dt>
-                            <dd>문제 풀이, 실습</dd>
+                            <dd><%=vo.getJdate() %></dd>
                             <dt>
                                 <span class="label03" ::before>수준</span>
                             </dt>
-                            <dd>상</dd>
+                            <dd><%=vo.getDifficult() %></dd>
                             <dt>
                                 <span class="label04" ::before>교재</span>
                             </dt>
-                            <dd>EBS 2025년 호랑이 키우기</dd>
+                            <dd><%=vo.getBook() %></dd>
                             <dt>
                                 <span class="label05" ::before>강의 기간</span>
                             </dt>
-                            <dd>1년</dd>
+                            <dd><%=vo.getDuringclass() %></dd>
                         </dl>
                         
                     </div>
