@@ -97,7 +97,7 @@
 <body>
       <section>
         <h2 class="library_title">자료실 수정</h2>
-        <form action="">
+        <form action="modify.do" method="post">
             <div class="library_title_write">
                 <input type="text" placeholder="제목을 입력해주세요." name="title">
             </div>
