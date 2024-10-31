@@ -48,7 +48,7 @@ public class ClassController {
 	}
 	
 	public void view (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		/*int cno = Integer.parseInt(request.getParameter("cno"));
+		int cno = Integer.parseInt(request.getParameter("cno"));
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -77,6 +77,7 @@ public class ClassController {
 				
 				
 				request.setAttribute("vo", vo);
+				
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -87,7 +88,7 @@ public class ClassController {
 	            e.printStackTrace();
 	        }
 		}
-		request.getRequestDispatcher("/WEB-INF/class/class_view.jsp").forward(request, response);*/
+		response.sendRedirect(request.getContextPath() + "/class/view.do");
 	}
 	public void list (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<ClassVO> coursList  = new ArrayList<ClassVO>();

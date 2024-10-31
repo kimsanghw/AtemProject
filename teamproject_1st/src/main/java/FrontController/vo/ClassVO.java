@@ -23,8 +23,7 @@ public class ClassVO {
 	private int cnt;
 	
 	
-<<<<<<< HEAD
-=======
+
 	
 	/**
 	 * @return the cnt
@@ -39,7 +38,6 @@ public class ClassVO {
 		this.cnt = cnt;
 	}
 //	
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
 	/**
 	 * @return the title
 	 */
