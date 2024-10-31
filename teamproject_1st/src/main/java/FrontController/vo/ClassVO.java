@@ -6,6 +6,7 @@ public class ClassVO {
 	
 	
 	
+	
 	private String title;
 	private String book;
 	private String rdate;
@@ -21,8 +22,20 @@ public class ClassVO {
 	private int cno;
 	private int uno;
 	private int cnt;
+	private int ano;
 	
-	
+	/**
+	 * @return the ano
+	 */
+	public int getAno() {
+		return ano;
+	}
+	/**
+	 * @param ano the ano to set
+	 */
+	public void setAno(int ano) {
+		this.ano = ano;
+	}
 	
 	/**
 	 * @return the cnt
@@ -194,5 +207,5 @@ public class ClassVO {
 	public void setTeacherName(String teacherName) {
 		this.teacherName = teacherName;
 	}
-
+	
 }

@@ -27,6 +27,7 @@ public class FrontController extends HttpServlet {
 		if(comments[0].equals("user")) {
 			UserController user = new UserController(request, response,comments);
 		}else if(comments[0].equals("attendance")) {
+			System.out.println("attendance");
 			AttendanceController attendance = new AttendanceController(request, response,comments);
 		}else if(comments[0].equals("mypage")) {
 			MyPageController mypage = new MyPageController(request, response,comments);

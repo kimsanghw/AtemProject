@@ -3,12 +3,16 @@
 <%@ include file="../../include/header.jsp" %>
 <%@ page import="FrontController.vo.ClassVO" %>
 <%@ page import="FrontController.util.*" %>
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.*" %>
 <%
 // 모델에서 데이터를 불러와서 유효성검사를 하고 변수에 저장
- String searchType = "";
-
+  String searchType = (String)request.getAttribute("searchType");
+	
   List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
+  int nowPage = 0;
+  PagingUtil paging = (PagingUtil)request.getAttribute("paging");
+  int StartPage = (Integer)request.getAttribute("StartPage");
+  int EndPage = (Integer) request.getAttribute("EndPage");
 %>
 
 <!DOCTYPE html>
@@ -17,6 +21,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script scr="https://code.jquery.com/jquery-3.4.1.js"></script>
+   
 
     <style>
     /*----------------------------------------------------------------section부분---------------------------------------*/
@@ -59,9 +65,9 @@
       height: 25px;
       width: 90px;
       font-size: 20px;
-      margin-top: 20px;
       margin-bottom: 20px;
     }
+    
     .app_btn{/*버튼 css*/
       width: 90px;
       height: 30px;
@@ -88,9 +94,9 @@
             <h2>출결 관리</h2>
             <div style="border-top: 5px solid #0b70b9; width: 86%;"></div>
             <div class="content_inner">
-            	<form action="/attendance/attendanceList.do" method="get" id="searchType">
-	              <div>
-	                <select  name="searchType" id="searchType">
+            	<form action="<%=request.getContextPath()%>/attendance/attendanceList.do" method="get" id="searchForm">
+	              <div >
+	                <select  name="searchType" id="searchType"  onchange="document.getElementById('searchForm').submit();">
 	                	<option value="">전체</option>
 	                  	<option value="강의" <%= searchType != null && searchType.equals("강의")?"selected":"" %>>현재 강의 중인 강의</option>
 	                </select>
@@ -103,13 +109,42 @@
               <div class="content_c">
                   <h3><%=vo.getSubject() %> <%= vo.getTitle() %></h3><br>
                      학생<%=vo.getCnt() %> <br>
-                    <button type="button" class="app_btn" onclick="location.href=/attendance/attedanceView.do?cno=">출결관리</button><br>
+                    <button type="button" class="app_btn"><a href="<%=request.getContextPath()%>/attendance/attendanceView.do">출결관리</a></button><br>
                     
               </div>
               <%} %>
             </div>
             <div class="paging_inner">
+				 <%
+					if(paging.getStartPage() > 1){
+						
+				%>
+					
+					<a href="<%=request.getContextPath()%>/attendance/attendanceList.do?nowPage=<%=paging.getStartPage()-1%>&searchType=<%=searchType%>"> &lt; </a>
+				<%
+					}
 				
+					for(int i= paging.getStartPage();
+							i<= paging.getEndPage(); i++){
+						if(i == nowPage){
+						%>
+						<strong><%= i %></strong>
+						<%
+						}else{
+						%>
+						<a href="<%=request.getContextPath()%>/attendance/attendanceList.do?nowPage=<%=i%>&searchType=<%=searchType%>"><%=i %></a>
+						<%	
+						}
+					}
+					
+					if(paging.getLastPage()>paging.getEndPage()){
+						
+						%>
+						<a href="<%=request.getContextPath()%>/attendance/attendanceList.do?nowPage=<%=paging.getEndPage()+1%>&searchType=<%=searchType%>">&gt;</a>
+						<%
+					}
+					
+				%>
             </div>
           </div>
         </article>

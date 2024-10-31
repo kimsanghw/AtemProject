@@ -8,8 +8,8 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-	        /* header 부분 시작*/
-        html, body {
+ /* header 부분 시작*/
+    html, body {
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -83,12 +83,12 @@
     <% 
             } else { 
     %>
-                <li><a href="#">출결정보</a></li>
+                <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
     <% 
             }
         } else { 
     %>
-        <li><a href="#">출결정보</a></li>
+        <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
     <% 
         } 
     %>
