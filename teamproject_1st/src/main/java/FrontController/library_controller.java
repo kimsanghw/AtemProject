@@ -163,7 +163,7 @@ public class library_controller {
 				psmt.executeUpdate();
 				
 				// 게시글 정보 가져오기 쿼리
-				sql = "SELECT l.*, u.id, f.orgFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?";
+				sql = "SELECT l.*, u.id, f.orgFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?"; 
 				// 리스트 생성
 				psmt = conn.prepareStatement(sql);
 				psmt.setInt(1, lno);
