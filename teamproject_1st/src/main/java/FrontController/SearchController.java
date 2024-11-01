@@ -24,7 +24,7 @@ public class SearchController {
 
     public void search(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String keyword = request.getParameter("search");
-        String searchField = request.getParameter("indexSearch");  // °Ë»ö ÇÊµå ¼±ÅÃ°ª °¡Á®¿À±â
+        String searchField = request.getParameter("indexSearch");  // ê²€ìƒ‰ í•„ë“œ ì„ íƒê°’ ê°€ì ¸ì˜¤ê¸°
         int nowPage = 1;
         int pageSize = 10;
         
@@ -34,8 +34,8 @@ public class SearchController {
         int startRow = (nowPage - 1) * pageSize;
         
         if (keyword == null || keyword.trim().isEmpty()) {
-            request.setAttribute("message", "°Ë»ö °á°ú°¡ ¾ø½À´Ï´Ù.");
-            request.setAttribute("searchResults", new ArrayList<>()); // ºó ¸®½ºÆ® Àü´Ş
+            request.setAttribute("message", "ê²€ìƒ‰ ê²°ê³¼ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            request.setAttribute("searchResults", new ArrayList<>()); // ë¹ˆ ë¦¬ìŠ¤íŠ¸ ì „ë‹¬
             request.getRequestDispatcher("/WEB-INF/index_search/index_search.jsp").forward(request, response);
             return;
         }
@@ -48,14 +48,14 @@ public class SearchController {
         try {
             conn = DBConn.conn();
             
-            // ±âº» °Ë»ö SQL
+            // ê¸°ë³¸ ê²€ìƒ‰ SQL
             String sql = "SELECT alltb.*, u.name, hit FROM ("
-                    + "SELECT nno AS no, title, content, '°øÁö°Ô½ÃÆÇ' AS type, rdate, uno, hit FROM notice_board WHERE state = 'E' "
-                    + "UNION ALL SELECT qno AS no, title, content, 'qna°Ô½ÃÆÇ' AS type, rdate, uno, hit FROM qna_board WHERE state = 'E' "
-                    + "UNION ALL SELECT lno AS no, title, content, 'ÀÚ·á½Ç°Ô½ÃÆÇ' AS type, rdate, uno, hit FROM library WHERE state = 'E') alltb "
+                    + "SELECT nno AS no, title, content, 'ê³µì§€ê²Œì‹œíŒ' AS type, rdate, uno, hit FROM notice_board WHERE state = 'E' "
+                    + "UNION ALL SELECT qno AS no, title, content, 'qnaê²Œì‹œíŒ' AS type, rdate, uno, hit FROM qna_board WHERE state = 'E' "
+                    + "UNION ALL SELECT lno AS no, title, content, 'ìë£Œì‹¤ê²Œì‹œíŒ' AS type, rdate, uno, hit FROM library WHERE state = 'E') alltb "
                     + "INNER JOIN user u ON alltb.uno = u.uno ";
             
-            // °Ë»ö ÇÊµå¿¡ µû¸¥ Á¶°Ç Ãß°¡
+            // ê²€ìƒ‰ í•„ë“œì— ë”°ë¥¸ ì¡°ê±´ ì¶”ê°€
             if (keyword != null && !keyword.trim().isEmpty()) {
                 if ("title".equals(searchField)) {
                     sql += "WHERE title LIKE ? ";
@@ -70,14 +70,14 @@ public class SearchController {
             psmt = conn.prepareStatement(sql);
             int paramIndex = 1;
             
-            // °Ë»ö ÇÊµå¿¡ µû¸¥ Å°¿öµå ¼³Á¤
+            // ê²€ìƒ‰ í•„ë“œì— ë”°ë¥¸ í‚¤ì›Œë“œ ì„¤ì •
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchKeyword = "%" + keyword + "%";
                 if ("title".equals(searchField) || "content".equals(searchField)) {
-                    psmt.setString(paramIndex++, searchKeyword); // ÇØ´ç ÇÊµå Á¶°Ç¿¡¸¸ ¼³Á¤
+                    psmt.setString(paramIndex++, searchKeyword); // í•´ë‹¹ í•„ë“œ ì¡°ê±´ì—ë§Œ ì„¤ì •
                 } else {
-                    psmt.setString(paramIndex++, searchKeyword); // title Á¶°Ç
-                    psmt.setString(paramIndex++, searchKeyword); // content Á¶°Ç
+                    psmt.setString(paramIndex++, searchKeyword); // title ì¡°ê±´
+                    psmt.setString(paramIndex++, searchKeyword); // content ì¡°ê±´
                 }
             }
             psmt.setInt(paramIndex++, startRow);
@@ -94,7 +94,7 @@ public class SearchController {
                 searchResults.add(new SearchVO(no, board, name, title, rdate, hit));
             }
 
-            // °Ë»ö °á°ú ¹× ÆäÀÌÁö Á¤º¸ Àü´Ş
+            // ê²€ìƒ‰ ê²°ê³¼ ë° í˜ì´ì§€ ì •ë³´ ì „ë‹¬
             request.setAttribute("searchResults", searchResults);
             request.setAttribute("nowPage", nowPage);
             request.setAttribute("totalPages", (int) Math.ceil((double) searchResults.size() / pageSize));
