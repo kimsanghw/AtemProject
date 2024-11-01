@@ -3,7 +3,7 @@
 <%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
 <%
-ClassVO vo = (ClassVO)request.getAttribute("vo");
+	ClassVO vo = (ClassVO)request.getAttribute("vo");
 %>
 <!DOCTYPE html>
 <html lang="en">
