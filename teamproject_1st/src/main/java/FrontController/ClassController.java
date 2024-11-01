@@ -88,7 +88,6 @@ public class ClassController {
 	            e.printStackTrace();
 	        }
 		}
-		response.sendRedirect(request.getContextPath() + "/class/view.do");
 	}
 	public void list (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<ClassVO> coursList  = new ArrayList<ClassVO>();
@@ -98,7 +97,7 @@ public class ClassController {
 		ResultSet rs = null;
 		try {
 			conn = DBConn.conn();
-	        String sql = "SELECT c.*, cf.* FROM class c, cfile cf;";
+	        String sql = "SELECT c.*, cf.* FROM class c, cfile cf WHERE c.cno=cf.cno;";
 	        
 	        psmt = conn.prepareStatement(sql);
 	        rs = psmt.executeQuery();
@@ -111,7 +110,6 @@ public class ClassController {
 				vo.setDuringclass(rs.getString("duringclass"));
 				vo.setName(rs.getString("name"));
 				vo.setOrgFileName(rs.getString("orgFileName"));
-				vo.setNewFileName(rs.getString("newFileName"));
 				
 				coursList.add(vo);
 			}
@@ -177,6 +175,7 @@ public class ClassController {
 			
 
 			int uno = loginUser.getUno(); 
+			int cno = 0;
 			String title = multi.getParameter("title"); 
 			String teacher_name = multi.getParameter("teacher_name");
 			String subject = multi.getParameter("subject");
@@ -211,7 +210,7 @@ public class ClassController {
 		        if (classResult > 0) {
 		            ResultSet generatedKeys = psmt.getGeneratedKeys();
 		            if (generatedKeys.next()) {
-		                int cno = generatedKeys.getInt(1);
+		                cno = generatedKeys.getInt(1);
 		                String fileSql = "INSERT INTO cfile(orgFileName, NewFileName, cno) VALUES(?, ?, ?)";
 		                psmt = conn.prepareStatement(fileSql);
 		                psmt.setString(1, logiName);

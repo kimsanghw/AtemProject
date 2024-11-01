@@ -143,7 +143,7 @@
 			<hr>
 		</div>
 		<%
-			 for(ClassVO vo : coursList){
+			for(ClassVO vo : coursList){
 		%>
 		<div class="course-item">
 			<img src="../img/<%=vo.getOrgFileName()%>">
