@@ -1,17 +1,17 @@
 package FrontController.util;
 
 public class PagingUtil {
-	//0 : ¿ÜºÎ¿¡¼­ ¹Ş¾Æ¿Ã ¿¬»ê¿¡ ÇÊ¿äÇÑ µ¥ÀÌÅÍ¸¦ ´ãÀ» ÇÊµå
-	//0ÀÌ ¾øÀ½ : 0µ¥ÀÌÅÍµéÀ» È°¿ëÇÏ¿© ¿¬»êµÈ °á°ú¸¦ ´ãÀ» ÇÊµå
-	private int nowPage;   //ÇöÀçÆäÀÌÁö¹øÈ£0
-	private int startPage; //½ÃÀÛÆäÀÌÁö¹øÈ£
-	private int endPage;   //Á¾·áÆäÀÌÁö¹øÈ£
-	private int total;      //ÀüÃ¼ °Ô½Ã±Û ¼ö0
-	private int perPage;    //ÇÑÆäÀÌÁö´ç °Ô½Ã±Û °¹¼ö0
-	private int lastPage;   //ÃÖÁ¾ÆäÀÌÁö ¹øÈ£
-	private int start;      //½ÃÀÛ °Ô½Ã±Û ¹øÈ£
-	private int end;       //Á¾·á °Ô½Ã±Û ¹øÈ£
-	private int cntPage=5;//ÇÑÆäÀÌÁö¿¡¼­ º¸¿©Áö´Â ÆäÀÌÂ¡¹øÈ£ °¹¼ö0
+	//0 : ì™¸ë¶€ì—ì„œ ë°›ì•„ì˜¬ ì—°ì‚°ì— í•„ìš”í•œ ë°ì´í„°ë¥¼ ë‹´ì„ í•„ë“œ
+	//0ì´ ì—†ìŒ : 0ë°ì´í„°ë“¤ì„ í™œìš©í•˜ì—¬ ì—°ì‚°ëœ ê²°ê³¼ë¥¼ ë‹´ì„ í•„ë“œ
+	private int nowPage;   //í˜„ì¬í˜ì´ì§€ë²ˆí˜¸0
+	private int startPage; //ì‹œì‘í˜ì´ì§€ë²ˆí˜¸
+	private int endPage;   //ì¢…ë£Œí˜ì´ì§€ë²ˆí˜¸
+	private int total;      //ì „ì²´ ê²Œì‹œê¸€ ìˆ˜0
+	private int perPage;    //í•œí˜ì´ì§€ë‹¹ ê²Œì‹œê¸€ ê°¯ìˆ˜0
+	private int lastPage;   //ìµœì¢…í˜ì´ì§€ ë²ˆí˜¸
+	private int start;      //ì‹œì‘ ê²Œì‹œê¸€ ë²ˆí˜¸
+	private int end;       //ì¢…ë£Œ ê²Œì‹œê¸€ ë²ˆí˜¸
+	private int cntPage=5;//í•œí˜ì´ì§€ì—ì„œ ë³´ì—¬ì§€ëŠ” í˜ì´ì§•ë²ˆí˜¸ ê°¯ìˆ˜0
 	
 	public PagingUtil() {}
 	public PagingUtil(int nowPage, int total, int perPage) {
@@ -19,34 +19,34 @@ public class PagingUtil {
 		setTotal(total);
 		setPerPage(perPage);
 		
-		calcStartEnd(nowPage,perPage);//½ÃÀÛ¹øÈ£ Á¾·á¹øÈ£ ¿¬»ê ±â´É È£Ãâ
-		calcLastPage(total,perPage);//ÃÖÁ¾ ÆäÀÌÁö ¹øÈ£ ¿¬»ê ±â´É È£ÁÙ
+		calcStartEnd(nowPage,perPage);//ì‹œì‘ë²ˆí˜¸ ì¢…ë£Œë²ˆí˜¸ ì—°ì‚° ê¸°ëŠ¥ í˜¸ì¶œ
+		calcLastPage(total,perPage);//ìµœì¢… í˜ì´ì§€ ë²ˆí˜¸ ì—°ì‚° ê¸°ëŠ¥ í˜¸ì¤„
 		calcStartEndPage(nowPage,cntPage);
 		
 	}
 	public void calcStartEnd(int nowPage, int perPage) {
-		int end = nowPage*perPage; //°Ô½Ã±Û Á¾·á ¹øÈ£(¿À¶óÅ¬¿¡ »ç¿ë)
+		int end = nowPage*perPage; //ê²Œì‹œê¸€ ì¢…ë£Œ ë²ˆí˜¸(ì˜¤ë¼í´ì— ì‚¬ìš©)
 		
-		//ÇöÀç ÆäÀÌÁö : 1/°Ô½Ã±Û³ëÃâ°¹¼ö:5
-		//Á¾·á¹øÈ£ : 1*5 => 5
-		//½ÃÀÛ¹øÈ£ : Á¾·á¹øÈ£ - °Ô½Ã±Û ³ëÃâ °¹¼ö(5-5=0);
-		int start = end - perPage;//°Ô½Ã±Û ½ÃÀÛ¹øÈ£(¿À¶óÅ¬¿¡¼­´Â +1À» ÇØÁà¾ß ÇÑ´Ù)
+		//í˜„ì¬ í˜ì´ì§€ : 1/ê²Œì‹œê¸€ë…¸ì¶œê°¯ìˆ˜:5
+		//ì¢…ë£Œë²ˆí˜¸ : 1*5 => 5
+		//ì‹œì‘ë²ˆí˜¸ : ì¢…ë£Œë²ˆí˜¸ - ê²Œì‹œê¸€ ë…¸ì¶œ ê°¯ìˆ˜(5-5=0);
+		int start = end - perPage;//ê²Œì‹œê¸€ ì‹œì‘ë²ˆí˜¸(ì˜¤ë¼í´ì—ì„œëŠ” +1ì„ í•´ì¤˜ì•¼ í•œë‹¤)
 		
 		setEnd(end);
 		setStart(start);
 	}
-	//ÃÑ 11°³ ÇÑÆäÀÌÁö´ç 10°³¾¿ ÆäÀÌÁö ÁËÁ¾ ¹øÈ£ : 2
+	//ì´ 11ê°œ í•œí˜ì´ì§€ë‹¹ 10ê°œì”© í˜ì´ì§€ ì£„ì¢… ë²ˆí˜¸ : 2
 	public void calcLastPage(int total, int perPage) {
-		//ÀüÃ¼°Ô½Ã±Û¿¡¼­ ÆäÀÌÁö´ç °Ô½Ã±Û ¼ö¸¦ ³ª´« ½Ç¼ö¸¦ ¿Ã¸²Ã³¸® ÇÑ °ªÀ» ¹İÈ¯
+		//ì „ì²´ê²Œì‹œê¸€ì—ì„œ í˜ì´ì§€ë‹¹ ê²Œì‹œê¸€ ìˆ˜ë¥¼ ë‚˜ëˆˆ ì‹¤ìˆ˜ë¥¼ ì˜¬ë¦¼ì²˜ë¦¬ í•œ ê°’ì„ ë°˜í™˜
 		int lastPage = (int)Math.ceil((double)total/perPage);
 		
 		setLastPage(lastPage);
 	}
 	
-	//ÇöÀç ÆäÀÌÁö
+	//í˜„ì¬ í˜ì´ì§€
 	public void calcStartEndPage(int nowPage, int cntPage) {
 		
-		//ÇöÀçÆäÀÌÁöÀÇ 10ÀÇ ÀÚ¸®¸¦ ±¸ÇØ¿Í +1ÇÑ ÈÄ ÆäÀÌÁö´ç ³ëÃâ ÆäÀÌÁö°¹¼ö °öÇÏ±â
+		//í˜„ì¬í˜ì´ì§€ì˜ 10ì˜ ìë¦¬ë¥¼ êµ¬í•´ì™€ +1í•œ í›„ í˜ì´ì§€ë‹¹ ë…¸ì¶œ í˜ì´ì§€ê°¯ìˆ˜ ê³±í•˜ê¸°
 		int endPage = (int)Math.ceil((double)nowPage/cntPage)*cntPage;
 		
 		int startPage = endPage - cntPage+1;
