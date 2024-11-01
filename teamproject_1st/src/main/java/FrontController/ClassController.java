@@ -98,7 +98,7 @@ public class ClassController {
 		ResultSet rs = null;
 		try {
 			conn = DBConn.conn();
-	        String sql = "SELECT c.*, cf.* FROM class c, cfile cf;";
+	        String sql = "SELECT c.*, cf.* FROM class c, cfile cf WHERE c.cno=cf.cno;";
 	        
 	        psmt = conn.prepareStatement(sql);
 	        rs = psmt.executeQuery();
@@ -111,7 +111,6 @@ public class ClassController {
 				vo.setDuringclass(rs.getString("duringclass"));
 				vo.setName(rs.getString("name"));
 				vo.setOrgFileName(rs.getString("orgFileName"));
-				vo.setNewFileName(rs.getString("newFileName"));
 				
 				coursList.add(vo);
 			}
