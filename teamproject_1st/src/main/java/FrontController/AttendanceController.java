@@ -48,12 +48,11 @@ public class AttendanceController {
 		
 		int nowPage = 1;
 		
-		if(request.getParameter("nowPage") != null){
-			nowPage 
-			= Integer.parseInt(request.getParameter("nowPage"));
+		if(request.getParameter("nowPage") != null && !request.getParameter("nowPage").isEmpty()){
+		    nowPage = Integer.parseInt(request.getParameter("nowPage"));
+		} else {
+		    nowPage = 1;
 		}
-		
-		
 		
 		int uno = loginUser.getUno();
 		String teacherName = loginUser.getName();

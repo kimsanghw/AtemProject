@@ -16,7 +16,6 @@
     html,body {
       position: relative;
       height: 100%;
-      width: 1900px;
     }
     body {
       background: #eee;
@@ -31,11 +30,6 @@
       width: 100%;
       height: 140px;
     }
-    .index_header_fixed{
-   	  background-color: #4b6cdf;
-      width: 100%;
-      height: 140px;
-    }
     .index_logo img{
         height: 100px;
     }
@@ -43,14 +37,9 @@
       width: 100%;
       height: 100%;
     }
-    .wallpaper {
-	  background-image: url("./img/common.png");
-	  background-size: cover; /* 배경 이미지를 화면에 꽉 채우기 */
-	  background-position: center; /* 배경 이미지 중앙 정렬 */
-	  background-repeat: no-repeat; /* 배경 이미지 반복 방지 */
-	  width: 100%;
-	  height: 100vh; /* 화면 전체 높이로 설정 */
-	}
+    .wallpaper img{
+      height: 1130px;
+    }
     /*slide1 영역*/
     .index_loginPage{
       position: absolute;
@@ -298,8 +287,7 @@
   <div class="swiper mySwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
-        <div class="wallpaper">
-        <div>
+        <div class="wallpaper"><img src="./img/common.png"></div>
         <div class="index_loginPage headerSlide">
         <% if(userId == null) { %>
             <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
@@ -335,7 +323,6 @@
             <li><a href="<%=request.getContextPath() %>/library/library_list.do">자료실</a></li>
           </ul>
         </div>
-        </div>
         <form action="<%=request.getContextPath()%>/search/search.do" method="GET">
           <div class="index_search">
             <select class="index_search_select" name="indexSearch">
@@ -346,8 +333,7 @@
           </div>
           <button class="index_search_button" type="submit">검색</button>
         </form>
-      </div></div>
-        
+      </div>
       <div class="swiper-slide">
         <div class="index_slide2_header">
           <div class="index_loginPage headerSlide">
@@ -357,7 +343,6 @@
             <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
         <% } %>
           </div>
-          <div class="index_header_fixed">
           <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>index.jsp"><img src="img/로고1.png"></a></h1>
           <div class="index_nav headerSlide">
             <ul>
@@ -384,7 +369,6 @@
               <li><a href="#">QnA</a></li>
               <li><a href="#">자료실</a></li>
             </ul>
-          </div>
           </div>
           <div class="index_notice">
             <h2>공지사항</h2>
