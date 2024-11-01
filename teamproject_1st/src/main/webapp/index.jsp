@@ -16,7 +16,6 @@
     html,body {
       position: relative;
       height: 100%;
-      width: 1900px;
     }
     body {
       background: #eee;
