@@ -5,6 +5,8 @@
 
 <%
 	List<libraryVO> list = (List<libraryVO>)request.getAttribute("list");
+	int currentPage = (Integer) request.getAttribute("currentPage");
+    int totalPages = (Integer) request.getAttribute("totalPages");
 %>
 
 <!DOCTYPE html> 
@@ -90,6 +92,14 @@
           text-align: center;
         }
         /* 내용 부분 끝 */
+        .paging{
+        	width:50px;
+        	margin: auto;
+        }
+        .paging a{
+        	color: black;
+        	text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -131,7 +141,19 @@
           <%} %>
           </tbody>
         </table>
+        <!-- 페이지 네비게이션 추가 -->
             <button class="button" onclick="location.href='<%=request.getContextPath()%>/library/library_write.do'">등록</button>
+        <div class="paging">
+        	<%
+        		for(int i = 1; i <= totalPages; i++){
+        			if(i == currentPage){
+        				out.print("<strong>" + i + "</strong> ");
+        			}else{
+        				out.print("<a href='" + request.getContextPath() + "/library/library_list.do?page=" + i + "'>" + i + "</a> ");
+        			}
+        		}
+        	%>
+        </div>
       </section>
 </body>
 </html>

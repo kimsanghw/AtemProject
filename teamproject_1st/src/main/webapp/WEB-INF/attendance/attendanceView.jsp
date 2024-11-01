@@ -1,11 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
+<%@ page import="java.util.*" %>
+<%@ page import="FrontController.util.*" %>
+<%@ page import="FrontController.vo.App_classVO" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script>
+ document.addEventListener("DOMContentLoaded", function() {
+    const dateInput = document.getElementById("dateInput");
+    if (dateInput) {
+      dateInput.addEventListener("change", function() {
+        document.getElementById("dateForm").submit();
+      });
+    }
+  });
+ </script>
+<%
+
+ List<App_classVO> attendanceList = (List<App_classVO>)request.getAttribute("attendanceList");
+ String  classNumber = (String)request.getAttribute(" classNumber");
+ String selectedDate = attendanceList.isEmpty() ? "" : attendanceList.get(0).getRdate();
+
+
+%>
 <style>
     .section {
       flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
@@ -138,10 +159,12 @@
           <div class="article_inner">
            <h2>출결 관리</h2>
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
+            <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
             <div class="today_date" >
-              <input type="date">
-              <span>오늘 일자 : 2024-10-25</span>
+              <input type="date" name="date" id="dateInput" >
+              <span>오늘 일자 : <%=selectedDate%></span>
             </div>
+            </form>
             <div class="content_inner">
               <table>
                 <thead>
@@ -150,16 +173,16 @@
                     <td style="width: 40px;">번호</td>
                     <td style="width: 40px;">이름</td>
                     <td style="width: 40px;">출결구분</td>
-                    <td>출결상태</td>
-                  </tr>
+                    <td>출결상태</td></tr>
                 </thead>
                 <tbody>
                   <form>
+                  <%for(App_classVO studentInfo : attendanceList){%>
                     <tr>
                       <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">1</td>
-                      <td style="width: 40px;">홍길동</td>
-                      <td>출석</td>
+                      <td style="width: 40px;"><%= studentInfo.getAno()%></td>
+                      <td style="width: 40px;"><%= studentInfo.getName() %></td>
+                      <td><%= studentInfo.getAttendance() %></td>
                       <td>
                         <div class="check_button">
                           <label>
@@ -169,132 +192,7 @@
                         </div>
                       </td>
                     </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">2</td>
-                      <td style="width: 40px;">정길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">3</td>
-                      <td style="width: 40px;">청길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">4</td>
-                      <td style="width: 40px;">황길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">5</td>
-                      <td style="width: 40px;">김길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">6</td>
-                      <td style="width: 40px;">박길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">7</td>
-                      <td style="width: 40px;">양길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">8</td>
-                      <td style="width: 40px;">수길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">9</td>
-                      <td style="width: 40px;">백길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;">10</td>
-                      <td style="width: 40px;">전길동</td>
-                      <td>출석</td>
-                      <td>
-                        <div class="check_button">
-                          <label>
-                            <input type="submit" class="attendance_btn1" value="출석">
-                            <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
-                        </div>
-                      </td>
-                    </tr>
+                    <%} %>
                 </tbody>
               </table>
               <div class="button">
@@ -312,3 +210,5 @@
         </article>
       </section>
 <%@ include file="../../include/footer.jsp" %>
+
+                  

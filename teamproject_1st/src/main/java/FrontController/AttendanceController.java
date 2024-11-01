@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import FrontController.util.DBConn;
 import FrontController.util.PagingUtil;
+import FrontController.vo.App_classVO;
 import FrontController.vo.ClassVO;
 import FrontController.vo.UserVO;
 
@@ -161,7 +164,95 @@ public class AttendanceController {
 	}
 	
 	public void attendanceView (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		HttpSession session = request.getSession();
+		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist"); 
+		List<App_classVO> attendanceList  = new ArrayList<>();
+		int uno = loginUser.getUno();
+		String teacherName = loginUser.getName();
+		int classNumber = (clist != null && !clist.isEmpty()) ? clist.get(0).getCno() : 0;
+
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
 		
+		String selectedDate = request.getParameter("date");
+		
+		
+		try {
+			conn = DBConn.conn();
+			
+			String sql  = "SELECT " 
+						+ "    u.uno AS 학생번호, " 
+						+ "    u.name AS 학생이름, " 
+						+ "    u.id AS 학생아이디, "  
+	                    + "    a.attendance AS 출결상태, " 
+	                    + "    a.rdate AS 출결일자, "
+	                    + "    a.ano As 출결번호, "
+	                    + " ac.subject AS 과목, " 
+	                    + " FROM " 
+	                    + "    attendance a " 
+	                    + " JOIN " 
+	                    + "    app_class ac ON a.acno = ac.acno " 
+	                    + " JOIN " 
+	                    + "    USER u ON a.uno = u.uno " 
+	                    + " JOIN " 
+	                    + "    class c ON ac.cno = c.cno " 
+	                    + " WHERE " 
+	                    + "    c.cno = ? AND "          
+	                    + "    DATE(a.rdate) = ? AND "    
+	                    + "    a.state = 'E' AND " 
+	                    + "    u.state = 'E' AND " 
+	                    + "    ac.state = 'E'";
+			
+			psmt = conn.prepareStatement(sql);	
+			psmt.setInt(1, classNumber);
+		    psmt.setString(2, selectedDate);
+		    rs = psmt.executeQuery();
+		    System.out.println("-------------------------------------------------------------------------------------");
+		    System.out.println(classNumber);
+		    System.out.println(selectedDate);
+	        
+	        while (rs.next()) {
+	        	App_classVO studentInfo = new App_classVO();
+	            studentInfo.setUno(rs.getInt("uno"));
+	            studentInfo.setName(rs.getString("name"));
+	            studentInfo.setId(rs.getString("id"));
+	            studentInfo.setAttendance(rs.getString("attendance"));
+	            studentInfo.setRdate(rs.getString("rdate"));
+	            studentInfo.setCno(rs.getInt("cno"));
+	            studentInfo.setAcno(rs.getInt("acno"));
+	            studentInfo.setState(rs.getString("state"));
+	            studentInfo.setAno(rs.getInt("ano"));
+
+	            attendanceList.add(studentInfo);
+	        }
+
+			
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			}finally {
+				
+				try {
+					DBConn.close(rs, psmt, conn);
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+				}
+		}
+		 System.out.println("-------------------------------------------------------------------------------------");
+		System.out.println("attendanceList size: " + attendanceList.size());
+		request.setAttribute("attendanceList", attendanceList);
+		 System.out.println("-------------------------------------------------------------------------------------");
+		request.setAttribute("selectedDate", selectedDate);
+		System.out.println(selectedDate);
+		 System.out.println("-------------------------------------------------------------------------------------");
+		request.setAttribute("classNumber",classNumber );
+		System.out.println(classNumber);
+	
 		request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
 		
 	}

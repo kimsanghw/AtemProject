@@ -60,9 +60,9 @@
                                     detailUrl = request.getContextPath() + "/qnaDetail.do?no=" + result.getNo();
                                     break;
                                 case "자료실게시판":
-                                    detailUrl = request.getContextPath() + "/libraryDetail.do?no=" + result.getNo();
+                                    detailUrl = request.getContextPath() + "/library/library_view.do?lno=" + result.getNo();
                                     break;
-                                default:
+                                default:	
                                     detailUrl = "#";
                             }
                     %>
