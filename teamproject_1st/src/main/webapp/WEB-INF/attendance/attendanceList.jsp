@@ -9,7 +9,11 @@
   String searchType = (String)request.getAttribute("searchType");
 	
   List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
+  String nowPageParam = request.getParameter("nowPage");
   int nowPage = 1;
+  if(nowPageParam != null){
+	  nowPage = Integer.parseInt(nowPageParam);
+  }
   PagingUtil paging = (PagingUtil)request.getAttribute("paging");
   int StartPage = 1;
   int EndPage = 1;
@@ -120,7 +124,7 @@
             </div>
             <div class="paging_inner">
 				 <%
-					if(paging.getStartPage() >= 1){
+					if(paging.getStartPage() > 1){
 						
 				%>
 					
@@ -141,7 +145,7 @@
 						}
 					}
 					
-					if(paging.getLastPage()>=paging.getEndPage()){
+					if(paging.getLastPage()>paging.getEndPage()){
 						
 						%>
 						<a href="<%=request.getContextPath()%>/attendance/attendanceList.do?nowPage=<%=paging.getEndPage()+1%>&searchType=<%=searchType%>">&gt;</a>
