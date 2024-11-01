@@ -77,7 +77,7 @@ public class ClassController {
 				
 				
 				request.setAttribute("vo", vo);
-				
+				response.sendRedirect(request.getContextPath() + "/class/view.do?cno=" + cno);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -224,7 +224,7 @@ public class ClassController {
 		                }
 		            }
 		        }
-			        response.sendRedirect(request.getContextPath() + "/class/view.do");
+		        response.sendRedirect(request.getContextPath() + "/class/view.do?cno=" + cno);
 			    } catch (Exception e) {
 			        e.printStackTrace();
 			    } finally {
