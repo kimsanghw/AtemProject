@@ -5,6 +5,8 @@
 
 <%
 	List<libraryVO> list = (List<libraryVO>)request.getAttribute("list");
+	String searchValue = (String)request.getAttribute("searchValue");
+	String searchType = (String)request.getAttribute("searchType");
 	int currentPage = (Integer) request.getAttribute("currentPage");
     int totalPages = (Integer) request.getAttribute("totalPages");
 %>
@@ -104,14 +106,14 @@
 </head>
 <body>
       <section>
-        <form>
-            <select name="search_option">
-                <option value="title">제목</option>
-                <option value="content">내용</option>
+        <form action="<%=request.getContextPath() %>/library/library_list.do" method="get" >
+            <select name="searchType">
+                <option value="title" <%=searchType != null && searchType.equals("title")?"seleced":"" %>>제목</option>
+                <option value="content" <%=searchType != null && searchType.equals("content' ")?"seleced":"" %>>내용</option>
             </select>
-            <input type="text" class="search_input" placeholder="검색어를 입력해주세요." name="search_name">
+            <input type="text" class="search_input" placeholder="검색어를 입력해주세요." name="searchValue" >
             <div class="library_board_img">
-                <button class="search_button" type="submit">검색</button>
+                <button class="search_button" type="submit" >검색</button>
             </div>
         </form>
         <div class="library_board_input">
@@ -141,8 +143,8 @@
           <%} %>
           </tbody>
         </table>
-        <!-- 페이지 네비게이션 추가 -->
             <button class="button" onclick="location.href='<%=request.getContextPath()%>/library/library_write.do'">등록</button>
+            <!-- 페이지 네비게이션 추가 -->
         <div class="paging">
         	<%
         		for(int i = 1; i <= totalPages; i++){

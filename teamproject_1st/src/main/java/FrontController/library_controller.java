@@ -62,6 +62,10 @@ public class library_controller {
 	    int totalPages = 0; // 총 페이지 수
 	    
 	    HttpSession session = request.getSession();
+	    
+	    // 검색 조건 추가
+	    String searchType = request.getParameter("searchType"); // 검색 필드 (예: title, id 등)
+	    String searchValue = request.getParameter("searchValue"); // 검색어
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -71,30 +75,58 @@ public class library_controller {
 		try {
 			conn = DBConn.conn();
 			
-			String pagesql = "SELECT COUNT(*) AS total_count FROM library;";
-			psmt = conn.prepareStatement(pagesql);
-			rs = psmt.executeQuery();
+	        // 전체 게시글 수를 가져오는 쿼리 (검색 조건이 있을 경우 이를 반영)
+			String pagesql = "SELECT COUNT(*) AS total_count FROM library l INNER JOIN user u ON l.uno = u.uno";
 			
+	        // 검색 조건이 있을 경우 WHERE 절 추가
+	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
+	            pagesql += " WHERE " + searchType + " LIKE ?";
+	        }
+	        
+	        psmt = conn.prepareStatement(pagesql);
+	        
+	        
+	        // 검색 조건이 있을 때 검색어 바인딩
+	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
+	            psmt.setString(1, "%" + searchValue + "%");
+	        }
+	        
+	        rs = psmt.executeQuery();
+	        
 	        if (rs.next()) {
 	            totalRecords = rs.getInt("total_count"); // 전체 게시글 수
 	        }
-	        
+			
 	        // 총 페이지 수 계산
 	        totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
-			
-	        // **이전 rs와 psmt를 닫고 새 쿼리 실행을 위해 초기화**
+
+	        // 이전 rs와 psmt를 닫고 새 쿼리 실행을 위해 초기화
 	        rs.close();
 	        psmt.close();
-
-	        String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') AS rdate, l.hit  FROM library l INNER JOIN user u ON l.uno = u.uno ORDER BY l.lno DESC LIMIT ?, ?";
-	        
 	        
 	        // 게시글 정보 가져오기 쿼리
+//	        String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') AS rdate, l.hit  FROM library l INNER JOIN user u ON l.uno = u.uno ORDER BY l.lno DESC LIMIT ?, ?";
 //			String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') as rdate, l.hit FROM library l INNER JOIN user u ON l.uno = u.uno;";
-			psmt = conn.prepareStatement(boardsql);
-	        // LIMIT 절에 사용할 시작 인덱스와 게시글 수 설정
-	        psmt.setInt(1, (page - 1) * recordsPerPage); // 시작 인덱스
-	        psmt.setInt(2, recordsPerPage); // 표시할 게시글 수
+	        String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') AS rdate, l.hit " +
+                    		  "FROM library l INNER JOIN user u ON l.uno = u.uno ";
+	        // 검색 조건이 있을 경우 WHERE 조건 추가
+	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
+	            boardsql += "WHERE " + searchType + " LIKE ? ";
+	        }
+	        
+	        boardsql += "ORDER BY l.lno DESC LIMIT ?, ?"; // 최신 게시글 순으로 정렬 및 LIMIT 사용
+	        
+	        psmt = conn.prepareStatement(boardsql);
+	        
+	        int paramIndex = 1; // PreparedStatement 파라미터 인덱스
+	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
+	            psmt.setString(paramIndex++, "%" + searchValue + "%"); // 검색어 바인딩
+	        }
+			
+	        // LIMIT 절에 사용할 시작 인덱스와 표시할 게시글 수 설정
+	        psmt.setInt(paramIndex++, (page - 1) * recordsPerPage); // 시작 인덱스
+	        psmt.setInt(paramIndex, recordsPerPage); // 표시할 게시글 수
+	        
 			rs = psmt.executeQuery();
 			
 			
@@ -117,6 +149,9 @@ public class library_controller {
 			request.setAttribute("list", list);
 	        request.setAttribute("currentPage", page);   // 현재 페이지
 	        request.setAttribute("totalPages", totalPages); // 전체 페이지 수
+	        request.setAttribute("searchType", searchType); // 검색 필드
+	        request.setAttribute("searchValue", searchValue); // 검색어
+	        
 			// 뷰페이지로 이동
 			request.getRequestDispatcher("/WEB-INF/library_board/library_list.jsp").forward(request, response);
 		}catch(Exception e) {
