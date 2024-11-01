@@ -115,9 +115,9 @@
 			 for(ClassVO vo : clist){
 			 %>
               <div class="content_c">
-                  <h3><%=vo.getSubject() %> <%= vo.getTitle() %></h3><br>
+                  <h3>[<%=vo.getSubject() %>] <%= vo.getTitle() %></h3><br>
                      학생<%=vo.getCnt() %> <br>
-                    <button type="button" class="app_btn"><a href="<%=request.getContextPath()%>/attendance/attendanceView.do">출결관리</a></button><br>
+                    <button type="button" class="app_btn"><a href="<%=request.getContextPath()%>/attendance/attendanceView.do?cno=<%=vo.getCno() %>">출결관리</a></button><br>
                     
               </div>
               <%} %>
