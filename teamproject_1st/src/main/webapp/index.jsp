@@ -26,38 +26,13 @@
       padding: 0;
     }
     header{
-       width: 100vw; /* 화면의 너비에 맞게 100%로 설정 */
-  		height: 20vh; /* 화면의 높이 기준 20% */
+      background-color: skyblue;
+      width: 100%;
+      height: 140px;
     }
     .index_logo img{
-        height: 10vh; /* 화면 높이의 10% */
-  width: auto;
+        height: 100px;
     }
-    .index_logo img, .index_photo img {
-  height: auto;
-}
-    @media (min-width: 768px) {
-  .index_logo {
-    margin: 0 auto;
-    width: 80%; /* 전체 화면 기준 80% 너비 */
-  }
-}
-
-/* 작은 화면 (예: 스마트폰) */
-@media (max-width: 767px) {
-  .index_logo {
-    width: 100%; /* 전체 화면 너비 */
-    height: auto;
-  }
-  .index_nav li {
-    font-size: 16px;
-    margin: 0 10px;
-  }
-  .index_search input {
-    width: 90%; /* 입력창의 너비를 화면 90% */
-    font-size: 18px;
-  }
-}
     .swiper {
       width: 100%;
       height: 100%;
@@ -92,15 +67,12 @@
       position: absolute;
       bottom: 870px;
       margin: 0 0 0 400px;
-      display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap; /* 화면 너비에 맞춰 줄바꿈 */
     }
     .index_nav li{
       display: block;
       float: left;
       margin: 0 0 0 120px;
-      font-size: 1.5em; /* 기준 폰트 크기 대비 1.5배 */
+      font-size: 22px;
       color: white;
       font-weight: 900;
     }
