@@ -85,9 +85,9 @@
 	            <div>수강 신청 기간 : <input type="date" name="jdate"> ~ <input type="date" name="jdate"></div>
 	            <div>
 	                강의 난이도 : <select name="diffcult">
-	                <option value="A">상</option>
-	                <option value="B">중</option>
-	                <option value="C">하</option>
+	                <option value="상">상</option>
+	                <option value="중">중</option>
+	                <option value="하">하</option>
 	                </select>
 	            </div>
 	            <div class="book_input">교재 <input type="text" name="book"></div>
