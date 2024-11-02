@@ -64,7 +64,7 @@
         <h2>강의 등록</h2>
         <div class="title_hr"></div>
         <div class="title">
-        <form action="<%= request.getContextPath()%>/class/writer.do" method="POST" enctype="multipart/form-data">
+        <form action="<%= request.getContextPath()%>/class/modify.do" method="POST" enctype="multipart/form-data">
         	<input type="hidden" name="uno" value="<%= userId2.getUno()%>">
             <input type="text" name="title" placeholder="제목을 입력하세요.">
 	        </div>

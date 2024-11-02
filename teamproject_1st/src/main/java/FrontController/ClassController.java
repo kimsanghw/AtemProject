@@ -44,6 +44,12 @@ public class ClassController {
 			} else if(request.getMethod().equals("POST")) {
 				writerOk(request,response);
 			}
+		} else if(comments[comments.length-1].equals("modify.do")) {
+			if(request.getMethod().equals("GET")){
+				modify(request,response);
+			} else if(request.getMethod().equals("POST")) {
+				modifyOk(request,response);
+			}
 		}
 	}
 	
@@ -57,8 +63,7 @@ public class ClassController {
 		try {
 			conn = DBConn.conn();
 			
-			String sql = "SELECT c.*,u.name FROM class c , user u WHERE c.uno = u.uno AND cno = ?";
-			
+			String sql = "SELECT c.*, u.name, (SELECT orgFileName FROM cfile WHERE cfile.cno = c.cno LIMIT 1) AS orgFileName, (SELECT newFileName FROM cfile WHERE cfile.cno = c.cno LIMIT 1) AS newFileName FROM class c, user u WHERE c.uno = u.uno AND c.cno = ?";			
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, cno);
 			
@@ -67,6 +72,8 @@ public class ClassController {
 			if(rs.next()) {
 				ClassVO vo = new ClassVO();
 				vo.setCno(rs.getInt("cno"));
+				vo.setName(rs.getString("name"));
+				vo.setRdate(rs.getString("rdate"));
 				vo.setTitle(rs.getString("title"));
 				vo.setBook(rs.getString("book"));
 				vo.setDuringclass(rs.getString("duringclass"));
@@ -74,10 +81,13 @@ public class ClassController {
 				vo.setSubject(rs.getString("subject"));
 				vo.setDifficult(rs.getString("difficult"));
 				vo.setState(rs.getString("state"));
-				
+				vo.setEnd_duringclass(rs.getString("end_duringclass"));
+				vo.setEnd_jdate(rs.getString("end_jdate"));
+				vo.setOrgFileName(rs.getString("orgFileName"));
+				vo.setNewFileName(rs.getString("newFileName"));
 				
 				request.setAttribute("vo", vo);
-				response.sendRedirect(request.getContextPath() + "/class/view.do?cno=" + cno);
+				request.getRequestDispatcher("/WEB-INF/class/class_view.jsp").forward(request, response);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -184,14 +194,15 @@ public class ClassController {
 			String book = multi.getParameter("book");
 			String duringclass = multi.getParameter("duringclass");
 			String orgFileName = multi.getOriginalFileName("attach");
-
+			String end_jdate = multi.getParameter("end_jdate");
+			String end_duringclass = multi.getParameter("end_duringclass");
 			
 			Connection conn = null;
 			PreparedStatement psmt = null;
 			ResultSet rs = null;
 			try {
 		        conn = DBConn.conn();
-		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno, end_jdate, end_duringclass) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		        
 		        // Statement.RETURN_GENERATED_KEYS를 지정하여 PreparedStatement 생성
 		        psmt = conn.prepareStatement(classSql, Statement.RETURN_GENERATED_KEYS);
@@ -203,7 +214,8 @@ public class ClassController {
 		        psmt.setString(6, duringclass);
 		        psmt.setString(7, teacher_name);
 		        psmt.setInt(8, uno);
-		        
+		        psmt.setString(9, end_jdate);
+		        psmt.setString(10, end_duringclass);
 		        
 		        int classResult = psmt.executeUpdate();
 		        
@@ -235,7 +247,10 @@ public class ClassController {
 			        }
 			    }
 	}
+	public void modify (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("/WEB-INF/class/class_modify.jsp").forward(request, response);
+	}	
+	public void modifyOk (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("/WEB-INF/class/class_modify.jsp").forward(request, response);
+	}
 }
-		
-
-

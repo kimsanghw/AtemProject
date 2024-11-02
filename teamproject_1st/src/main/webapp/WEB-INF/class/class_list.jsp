@@ -1,9 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import ="FrontController.vo.ClassVO" %>
+<%@ page import ="FrontController.vo.UserVO" %>
 <%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
 <%
 	List<ClassVO> coursList = (List<ClassVO>)request.getAttribute("coursList");
+	UserVO user = (UserVO) session.getAttribute("loginUser");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -159,7 +161,16 @@
 		<% } %>
 
 		<div class="mother">
+			<%
+			    if (user != null) {
+			        String authorization = user.getAuthorization();
+			        if ("A".equals(authorization)) {
+			%>
 			<a href="<%=request.getContextPath()%>/class/writer.do?uno="><button class="register-btn">등록</button></a>
+			<%
+			        }
+			    }
+			%>
 		</div>
 	</section>
 

@@ -19,12 +19,27 @@ public class ClassVO {
 	private String name;
 	private String orgFileName;
 	private String newFileName;
+	private String end_jdate;
+	private String end_duringclass;
 	private int cno;
 	private int uno;
 	private int cnt;
 	private int ano;
 	
 
+	
+	public String getEnd_jdate() {
+		return end_jdate;
+	}
+	public void setEnd_jdate(String end_jdate) {
+		this.end_jdate = end_jdate;
+	}
+	public String getEnd_duringclass() {
+		return end_duringclass;
+	}
+	public void setEnd_duringclass(String end_duringclass) {
+		this.end_duringclass = end_duringclass;
+	}
 	/**
 	 * @return the ano
 	 */
