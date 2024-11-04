@@ -6,6 +6,22 @@
 <%
 	libraryVO vo = (libraryVO)request.getAttribute("vo");
 %>
+<%
+	//세션에서 로그인 정보 확인하기
+	UserVO loginUser;
+	// 세션에서 값 가져오기
+	loginUser = (UserVO)session.getAttribute("loginUser");
+	// 로그인 정보가 없으면 내보냄
+	if( loginUser == null) {	/* <!-- 로그인 정보가 없음 --> */
+		%>
+		<script>
+			alert('로그인이 필요합니다.');
+			location.href='<%=request.getContextPath()%>/user/login.do'
+		</script>
+		
+		<%
+	}
+%>
 
 <!DOCTYPE html>
 <html lang="en">

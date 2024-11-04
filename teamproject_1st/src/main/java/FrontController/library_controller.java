@@ -121,7 +121,7 @@ public class library_controller {
                     		  "FROM library l INNER JOIN user u ON l.uno = u.uno ";
 	        // 검색 조건이 있을 경우 WHERE 조건 추가
 	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
-	            boardsql += "WHERE " + searchType + " LIKE ? ";
+	            boardsql += "WHERE " + searchType + " LIKE ?";
 	        }
 	        
 	        boardsql += "ORDER BY l.lno DESC LIMIT ?, ?"; // 최신 게시글 순으로 정렬 및 LIMIT 사용
