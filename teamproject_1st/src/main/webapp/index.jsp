@@ -314,7 +314,7 @@
         } else { 
     %>
     
-        <li><a href="#">출결정보</a></li>
+        <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
     <% 
         } 
     %>

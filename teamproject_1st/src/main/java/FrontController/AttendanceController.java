@@ -158,11 +158,11 @@ public class AttendanceController {
 		request.setCharacterEncoding("UTF-8");
 		HttpSession session = request.getSession();
 		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-		
+		List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist"); 
 		List<App_classVO> attendanceList  = new ArrayList<>();
 		int uno = loginUser.getUno();
 		String teacherName = loginUser.getName();
-		int classNumber = Integer.parseInt(request.getParameter("cno"));
+		int classNumber = (clist != null && !clist.isEmpty()) ? clist.get(0).getCno() : 0;
 
 		Connection conn = null;
 		PreparedStatement psmt = null;

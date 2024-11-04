@@ -4,21 +4,19 @@
 <%@ page import="java.util.*" %>
 <%@ page import="FrontController.util.*" %>
 <%@ page import="FrontController.vo.App_classVO" %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
+
 <title>Insert title here</title>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script>
- document.addEventListener("DOMContentLoaded", function() {
-    const dateInput = document.getElementById("dateInput");
-    if (dateInput) {
-      dateInput.addEventListener("change", function() {
-        document.getElementById("dateForm").submit();
-      });
-    }
-  });
- </script>
+	document.addEventListener("DOMContentLoaded", function() {
+	    const dateInput = document.getElementById("dateInput");
+	    if (dateInput) {
+	        dateInput.addEventListener("change", function() {
+	            document.getElementById("dateForm").submit();
+	        });
+	    }
+	});
+</script>
 <%
 
  List<App_classVO> attendanceList = (List<App_classVO>)request.getAttribute("attendanceList");
@@ -176,7 +174,7 @@
                     <td>출결상태</td></tr>
                 </thead>
                 <tbody>
-                  <form>
+                  <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="post" id="attendanceInfo">
                   <%for(App_classVO studentInfo : attendanceList){%>
                     <tr>
                       <td style="width: 40px;"><input type="checkbox"></td>

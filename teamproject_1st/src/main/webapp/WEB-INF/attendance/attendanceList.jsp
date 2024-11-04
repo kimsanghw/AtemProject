@@ -22,12 +22,6 @@
 	  EndPage = paging.getEndPage();
   }
 %>
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script scr="https://code.jquery.com/jquery-3.4.1.js"></script>
    
@@ -94,8 +88,6 @@
       margin-bottom: 15px;
     }
     </style>
-</head>
-<body>
 <section>
         <article>
           <div class="article_inner">
