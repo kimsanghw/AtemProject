@@ -23,6 +23,7 @@ public class library_controller {
 
 	public library_controller(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException {
 		
+		
 		if(comments[comments.length-1].equals("library_list.do")) {
 			if(request.getMethod().equals("GET")){
 				library_list(request,response);	
@@ -44,6 +45,11 @@ public class library_controller {
 				//수정페이지에서 데이터 수정 후 서브밋 했을 때
 				library_modifyOk(request,response);
 			}
+		}else if(comments[comments.length-1].equals("library_delete.do")) {
+			if(request.getMethod().equals("POST")) {
+				library_delete(request,response);
+			}
+			
 		}
 	}
 
@@ -283,7 +289,39 @@ public class library_controller {
 			}
 		}
 	}
-
+	private void library_delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		
+		int lno = Integer.parseInt(request.getParameter("lno"));
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		
+		try {
+			
+			conn = DBConn.conn();
+			
+			String sql = "DELETE FROM library WHERE lno = ?";
+			
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, lno);
+			
+			int result = psmt.executeUpdate();
+			
+			
+			
+			response.sendRedirect(request.getContextPath()+"/library/library_list.do");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 
 }

@@ -23,7 +23,7 @@ public class FrontController extends HttpServlet {
 		String contextPath = request.getContextPath();
 		String comment =  uri.substring(contextPath.length()+1);
 		String[] comments = comment.split("/");
-
+		
 		if(comments[0].equals("user")) {
 			UserController user = new UserController(request, response,comments);
 		}else if(comments[0].equals("attendance")) {
@@ -40,17 +40,13 @@ public class FrontController extends HttpServlet {
 			SearchController search = new SearchController(request, response,comments);
 
 		}else if(comments[0].equals("library")) {
+			System.out.println("library_controller를 생성합니다");
 			library_controller library = new library_controller(request, response,comments);
 
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		doGet(request, response);
 	}
-
 }

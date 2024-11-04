@@ -97,8 +97,11 @@
             <button onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">목록</button>
         </div>
         <div class="library_board_button">
-            <button type="submit" onclick="location.href='<%=request.getContextPath()%>/library/library_modify.do'">등록</button>
-            <button type="button" onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">취소</button>
+            <button type="submit" onclick="location.href='<%=request.getContextPath()%>/library/library_modify.do'">수정</button>
+            <button type="button" onclick="document.frm.submit();">삭제</button>
+           	<form name="frm" action="<%=request.getContextPath()%>/library/library_delete.do" method="post" >
+	 			<input type="hidden" name="lno" value="<%=vo.getLno()%>">
+	 		</form>
         </div>
       </section>
 </body>
