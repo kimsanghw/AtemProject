@@ -89,7 +89,11 @@
         <h2 class="library_title">자료실 상세</h2>
        	<div class="library_board_title"><%=vo.getTitle() %></div>
        	<div class="library_board">작성자 <%=vo.getId() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
-      		<div class="library_board_content"><%=vo.getContent() %></div>
+      		<div class="library_board_content"><%=vo.getContent() %>
+      		<% if(vo.getNewFileName()!=null && !vo.getNewFileName().equals("")) {%>
+      		<img src="../upload/<%=vo.getNewFileName()%>">
+      		<%} %>
+      		</div>
        	<div class="library_board_file"><%=vo.getOrgFileName() %></div>
         
         

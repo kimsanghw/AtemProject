@@ -1,5 +1,6 @@
 package FrontController;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +11,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import FrontController.util.DBConn;
 import FrontController.vo.UserVO;
@@ -204,7 +208,7 @@ public class library_controller {
 				psmt.executeUpdate();
 				
 				// 게시글 정보 가져오기 쿼리
-				sql = "SELECT l.*, u.id, f.orgFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?"; 
+				sql = "SELECT l.*, u.id, f.orgFileName,f.newFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?"; 
 				// 리스트 생성
 				psmt = conn.prepareStatement(sql);
 				psmt.setInt(1, lno);
@@ -222,6 +226,7 @@ public class library_controller {
 					vo.setState(rs.getString("state"));
 					vo.setContent(rs.getString("content"));
 					vo.setOrgFileName(rs.getString("orgFileName"));
+					vo.setNewFileName(rs.getString("newFileName"));
 					
 					// 모델에 리스트 저장
 					request.setAttribute("vo", vo);
@@ -281,13 +286,34 @@ public class library_controller {
 		request.getRequestDispatcher("/WEB-INF/library_board/library_modify.jsp").forward(request, response);
 		
 	}
-	private void library_modifyOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+private void library_modifyOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		request.setCharacterEncoding("UTF-8");
 		
-		int lno = Integer.parseInt(request.getParameter("lno"));
-		String title = request.getParameter("title");
-		String content = request.getParameter("content");
+		 // 파일 업로드 설정
+	    int size = 10 * 1024 * 1024;  // 최대 파일 크기 10MB
+	    String uploadPath = request.getSession().getServletContext().getRealPath("/upload");  // 서버 상의 파일 저장 경로
+	    MultipartRequest multi = null;
+
+	    try {
+	        // MultipartRequest를 사용해 파일 업로드 및 폼 데이터를 처리
+	        multi = new MultipartRequest(
+	                request,
+	                uploadPath,
+	                size,
+	                "UTF-8",
+	                new DefaultFileRenamePolicy()
+	        );
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.sendRedirect("/error.jsp");  // 오류 페이지로 리다이렉트
+	        return;
+	    }
+		
+		
+		int lno = Integer.parseInt(multi.getParameter("lno"));
+		String title = multi.getParameter("title");
+		String content = multi.getParameter("content");
 		
 		
 		Connection conn = null;
@@ -329,45 +355,105 @@ public class library_controller {
 		}
 	}
 	private void library_writeok(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		request.setCharacterEncoding("UTF-8");
-		
-		HttpSession session = request.getSession();
-		String title = request.getParameter("title");
-		String content = request.getParameter("content");
-		UserVO loginVO = (UserVO)session.getAttribute("loginUser");
-				
-		Connection conn = null;// DB 연결
-		PreparedStatement psmt = null;// SQL 등록 실행
-		
-		try {
-			conn = DBConn.conn();
-			
-			String sql = "insert into library( title,content,uno) values(?,?,?)";
-			
-			psmt = conn.prepareStatement(sql);
-			
-			psmt.setString(1, title); 
-			psmt.setString(2, content); 
-			psmt.setInt(3, loginVO.getUno()); 
-			
-			int result = psmt.executeUpdate();  // SQL 실행 (데이터 삽입)
-			
-			if(result > 0) {
-				response.sendRedirect("library_list.do");
-			}
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				DBConn.close(psmt, conn);
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
+	    // 요청 데이터의 인코딩 설정
+	    request.setCharacterEncoding("UTF-8");
+
+	    // 세션에서 로그인된 사용자 정보 가져오기
+	    HttpSession session = request.getSession();
+	    UserVO loginVO = (UserVO) session.getAttribute("loginUser");
+
+	    // 파일 업로드 설정
+	    int size = 10 * 1024 * 1024;  // 최대 파일 크기 10MB
+	    String uploadPath = request.getSession().getServletContext().getRealPath("/upload");  // 서버 상의 파일 저장 경로
+	    MultipartRequest multi = null;
+
+	    try {
+	        // MultipartRequest를 사용해 파일 업로드 및 폼 데이터를 처리
+	        multi = new MultipartRequest(
+	                request,
+	                uploadPath,
+	                size,
+	                "UTF-8",
+	                new DefaultFileRenamePolicy()
+	        );
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.sendRedirect("/error.jsp");  // 오류 페이지로 리다이렉트
+	        return;
+	    }
+
+	    // MultipartRequest에서 title과 content 가져오기
+	    String title = multi.getParameter("title");
+	    String content = multi.getParameter("content");
+
+	    // 파일 관련 변수 초기화
+	    Enumeration<?> files = multi.getFileNames();
+	    String phyName = "";  // 서버에 저장될 실제 파일명
+	    String logiName = ""; // 원본 파일명 (사용자가 업로드한 파일명)
+
+	    if (files.hasMoreElements()) {
+	        String fileElement = (String) files.nextElement();
+	        String fileName = multi.getFilesystemName(fileElement);  // 저장된 파일명 가져오기
+	        if (fileName != null) {
+	            phyName = UUID.randomUUID().toString();  // 고유한 이름 생성
+	            File srcFile = new File(uploadPath + File.separator + fileName);
+	            File targetFile = new File(uploadPath + File.separator + phyName);
+	            if (srcFile.renameTo(targetFile)) {  // 파일명 변경
+	                logiName = multi.getOriginalFileName(fileElement);  // 원본 파일명 저장
+	            }
+	        }
+	    }
+
+	    Connection conn = null;  // DB 연결
+	    PreparedStatement psmt = null;
+
+	    try {
+	        // DB 연결
+	        conn = DBConn.conn();
+
+	        // 1. library 테이블에 데이터 삽입 (게시글 정보)
+	        String sql = "INSERT INTO library(title, content, uno) VALUES(?, ?, ?)";
+	        psmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+	        psmt.setString(1, title);
+	        psmt.setString(2, content);
+	        psmt.setInt(3, loginVO.getUno());
+	        int result = psmt.executeUpdate();  // SQL 실행 (데이터 삽입)
+
+	        // 게시글 데이터가 성공적으로 삽입되면 파일 정보 삽입
+	        if (result > 0) {
+	            ResultSet generatedKeys = psmt.getGeneratedKeys();
+	            if (generatedKeys.next()) {
+	                int lno = generatedKeys.getInt(1);  // 생성된 lno 가져오기
+
+	                // 2. file 테이블에 파일 정보 삽입 (파일이 있는 경우)
+	                if (!logiName.isEmpty() && !phyName.isEmpty()) {
+	                    String fileSql = "INSERT INTO file(orgFileName, newFileName, lno) VALUES(?, ?, ?)";
+	                    try (PreparedStatement filePsmt = conn.prepareStatement(fileSql)) {
+	                        filePsmt.setString(1, logiName);
+	                        filePsmt.setString(2, phyName);
+	                        filePsmt.setInt(3, lno);
+	                        filePsmt.executeUpdate();
+	                        System.out.println("File inserted successfully: " + logiName + " -> " + phyName);
+	                    }
+	                }
+	            }
+	            // 게시글 목록 페이지로 리다이렉트
+	            response.sendRedirect("library_list.do");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.getWriter().println("Error: 데이터베이스 처리 중 오류가 발생했습니다.");
+	    } finally {
+	        // 리소스 해제
+	        try {
+	            DBConn.close(psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
+
+	
 	private void library_delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		
