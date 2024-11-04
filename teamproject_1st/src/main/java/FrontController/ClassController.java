@@ -20,6 +20,7 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import FrontController.util.DBConn;
+import FrontController.util.PagingUtil;
 import FrontController.vo.ClassVO;
 import FrontController.vo.UserVO;
 
@@ -50,9 +51,12 @@ public class ClassController {
 			} else if(request.getMethod().equals("POST")) {
 				modifyOk(request,response);
 			}
+		} else if(comments[comments.length-1].equals("delete.do")) {
+			if(request.getMethod().equals("POST")){
+				delete(request,response);
+			} 
 		}
 	}
-	
 	public void view (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int cno = Integer.parseInt(request.getParameter("cno"));
 		
@@ -100,17 +104,44 @@ public class ClassController {
 		}
 	}
 	public void list (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		String searchType = request.getParameter("searchType");
+		
+		
 		List<ClassVO> coursList  = new ArrayList<ClassVO>();
+		int nowPage = 1;
+		
+		if(request.getParameter("nowPage") != null && !request.getParameter("nowPage").isEmpty()){
+		    nowPage = Integer.parseInt(request.getParameter("nowPage"));
+		} else {
+		    nowPage = 1;
+		}
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		ResultSet rs = null;
+		PreparedStatement psmtTotal = null;
+		ResultSet rsTotal = null;
+		
 		try {
 			conn = DBConn.conn();
-	        String sql = "SELECT c.*, cf.* FROM class c, cfile cf WHERE c.cno=cf.cno;";
-	        
-	        psmt = conn.prepareStatement(sql);
-	        rs = psmt.executeQuery();
+	        String sqlTotal = "SELECT COUNT(*) AS total FROM class c JOIN user u ON c.uno = u.uno WHERE c.state = 'E'";
+
+	        psmtTotal = conn.prepareStatement(sqlTotal);
+	        rsTotal = psmtTotal.executeQuery();
+	        int total = 0;
+			if(rsTotal.next()){
+				total = rsTotal.getInt("total");
+			}
+			
+			PagingUtil paging = new PagingUtil(nowPage,total,5); 
+			
+			String sql = "SELECT c.*, cf.* FROM class c LEFT JOIN cfile cf ON c.cno = cf.cno WHERE c.state = 'E' ORDER BY c.rdate DESC LIMIT ? OFFSET ?";
+
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, paging.getPerPage());
+			psmt.setInt(2, (paging.getNowPage() - 1) * paging.getPerPage());
+			rs = psmt.executeQuery();
 	        
 	        while(rs.next()) {
 				ClassVO vo = new ClassVO();
@@ -123,9 +154,10 @@ public class ClassController {
 				
 				coursList.add(vo);
 			}
-	        
 	        request.setAttribute("coursList", coursList);
+	        request.setAttribute("paging", paging);
 	        
+	        request.getRequestDispatcher("/WEB-INF/class/class_list.jsp").forward(request, response);
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -135,7 +167,7 @@ public class ClassController {
 	            e.printStackTrace();
 	        }
 		}
-		request.getRequestDispatcher("/WEB-INF/class/class_list.jsp").forward(request, response);
+		
 	}
 	public void writer (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getRequestDispatcher("/WEB-INF/class/class_add.jsp").forward(request, response);
@@ -248,9 +280,175 @@ public class ClassController {
 			    }
 	}
 	public void modify (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("/WEB-INF/class/class_modify.jsp").forward(request, response);
-	}	
+		int cno = Integer.parseInt(request.getParameter("cno"));
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DBConn.conn();
+			
+			String sql = "SELECT cno, title, c.name, subject, difficult, book, c.uno FROM class c INNER JOIN user u ON c.uno = u.uno WHERE cno = ?";			
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, cno);
+			
+			rs = psmt.executeQuery();
+			
+			if(rs.next()) {
+				ClassVO vo = new ClassVO();
+				vo.setName(rs.getString("name"));
+				vo.setTitle(rs.getString("title"));
+				vo.setSubject(rs.getString("subject"));
+				vo.setDifficult(rs.getString("difficult"));
+				vo.setBook(rs.getString("book"));
+				vo.setUno(rs.getInt("uno"));
+				vo.setCno(rs.getInt("cno"));
+				
+				request.setAttribute("vo", vo);
+				request.getRequestDispatcher("/WEB-INF/class/class_modify.jsp").forward(request, response);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+		}
+	}
 	public void modifyOk (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("/WEB-INF/class/class_modify.jsp").forward(request, response);
+		int size = 10*1024*1024; // 첨부파일의 크기 4MB?
+		String uploadPath = request.getSession().getServletContext().getRealPath("/upload"); //절대경로
+		MultipartRequest multi = null;
+
+		try{
+		multi = new MultipartRequest(
+				request, 
+				uploadPath, 
+				size, 
+				"UTF-8", 
+				new DefaultFileRenamePolicy()	
+				);
+		}catch( Exception e){
+			System.out.println(e);
+			response.sendRedirect(""); return;
+		}
+		
+		String name = multi.getParameter("name");
+		Enumeration<?> files= multi.getFileNames();
+		String phyName = "";
+		String logiName = "";
+		
+		if (files != null) {
+		    String fileId = (String) files.nextElement();
+		    String fileName = multi.getFilesystemName("attach");
+		    if (fileName != null) {
+		        String newFileName = UUID.randomUUID().toString();
+		        String orgName = uploadPath + "\\" + fileName;
+		        String newName = uploadPath + "\\" + newFileName;
+		        File srcFile = new File(orgName);
+		        File targetFile = new File(newName);
+		        if (srcFile.renameTo(targetFile)) {
+		            phyName = newFileName;
+		            logiName = multi.getOriginalFileName("attach"); // 원본 파일명 가져오기
+		        }
+		    }
+		}
+			request.setCharacterEncoding("UTF-8");
+			HttpSession session = request.getSession();
+			UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+			
+
+			int uno = loginUser.getUno(); 
+			int cno =  Integer.parseInt(multi.getParameter("cno"));
+			System.out.println("현재 cno : "+Integer.parseInt(multi.getParameter("cno")));
+			String title = multi.getParameter("title"); 
+			String teacher_name = multi.getParameter("teacher_name");
+			String subject = multi.getParameter("subject");
+			String jdate = multi.getParameter("jdate");
+			String difficult = multi.getParameter("difficult");
+			String book = multi.getParameter("book");
+			String duringclass = multi.getParameter("duringclass");
+			String orgFileName = multi.getOriginalFileName("attach");
+			String end_jdate = multi.getParameter("end_jdate");
+			String end_duringclass = multi.getParameter("end_duringclass");
+			
+			Connection conn = null;
+			PreparedStatement psmt = null;
+			ResultSet rs = null;
+			try {
+		        conn = DBConn.conn();
+		        String classSql = "UPDATE class SET title=?, subject=?, jdate=?, difficult=?, book=?, duringclass=?, name=?, end_jdate=?, end_duringclass=? WHERE cno = ?"; //orgfilename = ?
+		        
+		        // Statement.RETURN_GENERATED_KEYS를 지정하여 PreparedStatement 생성
+		        psmt = conn.prepareStatement(classSql);
+		        psmt.setString(1, title);
+		        psmt.setString(2, subject);
+		        psmt.setString(3, jdate);
+		        psmt.setString(4, difficult);
+		        psmt.setString(5, book);
+		        psmt.setString(6, duringclass);
+		        psmt.setString(7, name);
+		        psmt.setString(8, end_jdate);
+		        psmt.setString(9, end_duringclass);
+		        psmt.setInt(10, cno);
+		        
+		        int classResult = psmt.executeUpdate();
+		        
+		        if (classResult > 0) {
+		                String fileSql = "UPDATE cfile SET orgFileName=?, NewFileName=?, cno = ? WHERE cno = ?";
+		                psmt = conn.prepareStatement(fileSql);
+		                psmt.setString(1, logiName);
+		                psmt.setString(2, phyName);
+		                psmt.setInt(3, cno);
+		                psmt.setInt(4, cno);
+
+		                int fileResult = psmt.executeUpdate();
+		                //현재는 file테이블이 나누어져있기때문에 이렇게 작성했지만 테이블이 한개가 된다면 사라질 내용
+		            }
+		        response.sendRedirect(request.getContextPath() + "/class/view.do?cno=" + cno);
+			    } catch (Exception e) {
+			        e.printStackTrace();
+			    } finally {
+			        try {
+			            DBConn.close(rs, psmt, conn);
+			        } catch (Exception e) {
+			            e.printStackTrace();
+			        }
+			    }
+	}
+	public void delete (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int cno = Integer.parseInt(request.getParameter("cno"));
+		System.out.println("현재 cno " + cno );
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		
+		try {
+			
+			conn = DBConn.conn();
+			
+			String sql = "UPDATE class SET state='D' WHERE cno = ?";
+			
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, cno);
+			
+			psmt.executeUpdate();
+			
+			//3. /board/main.do�� �̵�
+			response.sendRedirect(request.getContextPath()+"/class/list.do");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
+	

@@ -2,11 +2,6 @@ package FrontController.vo;
 
 public class ClassVO {
 	
-
-	
-	
-	
-	
 	private String title;
 	private String book;
 	private String rdate;

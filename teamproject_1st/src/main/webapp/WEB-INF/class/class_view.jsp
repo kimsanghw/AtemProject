@@ -193,16 +193,19 @@
         <hr>
         <div class="mother">
         	<span class="center_button"><button class="register-btn">수강신청</button></span>
-            <span class="center_button"><button class="register-btn" onclick="<%=request.getContextPath()%>/class/list.do">목록</button></span>
+            <span class="center_button"><button class="register-btn" onclick="location.href='<%=request.getContextPath()%>/class/list.do'">목록</button></span>
             
 			<%
 			    if (user != null) {
 			        String authorization = user.getAuthorization();
 			        if ("A".equals(authorization)) {
 			%>
-			            <span><button class="register-btn" onclick="<%=request.getContextPath()%>/class/modify.do">수정</button></span>
-			            <span><button class="register-btn">삭제</button></span>
-			<%
+			            <span><button class="register-btn" onclick="location.href='<%=request.getContextPath()%>/class/modify.do?cno=<%=vo.getCno()%>'">수정</button></span>
+			            <span><button class="register-btn" onclick="document.frm.submit()">삭제</button></span>
+			            <form name="frm" action="<%=request.getContextPath()%>/class/delete.do" method="POSt">
+			            	<input type="hidden" name="cno" value="<%=vo.getCno() %>">
+			            </form>			
+			            <%
 			        }
 			    }
 			%>
