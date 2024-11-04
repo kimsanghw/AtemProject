@@ -1,6 +1,11 @@
+<%@page import="FrontController.vo.libraryVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ include file="../../include/header.jsp" %>
+
+<%
+	libraryVO vo = (libraryVO)request.getAttribute("vo");
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,14 +102,15 @@
 <body>
       <section>
         <h2 class="library_title">자료실 수정</h2>
-        <form action="modify.do" method="post">
+        <form action="<%=request.getContextPath()%>/library/library_modify.do" method="post">
+       		<input type="hidden" name="lno" value="<%=vo.getLno()%>">	
             <div class="library_title_write">
-                <input type="text" placeholder="제목을 입력해주세요." name="title">
+                <input type="text" placeholder="제목을 입력해주세요." name="title" value="<%=vo.getTitle()%>">
             </div>
             <div class="library_body_write">
-                <textarea name="content" placeholder="내용을 입력해주세요."></textarea>
+                <textarea name="content" placeholder="내용을 입력해주세요."><%= vo.getContent() %></textarea>
             </div>
-            <div class="box">asfafaseqfkewqkf.jpg</div>
+            <div class="box"><%= vo.getOrgFileName() %></div>
             <div class="library_board_file">
                 <button>첨부파일</button>
             </div>
