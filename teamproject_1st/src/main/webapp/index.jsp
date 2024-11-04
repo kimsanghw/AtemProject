@@ -1,7 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="FrontController.vo.UserVO" %>
+<%@ page import="FrontController.IndexNoticeController" %>
+<%@ page import="FrontController.IndexLibraryController" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="FrontController.vo.NoticeVO" %>
+<%@ page import="FrontController.vo.libraryVO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -282,45 +287,51 @@
 <body>
 	 <!-- Swiper -->
 	 <%
-	 	UserVO userId = (UserVO) session.getAttribute("loginUser");
+	 UserVO userId = (UserVO) session.getAttribute("loginUser");
 	 %>
   <div class="swiper mySwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
         <div class="wallpaper"><img src="./img/common.png"></div>
         <div class="index_loginPage headerSlide">
-        <% if(userId == null) { %>
+        <%
+        if(userId == null) {
+        %>
             <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
-        <% } else { %>
+        <%
+        } else {
+        %>
             <div class="index_logOut"><a href="<%=request.getContextPath()%>/user/logout.do">로그아웃</a>　|　<a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지</a></div> <!-- 로그인 시 나오는 div 영역 -->
-        <% } %>
+        <%
+        }
+        %>
           </div>
         <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="img/로고1.png"></a></h1>
         <div class="index_nav headerSlide">
           <ul>
             <li><a href="<%=request.getContextPath()%>/class/list.do">수강신청</a></li>
-           <% 
-        if (userId != null) {
-            String authorization = userId.getAuthorization();
-            if ("T".equals(authorization) || "A".equals(authorization)) { 
-    %>
+           <%
+           if (userId != null) {
+                       String authorization = userId.getAuthorization();
+                       if ("T".equals(authorization) || "A".equals(authorization)) {
+           %>
                 <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
-    <% 
-            } else { 
+    <%
+    } else {
     %>
                 <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
-    <% 
-            }
-        } else { 
+    <%
+    }
+            } else {
     %>
     
         <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
-    <% 
-        } 
+    <%
+    }
     %>
             <li><a href="#">공지사항</a></li>
             <li><a href="#">QnA</a></li>
-            <li><a href="<%=request.getContextPath() %>/library/library_list.do">자료실</a></li>
+            <li><a href="<%=request.getContextPath()%>/library/library_list.do">자료실</a></li>
           </ul>
         </div>
         <form action="<%=request.getContextPath()%>/search/search.do" method="GET">
@@ -341,13 +352,22 @@
             <h2>공지사항</h2>
             <div class="index_notice_look"><a href="#">+ 더보기</a></div>
             <div class="index_notice_content">
+            <%
+            IndexNoticeController nCon = new IndexNoticeController();
+                        
+                        List<NoticeVO> list = null;
+                        list = nCon.makeNoticeList();
+            	System.out.println(list.size());
+            %>
               <div>
-                <div class="notice_content"><a href="#">뭔가 css하기싫은데 해야될 것 같은 느낌11111111111111111111111111111111111111</a></div>
-                <div class="index_notice_line"><!--라인--></div>
-                <div class="notice_content"><a href="#">아 진짜 너무 하기싫은데 아 너무 귀찮아</a></div>
-                <div class="index_notice_line"><!--라인--></div>
-                <div class="notice_content"><a href="#">그래도 해야겠지? 어쩌겠어 취업해야지</a></div>
-                <div class="index_notice_line"><!--라인--></div>
+              <%
+              if(list != null){
+	              for( NoticeVO nVO : list )
+    	          {	%>
+	                <div class="notice_content"><a href="#"><%= nVO.getTitle() %></a></div>
+	                <div class="index_notice_line"><!--라인--></div>
+            <%	  }
+	          }%>
               </div>
             </div>
           </div>
@@ -356,12 +376,22 @@
             <div class="index_library_look"><a href="#">+ 더보기</a></div>
             <div class="index_library_content">
               <div>
-                <div class="library_content"><a href="#">뭔가 css하기싫은데 해야될 것 같은 느낌11111111111111111111111111111111111111</a></div>
-                <div class="index_library_line"><!--라인--></div>
-                <div class="notice_content"><a href="#">아 진짜 너무 하기싫은데 아 너무 귀찮아asdsadsadadsadsadasdsadasdsadasdasdasd</a></div>
-                <div class="index_library_line"><!--라인--></div>
-                <div class="notice_content"><a href="#">그래도 해야겠지? 어쩌겠어 취업해야지</a></div>
-                <div class="index_library_line"><!--라인--></div>
+              <%
+            IndexLibraryController lCon = new IndexLibraryController();
+                        
+                        List<libraryVO> llist = null;
+                        llist = lCon.makeLibraryList();
+            	System.out.println(list.size());
+            %>
+              <div>
+              <%
+              if(list != null){
+	              for( libraryVO lVO : llist )
+    	          {	%>
+	                <div class="notice_content"><a href="#"><%= lVO.getTitle() %></a></div>
+	                <div class="index_notice_line"><!--라인--></div>
+            <%	  }
+	          }%>
               </div>
             </div>
           </div>
