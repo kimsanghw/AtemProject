@@ -169,7 +169,6 @@
               <table>
                 <thead>
                   <tr>
-                    <td style="width: 40px;"><input type="checkbox"></td>
                     <td style="width: 40px;">번호</td>
                     <td style="width: 40px;">이름</td>
                     <td style="width: 40px;">출결구분</td>
@@ -177,24 +176,24 @@
                 </thead>
                 <tbody>
                   <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="post" id="attendanceInfo">
+                  <% int studnetNumber = 1; %>
                   <%for(App_classVO studentInfo : attendanceList){%>
                     <tr>
-                      <td style="width: 40px;"></td>
+                      <td style="width: 40px;"><%= studnetNumber %></td>
                       <td style="width: 40px;"><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
                       <td style="width: 40px;"><%= studentInfo.getName() %></td>
                       <td><%= studentInfo.getAttendance() %></td>
                       <td>
-                        <div class="check_button">
                           <select>
                           	<option value="출석">출석</option>
                           	<option value="지각">지각</option>
                           	<option value="조퇴">조퇴</option>
                           	<option value="병결">병결</option>
                           	<option value="결석">결석</option>
-                          </select>
-                        </div>
+                          </select>   
                       </td>
                     </tr>
+                    <% studnetNumber++; %> 
                     <%} %>
                 </tbody>
               </table>
