@@ -47,15 +47,13 @@
             margin-top: -62px;
         }
         .library_title{
-          position: absolute;
           left: 50%;
-          margin: 47px 0 0 -600px;
+          margin: 50px 350px;
           padding: 0;
         }
         .table{
-          position: absolute;
           left: 50%;
-          margin: 140px 0 0 -600px;
+          margin: 20px auto;
           border: 0;
           border-collapse: collapse;
           text-align: center;
@@ -79,7 +77,6 @@
           font-size: 15px;
           border: none;
           border-radius:20px;
-          margin-top: 670px;
           margin-left: 1480px;
           cursor: pointer;
         }
@@ -143,7 +140,19 @@
           <%} %>
           </tbody>
         </table>
-            <button class="button" onclick="location.href='<%=request.getContextPath()%>/library/library_write.do'">등록</button>
+       <%
+    // 세션에서 로그인 정보 확인하기
+    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+
+    // 로그인한 사용자가 있고, 권한이 "T"인 경우에만 등록 버튼을 표시
+    if (loginUser != null && "T".equals(loginUser.getAuthorization())) {
+%>
+        <button class="button" onclick="location.href='<%=request.getContextPath()%>/library/library_write.do'">등록</button>
+<%
+    }
+%>
+
+            
             <!-- 페이지 네비게이션 추가 -->
         <div class="paging">
         	<%

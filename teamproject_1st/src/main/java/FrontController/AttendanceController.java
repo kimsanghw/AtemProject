@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +35,46 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 			attendanceList(request,response);
 			}
+		}else if(comments[comments.length-1].equals("attendanceClass.do")) {
+			if(request.getMethod().equals("GET")) {
+				attendanceClass(request,response);
+				}
 		}
+	}
+	public void attendanceClass(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		HttpSession session = request.getSession();
+		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		List<ClassVO> clist  = new ArrayList<ClassVO>();
+		
+		
+		int uno = loginUser.getUno();
+		String teacherName = loginUser.getName();
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			conn = DBConn.conn();
+			
+			
+			String sql = "";
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			}finally {
+				
+				try {
+					DBConn.close(rs, psmt, conn);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		
+		
 	}
 	
 	public void attendanceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -156,57 +195,63 @@ public class AttendanceController {
 	
 	public void attendanceView (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		HttpSession session = request.getSession();
-		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-		List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist"); 
-		List<App_classVO> attendanceList  = new ArrayList<>();
-		int uno = loginUser.getUno();
-		String teacherName = loginUser.getName();
-		int classNumber = (clist != null && !clist.isEmpty()) ? clist.get(0).getCno() : 0;
-
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");    
+	    List<App_classVO> attendanceList  = new ArrayList<>();
+	    String selectedDate = request.getParameter("date"); // 선택한 날짜 가져오기
+	    String todayDate = request.getParameter("now()");
+	    int cno = Integer.parseInt(request.getParameter("cno"));
+		
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		ResultSet rs = null;
 		
-		String selectedDate = request.getParameter("date");
 		
 		
 		try {
 			conn = DBConn.conn();
 			
-			   String sql = "SELECT u.uno AS 학생번호, u.name AS 학생이름, u.id AS 학생아이디, "
-		                   + "a.attendance AS 출결상태, a.rdate AS 출결일자, a.ano AS 출결번호 "
-		                   + "FROM attendance a "
-		                   + "JOIN app_class ac ON a.acno = ac.acno "
-		                   + "JOIN USER u ON a.uno = u.uno "
-		                   + "JOIN class c ON ac.cno = c.cno "
-		                   + "WHERE c.cno = ? "
-		                   + "AND DATE(a.rdate) = ? " 
-		                   + "AND a.state = 'E' AND u.state = 'E' AND ac.state = 'E'";
-		        
+			String sql = " SELECT u.uno AS 학생번호, u.name AS 학생이름, a.attendance AS 출결상태, "
+	                   + " a.rdate AS 출결일자, a.ano AS 출결번호 "
+	                   + " FROM attendance a "
+	                   + " JOIN USER u ON a.uno = u.uno "
+	                   + " JOIN class c ON a.cno = c.cno "
+	                   + " WHERE c.cno = ? "
+	                   + " AND DATE(a.rdate) = ?"  
+	                   + " AND a.state = 'E' AND u.state = 'E' AND c.state = 'E'";
+
 			
-			psmt = conn.prepareStatement(sql);	
-			psmt.setInt(1, classNumber);
-		    psmt.setString(2, selectedDate != null ? selectedDate : "NOW()");
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1,cno);
+			if (selectedDate != null) {
+	            psmt.setString(2, selectedDate);
+	            System.out.println(selectedDate);
+	        }else {
+	            // 현재 날짜를 기본 값으로 설정
+	            todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+	            psmt.setString(2, todayDate); // 기본 날짜로 오늘 날짜 설정
+	        }
 		    rs = psmt.executeQuery();
-		  
+		    System.out.println(selectedDate);
 	        
 	        while (rs.next()) {
 	        	App_classVO studentInfo = new App_classVO();
 	            studentInfo.setUno(rs.getInt("학생번호"));
 	            studentInfo.setName(rs.getString("학생이름"));
-	            studentInfo.setId(rs.getString("학생아이디"));
 	            studentInfo.setAttendance(rs.getString("출결상태"));
 	            studentInfo.setRdate(rs.getString("출결일자"));
-	            studentInfo.setCno(rs.getInt("cno"));
-	            studentInfo.setState(rs.getString("state"));
 	            studentInfo.setAno(rs.getInt("출결번호"));
 
 	            attendanceList.add(studentInfo);
 	        }
-
+	        request.setAttribute("attendanceList", attendanceList);
+			request.setAttribute("cno", cno );
+			request.setAttribute("selectedDate", selectedDate);
+			System.out.println(selectedDate);
+			request.setAttribute("todayDate", todayDate);
 			
 			
+			request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -219,17 +264,7 @@ public class AttendanceController {
 					e.printStackTrace();
 				}
 		}
-		 System.out.println("-------------------------------------------------------------------------------------");
-		System.out.println("attendanceList size: " + attendanceList.size());
-		request.setAttribute("attendanceList", attendanceList);
-		 System.out.println("-------------------------------------------------------------------------------------");
-		request.setAttribute("selectedDate", selectedDate);
-		System.out.println(selectedDate);
-		 System.out.println("-------------------------------------------------------------------------------------");
-		request.setAttribute("classNumber",classNumber );
-		System.out.println(classNumber);
-	
-		request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+		 
 		
 	}
 

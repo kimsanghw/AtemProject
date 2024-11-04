@@ -6,6 +6,22 @@
 <%
 	libraryVO vo = (libraryVO)request.getAttribute("vo");
 %>
+<%
+	//세션에서 로그인 정보 확인하기
+	UserVO loginUser;
+	// 세션에서 값 가져오기
+	loginUser = (UserVO)session.getAttribute("loginUser");
+	// 로그인 정보가 없으면 내보냄
+	if( loginUser == null) {	/* <!-- 로그인 정보가 없음 --> */
+		%>
+		<script>
+			alert('로그인이 필요합니다.');
+			location.href='<%=request.getContextPath()%>/user/login.do'
+		</script>
+		
+		<%
+	}
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -89,7 +105,11 @@
         <h2 class="library_title">자료실 상세</h2>
        	<div class="library_board_title"><%=vo.getTitle() %></div>
        	<div class="library_board">작성자 <%=vo.getId() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
-      		<div class="library_board_content"><%=vo.getContent() %></div>
+      		<div class="library_board_content"><%=vo.getContent() %>
+      		<% if(vo.getNewFileName()!=null && !vo.getNewFileName().equals("")) {%>
+      		<img src="../upload/<%=vo.getNewFileName()%>">
+      		<%} %>
+      		</div>
        	<div class="library_board_file"><%=vo.getOrgFileName() %></div>
         
         

@@ -52,14 +52,6 @@
             border-top: none;
             outline: none;
         }
-        .library_board_file{
-            width: 100px;
-            position: absolute;
-            left: 50%;
-            top: 550px;
-            left: 530px;
-            padding-bottom: 10px;
-        }
         .library_board_line{
             top: 580px;
             left: 365px;
@@ -102,7 +94,7 @@
 <body>
       <section>
         <h2 class="library_title">자료실 수정</h2>
-        <form action="<%=request.getContextPath()%>/library/library_modify.do" method="post">
+        <form action="<%=request.getContextPath()%>/library/library_modify.do" method="post" enctype="multipart/form-data">
        		<input type="hidden" name="lno" value="<%=vo.getLno()%>">	
             <div class="library_title_write">
                 <input type="text" placeholder="제목을 입력해주세요." name="title" value="<%=vo.getTitle()%>">
@@ -110,10 +102,7 @@
             <div class="library_body_write">
                 <textarea name="content" placeholder="내용을 입력해주세요."><%= vo.getContent() %></textarea>
             </div>
-            <div class="box"><%= vo.getOrgFileName() %></div>
-            <div class="library_board_file">
-                <button>첨부파일</button>
-            </div>
+            <div class="box"><input type="file" name="attach" ></div>
             <div class="library_board_button">
                 <button type="submit">등록</button>
                 <button type="button">취소</button>
