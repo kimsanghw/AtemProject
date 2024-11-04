@@ -243,11 +243,90 @@ public class library_controller {
 		
 	}
 	private void library_modify(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		int lno = Integer.parseInt(request.getParameter("lno"));
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			conn = DBConn.conn();
+			String sql = "SELECT l.lno, l.title, l.content, u.id, f.orgFileName FROM library l INNER JOIN user u ON l.uno = u.uno LEFT JOIN file f ON f.lno = l.lno WHERE l.lno = ?";
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, lno);
+			rs = psmt.executeQuery();
+			
+			if(rs.next()) {
+				libraryVO vo = new libraryVO();
+				vo.setLno(rs.getInt("lno"));
+				vo.setTitle(rs.getString("title"));
+				vo.setId(rs.getString("id"));
+				vo.setContent(rs.getString("content"));
+				vo.setOrgFileName("orgFileName");
+				
+				request.setAttribute("vo", vo);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(rs, psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		request.getRequestDispatcher("/WEB-INF/library_board/library_modify.jsp").forward(request, response);
 		
 	}
 	private void library_modifyOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		request.setCharacterEncoding("UTF-8");
+		
+		int lno = Integer.parseInt(request.getParameter("lno"));
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
+		
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		
+		
+		
+		try {
+			
+			conn = DBConn.conn();
+			
+	        // 1. library 테이블 업데이트 (title, content 수정)
+	        String sql = "UPDATE library SET title = ?, content = ? WHERE lno = ?";
+	        
+	        psmt = conn.prepareStatement(sql);
+	        
+	        psmt.setString(1, title);
+	        psmt.setString(2, content);
+	        psmt.setInt(3, lno);
+	        
+	        psmt.executeUpdate();
+	        
+	        
+	        // 쿼리 실행
+	        int result = psmt.executeUpdate();
+
+	        // 성공 시 리다이렉트
+	        if (result > 0) {
+	            response.sendRedirect("library_view.do?lno="+lno);
+	        }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	private void library_writeok(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -308,8 +387,6 @@ public class library_controller {
 			
 			int result = psmt.executeUpdate();
 			
-			
-			
 			response.sendRedirect(request.getContextPath()+"/library/library_list.do");
 			
 		}catch(Exception e) {
@@ -323,5 +400,6 @@ public class library_controller {
 		}
 	}
 
+	
 
 }
