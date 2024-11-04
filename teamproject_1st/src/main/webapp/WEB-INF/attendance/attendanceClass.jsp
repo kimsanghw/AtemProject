@@ -3,22 +3,8 @@
 <%@ include file="../../include/header.jsp" %>
 
 <title>Insert title here</title>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth'
-            });
-            calendar.render();
-
-            // 전역 변수로 calendar를 참조할 수 있도록 설정
-            window.calendar = calendar;
-        });
-
-    </script>
 <style>
-.section {
+	.section {
       flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
       padding-bottom: 80px;
     }
@@ -126,10 +112,10 @@
          margin-left: 50px;
 		}
     </style>
-	 <section>
+     <section>
         <div class="attendance_info">출결정보</div>
         <div class="info_flex">
-            <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClasee.do">수강중인 강의 ></a></div>
+            <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">수강중인 강의 ></a></div>
             <div class="app_line"></div>
             <div class="attendance_check class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceCheck.do">출석체크하기 ></a></div>
             <div class="app_line"></div>
@@ -137,8 +123,7 @@
             <div class="app_line"></div>
         </div>
         <div class="attendance_box info_flex">
-            <div class="app_check">출석정보</div>
-            <div id='calendar' ></div>
+            <div class="app_check">수강 중인 강의</div>
         </div>
     </section>
 <%@ include file="../../include/footer.jsp" %>

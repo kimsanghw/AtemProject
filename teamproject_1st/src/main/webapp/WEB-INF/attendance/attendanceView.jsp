@@ -20,9 +20,10 @@
 <%
 
  List<App_classVO> attendanceList = (List<App_classVO>)request.getAttribute("attendanceList");
- String  classNumber = (String)request.getAttribute(" classNumber");
- String selectedDate = attendanceList.isEmpty() ? "" : attendanceList.get(0).getRdate();
-
+ String selectedDate = (String)request.getAttribute("selectedDate");
+ String todayDate = (String)request.getAttribute("todayDate");
+ int cno = (int)request.getAttribute("cno");
+ 
 
 %>
 <style>
@@ -159,8 +160,9 @@
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
             <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
             <div class="today_date" >
-              <input type="date" name="date" id="dateInput" >
-              <span>오늘 일자 : <%=selectedDate%></span>
+              <input type="date" name="date" id="dateInput" value="<%= selectedDate != null ? selectedDate : todayDate %>" >
+              <input type="hidden" name="cno" value="<%=cno%>">
+              <span> 현재 일자 : <%= selectedDate != null ? selectedDate : todayDate %></span>
             </div>
             </form>
             <div class="content_inner">
@@ -177,31 +179,25 @@
                   <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="post" id="attendanceInfo">
                   <%for(App_classVO studentInfo : attendanceList){%>
                     <tr>
-                      <td style="width: 40px;"><input type="checkbox"></td>
-                      <td style="width: 40px;"><%= studentInfo.getAno()%></td>
+                      <td style="width: 40px;"></td>
+                      <td style="width: 40px;"><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
                       <td style="width: 40px;"><%= studentInfo.getName() %></td>
                       <td><%= studentInfo.getAttendance() %></td>
                       <td>
                         <div class="check_button">
-                          <label>
-                          <input type="submit" class="attendance_btn1" value="출석">
-                          <input type="submit" class="attendance_btn1" value="지각">
-                          </label>
+                          <select>
+                          	<option value="출석">출석</option>
+                          	<option value="지각">지각</option>
+                          	<option value="조퇴">조퇴</option>
+                          	<option value="병결">병결</option>
+                          	<option value="결석">결석</option>
+                          </select>
                         </div>
                       </td>
                     </tr>
                     <%} %>
                 </tbody>
               </table>
-              <div class="button">
-                <label>
-                  <input type="submit" class="attendance_btn1" value="출석">
-                  <input type="submit" class="attendance_btn1" value="지각">
-                  <input type="submit" class="attendance_btn1" value="조퇴">
-                  <input type="submit" class="attendance_btn1" value="결석">
-                  <input type="submit" class="attendance_btn1" value="병결">
-                </label>
-                </div>
             </form>
             </div>
           </div>
