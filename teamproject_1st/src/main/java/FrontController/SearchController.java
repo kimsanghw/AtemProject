@@ -26,7 +26,7 @@ public class SearchController {
         String keyword = request.getParameter("search");
         String searchField = request.getParameter("indexSearch");
         int nowPage = 1;
-        int pageSize = 1; // 페이지당 보여줄 게시물 수 (원하는 수치로 조정 가능)
+        int pageSize = 10; // 페이지당 보여줄 게시물 수 (원하는 수치로 조정 가능)
         int pageGroupSize = 10; // 한번에 보여줄 페이지 수 (원하는 수치로 조정 가능)
 
         if (request.getParameter("nowPage") != null) {
