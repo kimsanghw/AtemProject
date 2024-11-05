@@ -160,7 +160,11 @@
         <article>
           <div class="article_inner">
            <h2>출결 관리</h2>
-           
+          <form>
+	          <div>
+	          	<button type=submit>인증코드 생성</button>
+	          </div>
+          </form> 
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
             <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
             <div class="today_date" >

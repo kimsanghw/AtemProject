@@ -7,8 +7,8 @@ import java.sql.ResultSet;
 
 public class DBConn {
 	public static final String URL
-			=	"jdbc:mysql://localhost:3306/TEAM_PROJECT";
-	public static final String USER = "root";
+			=	"jdbc:mysql://192.168.0.4/team_project";
+	public static final String USER = "TEAM_admin";
 	public static final String PASSWORD = "ezen";
 	
 	public static Connection conn() throws Exception {

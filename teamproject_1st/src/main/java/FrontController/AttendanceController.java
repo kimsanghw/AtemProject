@@ -219,7 +219,7 @@ public class AttendanceController {
 		}
 		
 		int uno = loginUser.getUno();
-		String teacherName = loginUser.getName();
+		String name = loginUser.getName();
 
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -246,7 +246,7 @@ public class AttendanceController {
 				
 			psmtTotal = conn.prepareStatement(sqlTotal);
 			psmtTotal.setInt(1,uno);
-			psmtTotal.setString(2, teacherName);
+			psmtTotal.setString(2, name);
 				
 			rsTotal = psmtTotal.executeQuery();
 			
@@ -263,7 +263,7 @@ public class AttendanceController {
 			String sql = " select * ,"
 					   + "(select count(*) from app_class a where a.cno = c.cno ) as cnt"
 					   + "    from class as c , user u"
-					   + "    where c.teacherName = u.name"
+					   + "    where c.name = u.name"
 					   + "      and c.state = 'E' "
 					   + "      and u.name = ?";
 					   
@@ -272,7 +272,7 @@ public class AttendanceController {
 				}
 				sql += " limit ?, ?";
 				psmt = conn.prepareStatement(sql);
-				psmt.setString(1, teacherName);  // 이름 조건 추가
+				psmt.setString(1, name);  // 이름 조건 추가
 		        psmt.setInt(2, paging.getStart());
 		        psmt.setInt(3, paging.getPerPage());
 
