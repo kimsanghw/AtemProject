@@ -24,18 +24,23 @@ public class SearchController {
 
     public void search(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String keyword = request.getParameter("search");
-        String searchField = request.getParameter("indexSearch");  // 검색 필드 선택값 가져오기
+        String searchField = request.getParameter("indexSearch");
         int nowPage = 1;
-        int pageSize = 10;
-        
+        int pageSize = 1; // 페이지당 보여줄 게시물 수 (원하는 수치로 조정 가능)
+        int pageGroupSize = 10; // 한번에 보여줄 페이지 수 (원하는 수치로 조정 가능)
+
         if (request.getParameter("nowPage") != null) {
             nowPage = Integer.parseInt(request.getParameter("nowPage"));
         }
-        int startRow = (nowPage - 1) * pageSize;
         
+        int startRow = (nowPage - 1) * pageSize;
+        int totalRecords = 0;
+
         if (keyword == null || keyword.trim().isEmpty()) {
             request.setAttribute("message", "검색 결과가 없습니다.");
-            request.setAttribute("searchResults", new ArrayList<>()); // 빈 리스트 전달
+            request.setAttribute("searchResults", new ArrayList<>());
+            request.setAttribute("totalPages", 1);
+            request.setAttribute("nowPage", nowPage);
             request.getRequestDispatcher("/WEB-INF/index_search/index_search.jsp").forward(request, response);
             return;
         }
@@ -47,15 +52,49 @@ public class SearchController {
 
         try {
             conn = DBConn.conn();
+
+            // Count total records for pagination
+            String countSql = "SELECT COUNT(*) FROM ("
+                    + "SELECT nno AS no, title, content, '공지게시판' AS type FROM notice_board WHERE state = 'E' "
+                    + "UNION ALL SELECT qno AS no, title, content, 'qna게시판' AS type FROM qna_board WHERE state = 'E' "
+                    + "UNION ALL SELECT lno AS no, title, content, '자료실게시판' AS type FROM library WHERE state = 'E') alltb ";
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                if ("title".equals(searchField)) {
+                    countSql += "WHERE title LIKE ? ";
+                } else if ("content".equals(searchField)) {
+                    countSql += "WHERE content LIKE ? ";
+                } else {
+                    countSql += "WHERE (title LIKE ? OR content LIKE ?) ";
+                }
+            }
             
-            // 기본 검색 SQL
+            psmt = conn.prepareStatement(countSql);
+            int paramIndex = 1;
+            String searchKeyword = "%" + keyword + "%";
+            if ("title".equals(searchField) || "content".equals(searchField)) {
+                psmt.setString(paramIndex++, searchKeyword);
+            } else {
+                psmt.setString(paramIndex++, searchKeyword);
+                psmt.setString(paramIndex++, searchKeyword);
+            }
+            rs = psmt.executeQuery();
+            if (rs.next()) {
+                totalRecords = rs.getInt(1);
+            }
+            
+            // Calculate total pages
+            int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
+            // Reset for data retrieval
+            rs.close();
+            psmt.close();
+            
+            // Search with pagination
             String sql = "SELECT alltb.*, u.name, hit FROM ("
                     + "SELECT nno AS no, title, content, '공지게시판' AS type, rdate, uno, hit FROM notice_board WHERE state = 'E' "
                     + "UNION ALL SELECT qno AS no, title, content, 'qna게시판' AS type, rdate, uno, hit FROM qna_board WHERE state = 'E' "
                     + "UNION ALL SELECT lno AS no, title, content, '자료실게시판' AS type, rdate, uno, hit FROM library WHERE state = 'E') alltb "
                     + "INNER JOIN user u ON alltb.uno = u.uno ";
-            
-            // 검색 필드에 따른 조건 추가
             if (keyword != null && !keyword.trim().isEmpty()) {
                 if ("title".equals(searchField)) {
                     sql += "WHERE title LIKE ? ";
@@ -66,19 +105,14 @@ public class SearchController {
                 }
             }
             sql += "ORDER BY type, rdate DESC LIMIT ?, ?";
-            
+
             psmt = conn.prepareStatement(sql);
-            int paramIndex = 1;
-            
-            // 검색 필드에 따른 키워드 설정
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String searchKeyword = "%" + keyword + "%";
-                if ("title".equals(searchField) || "content".equals(searchField)) {
-                    psmt.setString(paramIndex++, searchKeyword); // 해당 필드 조건에만 설정
-                } else {
-                    psmt.setString(paramIndex++, searchKeyword); // title 조건
-                    psmt.setString(paramIndex++, searchKeyword); // content 조건
-                }
+            paramIndex = 1;
+            if ("title".equals(searchField) || "content".equals(searchField)) {
+                psmt.setString(paramIndex++, searchKeyword);
+            } else {
+                psmt.setString(paramIndex++, searchKeyword);
+                psmt.setString(paramIndex++, searchKeyword);
             }
             psmt.setInt(paramIndex++, startRow);
             psmt.setInt(paramIndex, pageSize);
@@ -94,10 +128,17 @@ public class SearchController {
                 searchResults.add(new SearchVO(no, board, name, title, rdate, hit));
             }
 
-            // 검색 결과 및 페이지 정보 전달
             request.setAttribute("searchResults", searchResults);
             request.setAttribute("nowPage", nowPage);
-            request.setAttribute("totalPages", (int) Math.ceil((double) searchResults.size() / pageSize));
+            request.setAttribute("totalPages", totalPages);
+
+            // Calculate start and end pages for pagination
+            int startPage = ((nowPage - 1) / pageGroupSize) * pageGroupSize + 1;
+            int endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
+
+            // Set pagination attributes
+            request.setAttribute("startPage", startPage);
+            request.setAttribute("endPage", endPage);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,6 +148,4 @@ public class SearchController {
 
         request.getRequestDispatcher("/WEB-INF/index_search/index_search.jsp").forward(request, response);
     }
-
-
 }

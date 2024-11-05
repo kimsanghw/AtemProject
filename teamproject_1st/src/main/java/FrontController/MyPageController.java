@@ -192,13 +192,13 @@ public class MyPageController {
 		
 		
 		
-		public void mypage3(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-			int page = 1; // 기본 페이지는 1
+		public void mypage3(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		    int page = 1; // Default to page 1 if no page is specified
 		    if (request.getParameter("page") != null) {
 		        page = Integer.parseInt(request.getParameter("page"));
 		    }
 
-		    int recordsPerPage = 10; // 페이지당 표시할 유저 수
+		    int recordsPerPage = 10; // Number of users displayed per page
 		    HttpSession session = request.getSession();
 
 		    Connection conn = null;
@@ -208,7 +208,7 @@ public class MyPageController {
 		    try {
 		        conn = DBConn.conn();
 
-		        // 권한이 A가 아닌 유저 조회 쿼리
+		        // Query to retrieve non-admin users with pagination
 		        String sql = "SELECT * FROM user WHERE authorization != 'A' LIMIT ? OFFSET ?";
 		        psmt = conn.prepareStatement(sql);
 		        
@@ -233,7 +233,7 @@ public class MyPageController {
 		            userList.add(user);
 		        }
 		        
-		        // 총 유저 수 계산
+		        // Count total number of users with authorization != 'A'
 		        String countSql = "SELECT COUNT(*) FROM user WHERE authorization != 'A'";
 		        psmt = conn.prepareStatement(countSql);
 		        rs = psmt.executeQuery();
@@ -244,9 +244,15 @@ public class MyPageController {
 
 		        int totalPages = (int) Math.ceil(totalUsers * 1.0 / recordsPerPage);
 
+		        // Calculate startPage and endPage for pagination
+		        int startPage = ((page - 1) / 10) * 10 + 1;
+		        int endPage = Math.min(startPage + 9, totalPages);
+
 		        request.setAttribute("userList", userList);
 		        request.setAttribute("totalPages", totalPages);
 		        request.setAttribute("currentPage", page);
+		        request.setAttribute("startPage", startPage);
+		        request.setAttribute("endPage", endPage);
 
 		        request.getRequestDispatcher("/WEB-INF/mypage/mypage3.jsp").forward(request, response);
 		    } catch (Exception e) {
@@ -259,6 +265,7 @@ public class MyPageController {
 		        }
 		    }
 		}
+
 		public void mypage3OK(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 			HttpSession session = request.getSession();
 		    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
