@@ -117,8 +117,12 @@ public class library_controller {
 	        // 게시글 정보 가져오기 쿼리
 //	        String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') AS rdate, l.hit  FROM library l INNER JOIN user u ON l.uno = u.uno ORDER BY l.lno DESC LIMIT ?, ?";
 //			String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') as rdate, l.hit FROM library l INNER JOIN user u ON l.uno = u.uno;";
+//	        String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') AS rdate, l.hit " +
+//                    		  "FROM library l INNER JOIN user u ON l.uno = u.uno ";
 	        String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') AS rdate, l.hit " +
-                    		  "FROM library l INNER JOIN user u ON l.uno = u.uno ";
+	                  "FROM library l INNER JOIN user u ON l.uno = u.uno " +
+	                  "WHERE l.state = 'E'";
+
 	        // 검색 조건이 있을 경우 WHERE 조건 추가
 	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
 	            boardsql += "WHERE " + searchType + " LIKE ?";
@@ -208,7 +212,7 @@ public class library_controller {
 				psmt.executeUpdate();
 				
 				// 게시글 정보 가져오기 쿼리
-				sql = "SELECT l.*, u.id, f.orgFileName,f.newFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?"; 
+				sql = "SELECT l.*, u.name, f.orgFileName,f.newFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?"; 
 				// 리스트 생성
 				psmt = conn.prepareStatement(sql);
 				psmt.setInt(1, lno);
@@ -220,13 +224,14 @@ public class library_controller {
 					// vo에 값 넣기
 					vo.setLno(rs.getInt("lno"));
 					vo.setTitle(rs.getString("title"));
-					vo.setId(rs.getString("id"));
+					vo.setName(rs.getString("name"));
 					vo.setRdate(rs.getString("rdate"));
 					vo.setHit(rs.getInt("hit"));
 					vo.setState(rs.getString("state"));
 					vo.setContent(rs.getString("content"));
 					vo.setOrgFileName(rs.getString("orgFileName"));
 					vo.setNewFileName(rs.getString("newFileName"));
+					vo.setUno(rs.getInt("uno"));
 					
 					// 모델에 리스트 저장
 					request.setAttribute("vo", vo);
@@ -286,7 +291,7 @@ public class library_controller {
 		request.getRequestDispatcher("/WEB-INF/library_board/library_modify.jsp").forward(request, response);
 		
 	}
-private void library_modifyOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void library_modifyOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		request.setCharacterEncoding("UTF-8");
 		
@@ -452,10 +457,8 @@ private void library_modifyOk(HttpServletRequest request, HttpServletResponse re
 	        }
 	    }
 	}
-
-	
 	private void library_delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		request.setCharacterEncoding("UTF-8");
 		
 		int lno = Integer.parseInt(request.getParameter("lno"));
 		
@@ -466,14 +469,18 @@ private void library_modifyOk(HttpServletRequest request, HttpServletResponse re
 			
 			conn = DBConn.conn();
 			
-			String sql = "DELETE FROM library WHERE lno = ?";
+			String sql = "UPDATE library SET state = 'D' WHERE lno = ?";
 			
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, lno);
 			
 			int result = psmt.executeUpdate();
+			if(result > 0) {
+				response.sendRedirect(request.getContextPath()+"/library/library_list.do");
+			} else {
+	            response.getWriter().println("Error: 게시글 비활성화에 실패했습니다.");
+	        }
 			
-			response.sendRedirect(request.getContextPath()+"/library/library_list.do");
 			
 		}catch(Exception e) {
 			e.printStackTrace();

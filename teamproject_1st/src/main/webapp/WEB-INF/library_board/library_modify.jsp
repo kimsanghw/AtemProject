@@ -105,7 +105,7 @@
             <div class="box"><input type="file" name="attach" ></div>
             <div class="library_board_button">
                 <button type="submit">등록</button>
-                <button type="button">취소</button>
+               	<button type="button" onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">취소</button>
             </div>
         </form>
         <div class="library_board_line"></div>

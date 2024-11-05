@@ -83,12 +83,12 @@
     <% 
             } else { 
     %>
-                <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
+                <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
     <% 
             }
         } else { 
     %>
-        <li><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출결정보</a></li>
+        <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
     <% 
         } 
     %>

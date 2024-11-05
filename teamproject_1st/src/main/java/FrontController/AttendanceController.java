@@ -29,7 +29,10 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 				
 				attendanceView(request,response);
-				}
+			}else if(request.getMethod().equals("POST")) {
+				
+				attendanceViewOk(request,response);
+			}
 		}else if(comments[comments.length-1].equals("attendanceList.do")) {
 			
 			if(request.getMethod().equals("GET")) {
@@ -39,17 +42,92 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 				attendanceClass(request,response);
 				}
+		}else if(comments[comments.length-1].equals("attendanceCheck.do")) {
+			if(request.getMethod().equals("GET")) {
+				attendanceCheck(request,response);
+				}
+		}else if(comments[comments.length-1].equals("attendanceInfoView.do")) {
+			if(request.getMethod().equals("GET")) {
+				attendanceInfoView(request,response);
+				}
 		}
 	}
+	
+	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceInfoView.jsp").forward(request, response);
+	}
+	
+	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
+	}
+	
+	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+
+	    // AJAX 요청에서 넘어온 출결 상태와 출결 번호
+	    String attendanceChange = request.getParameter("attendanceChange");
+	    String ano = request.getParameter("ano");
+	    String cno = request.getParameter("cno"); // cno 값을 요청에서 받도록 설정
+
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+
+	    try {
+	        conn = DBConn.conn();
+	        String sql = "UPDATE attendance SET attendance = ? WHERE ano = ?";
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setString(1, attendanceChange); // 출결 상태 업데이트
+	        psmt.setInt(2, Integer.parseInt(ano)); // 출결 번호로 특정 행 선택
+
+	        int rowsAffected = psmt.executeUpdate();
+
+	        response.setCharacterEncoding("utf-8");
+	        response.setContentType("text/html;");
+	        if (rowsAffected > 0) {
+	            response.getWriter().write("success");
+	        } else {
+	            response.getWriter().write("fail");
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.getWriter().write("error:" + e.getMessage());
+	    } finally {
+	        try {
+	            DBConn.close(psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    // cno 속성을 JSP로 전달
+	    if (cno != null) {
+	        request.setAttribute("cno", Integer.parseInt(cno));
+	    } else {
+	        // cno가 null인 경우에 대한 기본 처리 (예: 기본값 설정 등)
+	        request.setAttribute("cno", 0);  // 기본값 설정 (필요에 따라 다르게 설정 가능)
+	    }
+	    request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+
+		
+	}
+	
 	public void attendanceClass(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		HttpSession session = request.getSession();
 		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
-		
-		
 		int uno = loginUser.getUno();
-		String teacherName = loginUser.getName();
+		String cno = request.getParameter("cno");
+		
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -60,7 +138,55 @@ public class AttendanceController {
 			conn = DBConn.conn();
 			
 			
-			String sql = "";
+			String sql  = " SELECT "
+					    + "    c.cno, "
+					    + "    u.uno, "
+						+ "    c.title ,"
+						+ "    c.subject ,"
+						+ "    c.state ,"
+						+ "    c.difficult ,"
+						+ "    c.book ,"
+						+ "    c.duringclass,"
+						+ "    c.end_duringclass"
+						+ " FROM "
+						+ "     class c"
+						+ " JOIN "
+						+ "   app_class ac ON ac.cno = c.cno"
+						+ " JOIN "
+						+ "    USER u ON c.uno = u.uno"
+						+ " WHERE "
+						+ "    ac.uno = ?        "
+						+ "    AND c.state = 'E'  "
+						+ "    AND ac.state = 'E'"
+						+ "    AND c.end_duringclass > NOW()";
+			
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, uno);
+			
+			rs = psmt.executeQuery();
+			
+			 while(rs.next()) {
+				 
+					ClassVO vo = new ClassVO();
+					vo.setCno(rs.getInt("cno"));
+					vo.setUno(rs.getInt("uno"));
+					vo.setTitle(rs.getString("title"));
+					vo.setState(rs.getString("state"));
+					vo.setSubject(rs.getString("subject"));
+					vo.setDuringclass(rs.getString("duringclass"));
+					vo.setEnd_duringclass(rs.getString("End_duringclass"));
+					vo.setDifficult(rs.getString("difficult"));
+					vo.setBook(rs.getString("book"));
+					
+					
+					clist.add(vo);
+					
+				}
+			 
+			   request.setAttribute("clist", clist);
+			   System.out.println(clist);
+			   
+			   request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
 			
 			
 		}catch(Exception e) {
@@ -94,7 +220,7 @@ public class AttendanceController {
 		}
 		
 		int uno = loginUser.getUno();
-		String teacherName = loginUser.getName();
+		String name = loginUser.getName();
 
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -121,7 +247,7 @@ public class AttendanceController {
 				
 			psmtTotal = conn.prepareStatement(sqlTotal);
 			psmtTotal.setInt(1,uno);
-			psmtTotal.setString(2, teacherName);
+			psmtTotal.setString(2, name);
 				
 			rsTotal = psmtTotal.executeQuery();
 			
@@ -138,7 +264,7 @@ public class AttendanceController {
 			String sql = " select * ,"
 					   + "(select count(*) from app_class a where a.cno = c.cno ) as cnt"
 					   + "    from class as c , user u"
-					   + "    where c.teacherName = u.name"
+					   + "    where c.name = u.name"
 					   + "      and c.state = 'E' "
 					   + "      and u.name = ?";
 					   
@@ -147,7 +273,7 @@ public class AttendanceController {
 				}
 				sql += " limit ?, ?";
 				psmt = conn.prepareStatement(sql);
-				psmt.setString(1, teacherName);  // 이름 조건 추가
+				psmt.setString(1, name);  // 이름 조건 추가
 		        psmt.setInt(2, paging.getStart());
 		        psmt.setInt(3, paging.getPerPage());
 

@@ -1,6 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%@ page import="FrontController.vo.ClassVO" %>
+<%@ page import="FrontController.util.*" %>
 <%@ include file="../../include/header.jsp" %>
+<%
+
+ List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
+
+%>
 
 <title>Insert title here</title>
 <style>
@@ -96,9 +104,17 @@
 
        .app_check{
         margin-top: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 50px;
         margin-left: 50px;
         font-size: 25px;
+       }
+       
+       .app_check h3{
+        margin-bottom: 50px
+       }
+       .app_check div{
+        margin-bottom: 15px;
+        font-size: 20px;
        }
 
         element.style {
@@ -123,7 +139,22 @@
             <div class="app_line"></div>
         </div>
         <div class="attendance_box info_flex">
-            <div class="app_check">수강 중인 강의</div>
+            <%
+			 for(ClassVO vo : clist){
+			 %>
+            <div class="app_check">
+            	<h3>수강 중인 강의</h3>
+	            	<div>강의 제목 : <%=vo.getTitle() %></div>
+	            	<div>강의 과목 : <%=vo.getSubject() %></div>
+	            	<div>강의 난이도 : <%=vo.getDifficult() %></div>
+	            	<div>강의 교제 : <%=vo.getBook() %></div>
+	            	<div>강의 시작 날짜 : <%=vo.getDuringclass() %></div>
+	            	<div>강의 마지막 날짜 : <%=vo.getEnd_duringclass() %></div>
+            
+            </div>
+             <%} %>
         </div>
     </section>
 <%@ include file="../../include/footer.jsp" %>
+
+            
