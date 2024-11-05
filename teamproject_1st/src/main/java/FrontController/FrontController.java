@@ -42,6 +42,9 @@ public class FrontController extends HttpServlet {
 		}else if(comments[0].equals("library")) {
 			library_controller library = new library_controller(request, response,comments);
 
+		}else if(comments[0].equals("notice")) {
+			notice_controller notice = new notice_controller(request, response,comments);
+
 		}
 	}
 

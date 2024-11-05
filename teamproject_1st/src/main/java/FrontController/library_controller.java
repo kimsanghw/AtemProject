@@ -20,9 +20,6 @@ import FrontController.vo.UserVO;
 import FrontController.vo.libraryVO;
 
 
-
-
-
 public class library_controller {
 
 	public library_controller(HttpServletRequest request, HttpServletResponse response, String[] comments) throws ServletException, IOException {
