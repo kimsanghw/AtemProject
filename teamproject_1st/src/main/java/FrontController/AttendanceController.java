@@ -106,6 +106,7 @@ public class AttendanceController {
 		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
 		int uno = loginUser.getUno();
+		String cno = request.getParameter("cno");
 		
 		
 		Connection conn = null;
@@ -117,14 +118,16 @@ public class AttendanceController {
 			conn = DBConn.conn();
 			
 			
-			String sql =  " SELECT "
-						+ "    c.title AS 제목,"
-						+ "    c.subject AS 과목,"
-						+ "    c.state AS class_state,"
-						+ "    c.difficult AS 난이도,"
-						+ "    c.book AS 교제 ,"
-						+ "    c.duringclass AS 수강 시작 날짜,"
-						+ "    c.end_duringclass AS 수강 마지막 날짜,"
+			String sql  = " SELECT "
+					    + "    c.cno, "
+					    + "    u.uno, "
+						+ "    c.title ,"
+						+ "    c.subject ,"
+						+ "    c.state ,"
+						+ "    c.difficult ,"
+						+ "    c.book ,"
+						+ "    c.duringclass,"
+						+ "    c.end_duringclass"
 						+ " FROM "
 						+ "     class c"
 						+ " JOIN "
@@ -139,6 +142,7 @@ public class AttendanceController {
 			
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, uno);
+			
 			rs = psmt.executeQuery();
 			
 			 while(rs.next()) {
@@ -150,7 +154,7 @@ public class AttendanceController {
 					vo.setState(rs.getString("state"));
 					vo.setSubject(rs.getString("subject"));
 					vo.setDuringclass(rs.getString("duringclass"));
-					vo.setEnd_duringclass(rs.getString("end_duringclass"));
+					vo.setEnd_duringclass(rs.getString("End_duringclass"));
 					vo.setDifficult(rs.getString("difficult"));
 					vo.setBook(rs.getString("book"));
 					
