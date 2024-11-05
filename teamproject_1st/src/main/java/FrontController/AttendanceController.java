@@ -184,6 +184,7 @@ public class AttendanceController {
 				}
 			 
 			   request.setAttribute("clist", clist);
+			   System.out.println(clist);
 			   
 			   request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
 			
