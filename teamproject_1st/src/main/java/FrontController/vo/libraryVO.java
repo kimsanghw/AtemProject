@@ -11,8 +11,14 @@ public class libraryVO {
 	private String id;
 	private String orgFileName;
 	private String newFileName;
+	private String name;
 	
-	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public String getNewFileName() {
 		return newFileName;
 	}

@@ -40,7 +40,6 @@ public class FrontController extends HttpServlet {
 			SearchController search = new SearchController(request, response,comments);
 
 		}else if(comments[0].equals("library")) {
-			System.out.println("library_controller를 생성합니다");
 			library_controller library = new library_controller(request, response,comments);
 
 		}
