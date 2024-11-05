@@ -75,7 +75,7 @@
 	        </div>
 	        <div class="content">
 	            <div>
-	                강사이름 <input  type="text" name="teacher_name" value="<%=vo.getName()%>">
+	                강사이름 <input  type="text" name="name" value="<%=vo.getName()%>">
 	            </div>
 	            <div >
 	                과목
@@ -89,7 +89,7 @@
 	            </div>
 	            <div>수강 신청 기간 : <input type="date" name="jdate"> ~ <input type="date" name="end_jdate"></div>
 	            <div>
-	                강의 난이도 : <select name="diffcult">
+	                강의 난이도 : <select name="difficult">
 	                <option value="상">상</option>
 	                <option value="중">중</option>
 	                <option value="하">하</option>

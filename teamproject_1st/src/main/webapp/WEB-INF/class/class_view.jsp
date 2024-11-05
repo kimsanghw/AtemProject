@@ -6,7 +6,17 @@
 <%
 	ClassVO vo = (ClassVO)request.getAttribute("vo");
 	UserVO user = (UserVO) session.getAttribute("loginUser");
-%>
+	
+	if (user == null) {
+		%>
+		        <script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,7 +169,7 @@
                 <div class="main_content">
                     <div class="img">
                     <!-- 현재 쿼리는 class user만 하고 있음 그래서 orgFileName을 불러오려면 서브쿼리를 사용? -->
-                        <img src="<%=request.getContextPath()%>/upload/<%=vo.getNewFileName()%>" alt="<%=vo.getOrgFileName()%>">
+                        <img src="<%=request.getContextPath()%>/upload/<%=vo.getOrgFileName()%>" alt="<%=vo.getOrgFileName()%>">
                     </div>
                     <div class="cont_info">
                         <dl>

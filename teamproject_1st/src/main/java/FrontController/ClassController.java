@@ -71,7 +71,7 @@ public class ClassController {
 		try {
 			conn = DBConn.conn();
 			
-			String sql = "SELECT c.*, u.name, (SELECT orgFileName FROM cfile WHERE cfile.cno = c.cno LIMIT 1) AS orgFileName, (SELECT newFileName FROM cfile WHERE cfile.cno = c.cno LIMIT 1) AS newFileName FROM class c, user u WHERE c.uno = u.uno AND c.cno = ?";			
+			String sql = "SELECT c.*, u.name FROM class c INNER JOIN user u ON c.uno = u.uno WHERE c.cno = ?";			
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, cno);
 			
@@ -140,7 +140,7 @@ public class ClassController {
 			
 			PagingUtil paging = new PagingUtil(nowPage,total,5); 
 			
-			String sql = "SELECT c.*, cf.* FROM class c LEFT JOIN cfile cf ON c.cno = cf.cno WHERE c.state = 'E' ORDER BY c.rdate DESC LIMIT ? OFFSET ?";
+			String sql = "SELECT c.* FROM class c WHERE c.state = 'E' ORDER BY c.rdate DESC LIMIT ? OFFSET ?";
 
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1, paging.getPerPage());
@@ -230,18 +230,18 @@ public class ClassController {
 			String book = multi.getParameter("book");
 			String duringclass = multi.getParameter("duringclass");
 			String orgFileName = multi.getOriginalFileName("attach");
+			String newFileName = "";
 			String end_jdate = multi.getParameter("end_jdate");
 			String end_duringclass = multi.getParameter("end_duringclass");
 			
 			Connection conn = null;
 			PreparedStatement psmt = null;
-			ResultSet rs = null;
+			
 			try {
 		        conn = DBConn.conn();
-		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno, end_jdate, end_duringclass) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno, end_jdate, end_duringclass, orgFileName, newFileName, cno) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		        
-		        // Statement.RETURN_GENERATED_KEYS를 지정하여 PreparedStatement 생성
-		        psmt = conn.prepareStatement(classSql, Statement.RETURN_GENERATED_KEYS);
+		        psmt = conn.prepareStatement(classSql);
 		        psmt.setString(1, title);
 		        psmt.setString(2, subject);
 		        psmt.setString(3, jdate);
@@ -252,32 +252,19 @@ public class ClassController {
 		        psmt.setInt(8, uno);
 		        psmt.setString(9, end_jdate);
 		        psmt.setString(10, end_duringclass);
+		        psmt.setString(11, orgFileName);
+		        psmt.setString(12, newFileName);
+		        psmt.setInt(13, cno);
 		        
-		        int classResult = psmt.executeUpdate();
+		        psmt.executeUpdate();
 		        
-		        if (classResult > 0) {
-		            ResultSet generatedKeys = psmt.getGeneratedKeys();
-		            if (generatedKeys.next()) {
-		                cno = generatedKeys.getInt(1);
-		                String fileSql = "INSERT INTO cfile(orgFileName, NewFileName, cno) VALUES(?, ?, ?)";
-		                psmt = conn.prepareStatement(fileSql);
-		                psmt.setString(1, logiName);
-		                psmt.setString(2, phyName);
-		                psmt.setInt(3, cno);
-
-		                int fileResult = psmt.executeUpdate();
-		            
-		                if (fileResult > 0) {
-		                	System.out.println("File inserted successfully: " + logiName + " -> " + phyName);
-		                }
-		            }
-		        }
+		       
 		        response.sendRedirect(request.getContextPath() + "/class/view.do?cno=" + cno);
 			    } catch (Exception e) {
 			        e.printStackTrace();
 			    } finally {
 			        try {
-			            DBConn.close(rs, psmt, conn);
+			            DBConn.close( psmt, conn);
 			        } catch (Exception e) {
 			            e.printStackTrace();
 			        }
@@ -369,7 +356,7 @@ public class ClassController {
 			int cno =  Integer.parseInt(multi.getParameter("cno"));
 			System.out.println("현재 cno : "+Integer.parseInt(multi.getParameter("cno")));
 			String title = multi.getParameter("title"); 
-			String teacher_name = multi.getParameter("teacher_name");
+			String Tname = multi.getParameter("name");
 			String subject = multi.getParameter("subject");
 			String jdate = multi.getParameter("jdate");
 			String difficult = multi.getParameter("difficult");
@@ -378,13 +365,14 @@ public class ClassController {
 			String orgFileName = multi.getOriginalFileName("attach");
 			String end_jdate = multi.getParameter("end_jdate");
 			String end_duringclass = multi.getParameter("end_duringclass");
+			String newFileName = "";
 			
 			Connection conn = null;
 			PreparedStatement psmt = null;
 			ResultSet rs = null;
 			try {
 		        conn = DBConn.conn();
-		        String classSql = "UPDATE class SET title=?, subject=?, jdate=?, difficult=?, book=?, duringclass=?, name=?, end_jdate=?, end_duringclass=? WHERE cno = ?"; //orgfilename = ?
+		        String classSql = "UPDATE class SET title=?, subject=?, jdate=?, difficult=?, book=?, duringclass=?, name=?, end_jdate=?, end_duringclass=?, orgFileName=?, newFileName=? WHERE cno = ?"; 
 		        
 		        // Statement.RETURN_GENERATED_KEYS를 지정하여 PreparedStatement 생성
 		        psmt = conn.prepareStatement(classSql);
@@ -394,24 +382,15 @@ public class ClassController {
 		        psmt.setString(4, difficult);
 		        psmt.setString(5, book);
 		        psmt.setString(6, duringclass);
-		        psmt.setString(7, name);
+		        psmt.setString(7, Tname);
 		        psmt.setString(8, end_jdate);
 		        psmt.setString(9, end_duringclass);
-		        psmt.setInt(10, cno);
+		        psmt.setString(10, orgFileName);
+		        psmt.setString(11, newFileName);
+		        psmt.setInt(12, cno);
 		        
-		        int classResult = psmt.executeUpdate();
+		        psmt.executeUpdate();
 		        
-		        if (classResult > 0) {
-		                String fileSql = "UPDATE cfile SET orgFileName=?, NewFileName=?, cno = ? WHERE cno = ?";
-		                psmt = conn.prepareStatement(fileSql);
-		                psmt.setString(1, logiName);
-		                psmt.setString(2, phyName);
-		                psmt.setInt(3, cno);
-		                psmt.setInt(4, cno);
-
-		                int fileResult = psmt.executeUpdate();
-		                //현재는 file테이블이 나누어져있기때문에 이렇게 작성했지만 테이블이 한개가 된다면 사라질 내용
-		            }
 		        response.sendRedirect(request.getContextPath() + "/class/view.do?cno=" + cno);
 			    } catch (Exception e) {
 			        e.printStackTrace();
@@ -490,7 +469,7 @@ public class ClassController {
 	            return;
 			}
 			//신청 안했으면 등록 
-			String insertSQL = "INSERT INTO app_class(uno, cno, subject) VALUES (?, ?, 'A')";
+			String insertSQL = "INSERT INTO app_class(uno, cno) VALUES (?, ?)";
 			psmt2 = conn.prepareStatement(insertSQL);
 			psmt2.setInt(1, uno);
 			psmt2.setInt(2, cno);
