@@ -6,6 +6,23 @@
 <%
 	libraryVO vo = (libraryVO)request.getAttribute("vo");
 %>
+<%
+	//세션에서 로그인 정보 확인하기
+	UserVO loginUser;
+	// 세션에서 값 가져오기
+	loginUser = (UserVO)session.getAttribute("loginUser");
+	// 로그인 정보가 없으면 내보냄
+	if( loginUser == null) {	/* <!-- 로그인 정보가 없음 --> */
+		%>
+		<script>
+			alert('로그인이 필요합니다.');
+			location.href='<%=request.getContextPath()%>/user/login.do'
+		</script>
+		
+		<%
+
+	}
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -88,8 +105,12 @@
       <section>
         <h2 class="library_title">자료실 상세</h2>
        	<div class="library_board_title"><%=vo.getTitle() %></div>
-       	<div class="library_board">작성자 <%=vo.getId() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
-      		<div class="library_board_content"><%=vo.getContent() %></div>
+       	<div class="library_board">작성자 <%=vo.getName() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
+      		<div class="library_board_content"><%=vo.getContent() %>
+      		<% if(vo.getNewFileName()!=null && !vo.getNewFileName().equals("")) {%>
+      		<img src="../upload/<%=vo.getNewFileName()%>">
+      		<%} %>
+      		</div>
        	<div class="library_board_file"><%=vo.getOrgFileName() %></div>
         
         
@@ -97,11 +118,16 @@
             <button onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">목록</button>
         </div>
         <div class="library_board_button">
-            <button type="submit" onclick="location.href='<%=request.getContextPath()%>/library/library_modify.do?lno=<%= vo.getLno()%>'">수정</button>
-            <button type="button" onclick="document.frm.submit();">삭제</button>
-           	<form name="frm" action="<%=request.getContextPath()%>/library/library_delete.do" method="post" >
+        
+        <%
+        if(loginUser != null && vo != null && loginUser.getUno() == vo.getUno()){%>
+        	<button type="submit" onclick="location.href='<%=request.getContextPath()%>/library/library_modify.do?lno=<%= vo.getLno()%>'">수정</button>
+			<button type="button" onclick="document.frm.submit();">삭제</button>
+			<form name="frm" action="<%=request.getContextPath()%>/library/library_delete.do" method="post" >
 	 			<input type="hidden" name="lno" value="<%=vo.getLno()%>">
 	 		</form>
+        <% }%>
+
         </div>
       </section>
 </body>
