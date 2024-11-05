@@ -42,10 +42,30 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 				attendanceClass(request,response);
 				}
+		}else if(comments[comments.length-1].equals("attendanceCheck.do")) {
+			if(request.getMethod().equals("GET")) {
+				attendanceCheck(request,response);
+				}
+		}else if(comments[comments.length-1].equals("attendanceInfoView.do")) {
+			if(request.getMethod().equals("GET")) {
+				attendanceInfoView(request,response);
+				}
 		}
 	}
 	
+	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceInfoView.jsp").forward(request, response);
+	}
 	
+	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
+	}
 	
 	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
