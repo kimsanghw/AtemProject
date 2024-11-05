@@ -3,12 +3,14 @@ package FrontController.vo;
 public class NoticeVO {
 	private int nno;
 	private String title;
-	private String text;
+	private String content;
 	private String rdate;
 	private int hit;
 	private String state;
 	private String topYn;
 	private int uno;
+	private String name;
+	private String id;
 	
 	
 	public int getNno() {
@@ -23,11 +25,11 @@ public class NoticeVO {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getText() {
-		return text;
+	public String getContent() {
+		return content;
 	}
-	public void setText(String text) {
-		this.text = text;
+	public void setContent(String content) {
+		this.content = content;
 	}
 	public String getRdate() {
 		return rdate;
@@ -58,6 +60,18 @@ public class NoticeVO {
 	}
 	public void setUno(int uno) {
 		this.uno = uno;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 }
 	

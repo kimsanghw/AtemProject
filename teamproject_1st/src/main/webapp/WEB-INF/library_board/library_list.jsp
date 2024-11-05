@@ -1,3 +1,4 @@
+<%@page import="FrontController.util.PagingUtil"%>
 <%@page import="FrontController.vo.libraryVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import ="java.util.*" %>
@@ -7,8 +8,12 @@
 	List<libraryVO> list = (List<libraryVO>)request.getAttribute("list");
 	String searchValue = (String)request.getAttribute("searchValue");
 	String searchType = (String)request.getAttribute("searchType");
-	int currentPage = (Integer) request.getAttribute("currentPage");
-    int totalPages = (Integer) request.getAttribute("totalPages");
+	PagingUtil paging = (PagingUtil) request.getAttribute("paging");
+	
+	int nowpage =1;
+	if(request.getParameter("nowpage")!= null){
+		nowpage = Integer.parseInt(request.getParameter("nowpage"));
+	}
 %>
 
 <!DOCTYPE html> 
@@ -90,7 +95,6 @@
           margin-top: 30px;          
           text-align: center;
         }
-        /* 내용 부분 끝 */
         .paging{
         	width:50px;
         	margin: auto;
@@ -99,6 +103,8 @@
         	color: black;
         	text-decoration: none;
         }
+        /* 내용 부분 끝 */
+        
     </style>
 </head>
 <body>
@@ -153,17 +159,64 @@
 %>
 
             
-            <!-- 페이지 네비게이션 추가 -->
         <div class="paging">
-        	<%
-        		for(int i = 1; i <= totalPages; i++){
-        			if(i == currentPage){
-        				out.print("<strong>" + i + "</strong> ");
-        			}else{
-        				out.print("<a href='" + request.getContextPath() + "/library/library_list.do?page=" + i + "'>" + i + "</a> ");
-        			}
-        		}
-        	%>
+        	<!-- 페이징 영역 -->
+		<%
+			if(paging.getStartPage() > 1){
+				//시작페이지가 1보다 큰경우 이전 페이지 존재
+				if(searchType!=null){
+					%>
+					<!-- 클릭시 현재 페이지의 시작 페이지 번호 이전 페이지로 이동 13->10으로 이동 -->
+					<a href="<%=request.getContextPath()%>/library/library_list.do?nowpage=<%=paging.getStartPage()-1%>&searchType=<%=searchType%>&searchValue=<%=searchValue%>"> &lt; </a>
+				<%			
+				}else{
+					%>
+					<!-- 클릭시 현재 페이지의 시작 페이지 번호 이전 페이지로 이동 13->10으로 이동 -->
+					<a href="<%=request.getContextPath()%>/library/library_list.do?nowpage=<%=paging.getStartPage()-1%>"> &lt; </a>
+				<%		
+				}
+		
+			}
+		
+			for(int i= paging.getStartPage();
+					i<=paging.getEndPage(); i++){
+				if(i == nowpage){
+				%>
+				<strong><%= i %></strong>
+				<%
+				}else{
+					if(searchType!=null){
+						%>
+						
+						<a href="<%=request.getContextPath()%>/library/library_list.do?nowpage=<%=i%>&searchType=<%=searchType%>&searchValue=<%=searchValue%>"><%=i %></a>
+						<%		
+					}else{
+						%>
+						
+						<a href="<%=request.getContextPath()%>/library/library_list.do?nowpage=<%=i%>"><%=i %></a>
+						<%		
+					}
+				
+				}
+			}
+			
+			if(paging.getLastPage()>paging.getEndPage()){
+				//전체 페이지번호 보다 현재 종료 페이지 번호가 더 작은 경우
+				if(searchType!=null){
+					%>
+					<a href="<%=request.getContextPath()%>/library/library_list.do?nowpage=<%=paging.getEndPage()+1%>&searchType=<%=searchType%>&searchValue=<%=searchValue%>">&gt;</a>
+					<%
+				}else{
+					%>
+					<a href="<%=request.getContextPath()%>/library/library_list.do?nowpage=<%=paging.getEndPage()+1%>">&gt;</a>
+					<%	
+				}
+				
+			}
+			
+		%>
+	
+	
         </div>
       </section>
 </body>

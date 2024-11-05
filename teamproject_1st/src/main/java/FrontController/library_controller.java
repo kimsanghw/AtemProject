@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +19,7 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import FrontController.util.DBConn;
+import FrontController.util.PagingUtil;
 import FrontController.vo.UserVO;
 import FrontController.vo.libraryVO;
 
@@ -59,9 +63,10 @@ public class library_controller {
 		
 		request.setCharacterEncoding("UTF-8");
 		
-		int page = 1; // 기본 페이지는 1
-	    if (request.getParameter("page") != null) {
-	        page = Integer.parseInt(request.getParameter("page"));
+		int nowpage = 1; // 기본 페이지는 1
+		
+	    if (request.getParameter("nowpage") != null) {
+	    	nowpage = Integer.parseInt(request.getParameter("nowpage"));
 	    }
 	    
 	    int recordsPerPage = 10; // 페이지당 표시할 게시글 수
@@ -83,7 +88,7 @@ public class library_controller {
 			conn = DBConn.conn();
 			
 	        // 전체 게시글 수를 가져오는 쿼리 (검색 조건이 있을 경우 이를 반영)
-			String pagesql = "SELECT COUNT(*) AS total_count FROM library l INNER JOIN user u ON l.uno = u.uno";
+			String pagesql = "SELECT COUNT(*) AS total_count FROM library l INNER JOIN user u ON l.uno = u.uno AND l.state='E'";
 			
 	        // 검색 조건이 있을 경우 WHERE 절 추가
 	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
@@ -104,12 +109,12 @@ public class library_controller {
 	            totalRecords = rs.getInt("total_count"); // 전체 게시글 수
 	        }
 			
-	        // 총 페이지 수 계산
-	        totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
 
 	        // 이전 rs와 psmt를 닫고 새 쿼리 실행을 위해 초기화
 	        rs.close();
 	        psmt.close();
+	        
+	        PagingUtil paging = new PagingUtil(nowpage,totalRecords,recordsPerPage);
 	        
 	        // 게시글 정보 가져오기 쿼리
 //	        String boardsql = "SELECT l.lno, l.title, DATE_FORMAT(l.rdate, '%Y-%m-%d') AS rdate, l.hit  FROM library l INNER JOIN user u ON l.uno = u.uno ORDER BY l.lno DESC LIMIT ?, ?";
@@ -135,7 +140,7 @@ public class library_controller {
 	        }
 			
 	        // LIMIT 절에 사용할 시작 인덱스와 표시할 게시글 수 설정
-	        psmt.setInt(paramIndex++, (page - 1) * recordsPerPage); // 시작 인덱스
+	        psmt.setInt(paramIndex++,paging.getStart()); // 시작 인덱스
 	        psmt.setInt(paramIndex, recordsPerPage); // 표시할 게시글 수
 	        
 			rs = psmt.executeQuery();
@@ -158,8 +163,7 @@ public class library_controller {
 			
 			// 모델에 리스트 저장
 			request.setAttribute("list", list);
-	        request.setAttribute("currentPage", page);   // 현재 페이지
-	        request.setAttribute("totalPages", totalPages); // 전체 페이지 수
+	        request.setAttribute("paging", paging); // 전체 페이지 수
 	        request.setAttribute("searchType", searchType); // 검색 필드
 	        request.setAttribute("searchValue", searchValue); // 검색어
 	        
@@ -210,6 +214,7 @@ public class library_controller {
 				
 				// 게시글 정보 가져오기 쿼리
 				sql = "SELECT l.*, u.name, f.orgFileName,f.newFileName FROM library l INNER JOIN user u ON l.uno = u.uno left outer join file f on l.lno=f.lno WHERE l.lno = ?"; 
+				
 				// 리스트 생성
 				psmt = conn.prepareStatement(sql);
 				psmt.setInt(1, lno);
@@ -474,10 +479,7 @@ public class library_controller {
 			int result = psmt.executeUpdate();
 			if(result > 0) {
 				response.sendRedirect(request.getContextPath()+"/library/library_list.do");
-			} else {
-	            response.getWriter().println("Error: 게시글 비활성화에 실패했습니다.");
-	        }
-			
+			}			
 			
 		}catch(Exception e) {
 			e.printStackTrace();
