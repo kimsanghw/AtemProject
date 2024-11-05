@@ -1,11 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import ="FrontController.vo.ClassVO" %>
 <%@ page import ="FrontController.vo.UserVO" %>
+<%@ page import="FrontController.util.*" %>
 <%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
 <%
 	List<ClassVO> coursList = (List<ClassVO>)request.getAttribute("coursList");
 	UserVO user = (UserVO) session.getAttribute("loginUser");
+	String searchType = (String)request.getAttribute("searchType");
+	String nowPageParam = request.getParameter("nowPage");
+	  int nowPage = 1;
+	  if(nowPageParam != null){
+		  nowPage = Integer.parseInt(nowPageParam);
+	  }
+	  PagingUtil paging = (PagingUtil)request.getAttribute("paging");
+	  int StartPage = 1;
+	  int EndPage = 1;
+	  if( paging != null ){
+		  StartPage = paging.getStartPage();
+		  EndPage = paging.getEndPage();
+	  }
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -115,15 +129,30 @@
     border-radius: 5px;
 }
 .mother {
-    display: block;
-    text-align: right; /* 오른쪽 정렬 */
-    margin: 20px auto;
-}
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .paging-container {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    .paging {
+        display: inline-block;
+    }
+
+    .button-container {
+        flex-shrink: 0;
+    }
 
 
 .register-btn:hover {
     background-color: #007ACC;
 }
+
 
     </style>
 </head>
@@ -161,6 +190,41 @@
 		<% } %>
 
 		<div class="mother">
+			<div class="paging-container">
+				<span class="paging">
+			<%
+					if(paging.getStartPage() > 1){
+						
+				%>
+					
+					<a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=paging.getStartPage()-1%>&searchType=<%=searchType%>"> &lt; </a>
+				<%
+					}
+				
+					for(int i= paging.getStartPage();
+							i<= paging.getEndPage(); i++){
+						if(i == nowPage){
+						%>
+						<strong><%= i %></strong>
+						<%
+						}else{
+						%>
+						<a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=i%>&searchType=<%=searchType%>"><%=i %></a>
+						<%	
+						}
+					}
+					
+					if(paging.getLastPage()>paging.getEndPage()){
+						
+						%>
+						<a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=paging.getEndPage()+1%>&searchType=<%=searchType%>">&gt;</a>
+						<%
+					}
+					
+				%>
+					</span>
+			</div>
+			<div class="button-container">
 			<%
 			    if (user != null) {
 			        String authorization = user.getAuthorization();
@@ -171,6 +235,7 @@
 			        }
 			    }
 			%>
+			</div>
 		</div>
 	</section>
 

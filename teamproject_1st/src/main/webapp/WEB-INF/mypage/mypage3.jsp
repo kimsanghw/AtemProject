@@ -19,10 +19,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-    .pagination{
-    	width: 50px;
-    	margin: auto;
-    }
+    .pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0; 
+	}
+
+	.pagination a, .pagination strong {
+	    margin: 0 5px;	
+	    text-decoration: none;
+	    color: black;
+	}
     .mypage{
         font-size: 25px;
         font-weight: 900;
@@ -104,6 +111,7 @@
         width: 50px;
         height: 30px;
     }
+    
     </style>
 </head>
 <body>
@@ -160,16 +168,38 @@
             </table>
             <!-- 페이지 네비게이션 추가 -->
             <div class="pagination">
-                <%
-                    for (int i = 1; i <= totalPages; i++) {
-                        if (i == currentPage) {
-                            out.print("<strong>" + i + "</strong> ");
-                        } else {
-                            out.print("<a href='" + request.getContextPath() + "/mypage/mypage3.do?page=" + i + "'>" + i + "</a> ");
-                        }
-                    }
-                %>
-            </div>
+			    <% 
+			        int startPage = (Integer) request.getAttribute("startPage");
+			        int endPage = (Integer) request.getAttribute("endPage");
+			        
+			        // Display "Previous" button if current page is beyond the first set
+			        if (startPage > 1) { 
+			    %>
+			        <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= startPage - 1 %>">Previous</a>
+			    <% 
+			        }
+			        
+			        // Display page numbers within the current set
+			        for (int i = startPage; i <= endPage; i++) { 
+			            if (i == currentPage) { 
+			    %>
+			                <strong><%= i %></strong> 
+			    <% 
+			            } else { 
+			    %>
+			                <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= i %>"><%= i %></a>
+			    <% 
+			            }
+			        } 
+			        
+			        // Display "Next" button if there are more pages beyond the current set
+			        if (endPage < totalPages) { 
+			    %>
+			        <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= endPage + 1 %>">Next</a>
+			    <% 
+			        } 
+			    %>
+			</div>
             <form action="action=<%=request.getContextPath()%>/mypage/mypage3search.do" method="GET">
                 <select class="search_options" name="search_option">
                     <option value="id">아이디</option>

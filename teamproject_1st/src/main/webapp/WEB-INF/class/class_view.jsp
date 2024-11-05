@@ -6,7 +6,17 @@
 <%
 	ClassVO vo = (ClassVO)request.getAttribute("vo");
 	UserVO user = (UserVO) session.getAttribute("loginUser");
-%>
+	
+	if (user == null) {
+		%>
+		        <script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,7 +169,7 @@
                 <div class="main_content">
                     <div class="img">
                     <!-- 현재 쿼리는 class user만 하고 있음 그래서 orgFileName을 불러오려면 서브쿼리를 사용? -->
-                        <img src="<%=request.getContextPath()%>/upload/<%=vo.getNewFileName()%>" alt="<%=vo.getOrgFileName()%>">
+                        <img src="<%=request.getContextPath()%>/upload/<%=vo.getOrgFileName()%>" alt="<%=vo.getOrgFileName()%>">
                     </div>
                     <div class="cont_info">
                         <dl>
@@ -192,17 +202,41 @@
 
         <hr>
         <div class="mother">
-        	<span class="center_button"><button class="register-btn">수강신청</button></span>
-            <span class="center_button"><button class="register-btn" onclick="<%=request.getContextPath()%>/class/list.do">목록</button></span>
+        <%
+			    if (user != null) {
+			        String authorization = user.getAuthorization();
+			        if ("S".equals(authorization)) {
+			%>
+        	<span class="center_button"><button class="register-btn" onclick="document.fre.submit()">수강신청</button></span>
+        	<%
+			        }
+			    }
+			%>
+        	<form name="fre" action="<%=request.getContextPath()%>/class/app_class.do" method="POST">
+        		<input type="hidden" name="cno" value="<%=vo.getCno() %>">
+        		<input type="hidden" name="uno" value="<%=user.getUno() %>">
+        		<input type="hidden" name="title" value="<%=vo.getTitle() %>">
+			    <input type="hidden" name="subject" value="<%=vo.getSubject() %>">
+			    <input type="hidden" name="jdate" value="<%=vo.getJdate() %>">
+			    <input type="hidden" name="end_jdate" value="<%=vo.getEnd_jdate() %>">
+			    <input type="hidden" name="difficult" value="<%=vo.getDifficult() %>">
+			    <input type="hidden" name="book" value="<%=vo.getBook() %>">
+			    <input type="hidden" name="duringclass" value="<%=vo.getDuringclass() %>">
+			    <input type="hidden" name="end_duringclass" value="<%=vo.getEnd_duringclass() %>">
+        	</form>
+            <span class="center_button"><button class="register-btn" onclick="location.href='<%=request.getContextPath()%>/class/list.do'">목록</button></span>
             
 			<%
 			    if (user != null) {
 			        String authorization = user.getAuthorization();
 			        if ("A".equals(authorization)) {
 			%>
-			            <span><button class="register-btn" onclick="<%=request.getContextPath()%>/class/modify.do">수정</button></span>
-			            <span><button class="register-btn">삭제</button></span>
-			<%
+			            <span><button class="register-btn" onclick="location.href='<%=request.getContextPath()%>/class/modify.do?cno=<%=vo.getCno()%>'">수정</button></span>
+			            <span><button class="register-btn" onclick="document.frm.submit()">삭제</button></span>
+			            <form name="frm" action="<%=request.getContextPath()%>/class/delete.do" method="POSt">
+			            	<input type="hidden" name="cno" value="<%=vo.getCno() %>">
+			            </form>			
+			            <%
 			        }
 			    }
 			%>

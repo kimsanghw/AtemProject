@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
+<%@ page import ="FrontController.vo.ClassVO" %>
+<%@ page import ="FrontController.vo.UserVO" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,18 +61,21 @@
  	{
  		System.out.println("세션에 정보가 없습니다");
  	}
+ 	ClassVO vo = (ClassVO)request.getAttribute("vo");
+ 	
 %>
       <section>
-        <h2>강의 등록</h2>
+        <h2>강의 수정</h2>
         <div class="title_hr"></div>
         <div class="title">
         <form action="<%= request.getContextPath()%>/class/modify.do" method="POST" enctype="multipart/form-data">
         	<input type="hidden" name="uno" value="<%= userId2.getUno()%>">
-            <input type="text" name="title" placeholder="제목을 입력하세요.">
+        	<input type="hidden" name="cno" value="<%= vo.getCno()%>">
+            <input type="text" name="title" value="<%=vo.getTitle()%>">
 	        </div>
 	        <div class="content">
 	            <div>
-	                강사이름 <input  type="text" name="teacher_name">
+	                강사이름 <input  type="text" name="name" value="<%=vo.getName()%>">
 	            </div>
 	            <div >
 	                과목
@@ -84,13 +89,13 @@
 	            </div>
 	            <div>수강 신청 기간 : <input type="date" name="jdate"> ~ <input type="date" name="end_jdate"></div>
 	            <div>
-	                강의 난이도 : <select name="diffcult">
+	                강의 난이도 : <select name="difficult">
 	                <option value="상">상</option>
 	                <option value="중">중</option>
 	                <option value="하">하</option>
 	                </select>
 	            </div>
-	            <div class="book_input">교재 <input type="text" name="book"></div>
+	            <div class="book_input">교재 <input type="text" name="book" value="<%=vo.getBook()%>"></div>
 	            <div>강의 기간 <input type="date" name="duringclass"> ~ <input type="date" name="end_duringclass"></div>
 	        </div>
 	        <div class="filse">
@@ -99,7 +104,7 @@
 	            <hr> 
 	        </div>
 	        <div class="last_button">
-	            <button>등록</button>
+	            <button>수정</button>
 	        </div>
         </form>
       </section>
