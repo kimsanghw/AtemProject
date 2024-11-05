@@ -73,7 +73,7 @@
         <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="<%= request.getContextPath() %>/img/로고1.png"></a></h1>
       <div class="index_nav headerSlide">
         <ul>
-          <li><a href="#">수강신청</a></li>
+          <li><a href="<%=request.getContextPath()%>/class/list.do">수강신청</a></li>
           <% 
         if (userId != null) {
             String authorization = userId.getAuthorization();
@@ -92,9 +92,9 @@
     <% 
         } 
     %>
-          <li><a href="#">공지사항</a></li>
-          <li><a href="#">QnA</a></li>
-          <li><a href="#">자료실</a></li>
+          <li><a href="<%=request.getContextPath()%>/notice_board/notice_list.do">공지사항</a></li>
+          <li><a href="<%=request.getContextPath()%>/QnA_board/QnA_list.do">QnA</a></li>
+          <li><a href="<%=request.getContextPath()%>/libray/libray_list.do">자료실</a></li>
         </ul>
       </div>
       <div class="index_loginPage headerSlide">
