@@ -192,7 +192,28 @@
 
         <hr>
         <div class="mother">
-        	<span class="center_button"><button class="register-btn">수강신청</button></span>
+        <%
+			    if (user != null) {
+			        String authorization = user.getAuthorization();
+			        if ("S".equals(authorization)) {
+			%>
+        	<span class="center_button"><button class="register-btn" onclick="document.fre.submit()">수강신청</button></span>
+        	<%
+			        }
+			    }
+			%>
+        	<form name="fre" action="<%=request.getContextPath()%>/class/app_class.do" method="POST">
+        		<input type="hidden" name="cno" value="<%=vo.getCno() %>">
+        		<input type="hidden" name="uno" value="<%=user.getUno() %>">
+        		<input type="hidden" name="title" value="<%=vo.getTitle() %>">
+			    <input type="hidden" name="subject" value="<%=vo.getSubject() %>">
+			    <input type="hidden" name="jdate" value="<%=vo.getJdate() %>">
+			    <input type="hidden" name="end_jdate" value="<%=vo.getEnd_jdate() %>">
+			    <input type="hidden" name="difficult" value="<%=vo.getDifficult() %>">
+			    <input type="hidden" name="book" value="<%=vo.getBook() %>">
+			    <input type="hidden" name="duringclass" value="<%=vo.getDuringclass() %>">
+			    <input type="hidden" name="end_duringclass" value="<%=vo.getEnd_duringclass() %>">
+        	</form>
             <span class="center_button"><button class="register-btn" onclick="location.href='<%=request.getContextPath()%>/class/list.do'">목록</button></span>
             
 			<%

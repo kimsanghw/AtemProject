@@ -55,6 +55,10 @@ public class ClassController {
 			if(request.getMethod().equals("POST")){
 				delete(request,response);
 			} 
+		} else if(comments[comments.length-1].equals("app_class.do")) {
+			if(request.getMethod().equals("POST")){
+				app_class(request,response);
+			} 
 		}
 	}
 	public void view (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -450,5 +454,66 @@ public class ClassController {
 			}
 		}
 	}
+	public void app_class (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		
+		//데이터를 가져오기
+		int cno = Integer.parseInt(request.getParameter("cno"));
+		int uno = Integer.parseInt(request.getParameter("uno"));
+		String title = request.getParameter("title");
+		String subject = request.getParameter("subject");
+		String jdate = request.getParameter("jdate");
+		String end_jdate = request.getParameter("end_jdate");
+		String difficult = request.getParameter("difficult");
+		String book = request.getParameter("book");
+		String duringclass = request.getParameter("duringclass");
+		String end_duringclass = request.getParameter("end_duringclass");
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		PreparedStatement psmt2 = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DBConn.conn();
+			
+			//신청한 강의인지 확인
+			String sql = "SELECT * FROM app_class WHERE uno=? AND cno=?";
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, uno);
+			psmt.setInt(2, cno);
+			
+			rs = psmt.executeQuery();
+			
+			if(rs.next()) {
+				
+	            return;
+			}
+			//신청 안했으면 등록 
+			String insertSQL = "INSERT INTO app_class(uno, cno, subject) VALUES (?, ?, 'A')";
+			psmt2 = conn.prepareStatement(insertSQL);
+			psmt2.setInt(1, uno);
+			psmt2.setInt(2, cno);
+			
+			
+			int result = psmt2.executeUpdate();
+			
+			if(result>0) {
+				request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
+			} else {
+				System.out.println("실패했습니다");
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
+
 	
