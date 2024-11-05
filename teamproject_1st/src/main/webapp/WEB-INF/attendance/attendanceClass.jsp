@@ -1,6 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%@ page import="FrontController.vo.ClassVO" %>
+<%@ page import="FrontController.util.*" %>
 <%@ include file="../../include/header.jsp" %>
+<%
+
+ List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
+
+%>
 
 <title>Insert title here</title>
 <style>

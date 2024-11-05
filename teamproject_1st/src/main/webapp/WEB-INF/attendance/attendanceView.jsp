@@ -22,7 +22,10 @@
  List<App_classVO> attendanceList = (List<App_classVO>)request.getAttribute("attendanceList");
  String selectedDate = (String)request.getAttribute("selectedDate");
  String todayDate = (String)request.getAttribute("todayDate");
- int cno = (int)request.getAttribute("cno");
+ Integer cno = (Integer) request.getAttribute("cno");
+ if (cno == null) {
+     cno = 0;  // 기본값 설정
+ }
  
 
 %>
@@ -157,6 +160,7 @@
         <article>
           <div class="article_inner">
            <h2>출결 관리</h2>
+           
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
             <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
             <div class="today_date" >
@@ -172,36 +176,64 @@
                     <td style="width: 40px;">번호</td>
                     <td style="width: 40px;">이름</td>
                     <td style="width: 40px;">출결구분</td>
-                    <td>출결상태</td></tr>
+                    <td style="width: 40px;">출결상태</td>
+                   </tr>
                 </thead>
                 <tbody>
-                  <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="post" id="attendanceInfo">
                   <% int studnetNumber = 1; %>
                   <%for(App_classVO studentInfo : attendanceList){%>
                     <tr>
-                      <td style="width: 40px;"><%= studnetNumber %></td>
-                      <td style="width: 40px;"><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
+                      <td style="width: 40px;"><%= studnetNumber %><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
                       <td style="width: 40px;"><%= studentInfo.getName() %></td>
                       <td><%= studentInfo.getAttendance() %></td>
                       <td>
-                          <select>
+                      	<div>
+                          <select name="attendanceChange">
                           	<option value="출석">출석</option>
                           	<option value="지각">지각</option>
                           	<option value="조퇴">조퇴</option>
                           	<option value="병결">병결</option>
                           	<option value="결석">결석</option>
-                          </select>   
+                          </select>
+                          <button class="attendanceChange_button" type="submit">등록</button>
+                          </div>   
                       </td>
                     </tr>
                     <% studnetNumber++; %> 
                     <%} %>
                 </tbody>
               </table>
-            </form>
             </div>
           </div>
         </article>
       </section>
 <%@ include file="../../include/footer.jsp" %>
+<script>
+	$(document).ready(function() {
+	    $(".attendanceChange_button").on("click", function(e) {
+	        e.preventDefault();
+	        
+	        var attendanceChange = $(this).siblings("select[name='attendanceChange']").val();
+	        var ano = $(this).closest("tr").find("input[name='ano']").val(); // 숨겨진 input에서 ano 값 추출
+	        
+	        $.ajax({
+	            url: "<%=request.getContextPath()%>/attendance/attendanceViewOk.do",
+	            type: "POST",
+	            data: { attendanceChange: attendanceChange, ano: ano }, // 출결 상태와 번호 전송
+	            success: function(response) {
+	                if(response.trim() === "success") {
+	                    alert("출결 변경에 성공하였습니다.");
+	                } else {
+	                    alert("출결 변경에 실패했습니다.");
+	                }
+	            },
+	            error: function() {
+	                alert("서버와의 통신에 실패했습니다.");
+	            }
+	        });
+	    });
+	});
+
+</script>
 
                   
