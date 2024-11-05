@@ -29,7 +29,10 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 				
 				attendanceView(request,response);
-				}
+			}else if(request.getMethod().equals("POST")) {
+				
+				attendanceViewOk(request,response);
+			}
 		}else if(comments[comments.length-1].equals("attendanceList.do")) {
 			
 			if(request.getMethod().equals("GET")) {
@@ -41,15 +44,69 @@ public class AttendanceController {
 				}
 		}
 	}
+	
+	
+	
+	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+
+	    // AJAX 요청에서 넘어온 출결 상태와 출결 번호
+	    String attendanceChange = request.getParameter("attendanceChange");
+	    String ano = request.getParameter("ano");
+	    String cno = request.getParameter("cno"); // cno 값을 요청에서 받도록 설정
+
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+
+	    try {
+	        conn = DBConn.conn();
+	        String sql = "UPDATE attendance SET attendance = ? WHERE ano = ?";
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setString(1, attendanceChange); // 출결 상태 업데이트
+	        psmt.setInt(2, Integer.parseInt(ano)); // 출결 번호로 특정 행 선택
+
+	        int rowsAffected = psmt.executeUpdate();
+
+	        response.setCharacterEncoding("utf-8");
+	        response.setContentType("text/html;");
+	        if (rowsAffected > 0) {
+	            response.getWriter().write("success");
+	        } else {
+	            response.getWriter().write("fail");
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.getWriter().write("error:" + e.getMessage());
+	    } finally {
+	        try {
+	            DBConn.close(psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    // cno 속성을 JSP로 전달
+	    if (cno != null) {
+	        request.setAttribute("cno", Integer.parseInt(cno));
+	    } else {
+	        // cno가 null인 경우에 대한 기본 처리 (예: 기본값 설정 등)
+	        request.setAttribute("cno", 0);  // 기본값 설정 (필요에 따라 다르게 설정 가능)
+	    }
+	    request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+
+		
+	}
+	
 	public void attendanceClass(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		HttpSession session = request.getSession();
 		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
-		
-		
 		int uno = loginUser.getUno();
-		String teacherName = loginUser.getName();
+		
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -60,7 +117,51 @@ public class AttendanceController {
 			conn = DBConn.conn();
 			
 			
-			String sql = "";
+			String sql =  " SELECT "
+						+ "    c.title AS 제목,"
+						+ "    c.subject AS 과목,"
+						+ "    c.state AS class_state,"
+						+ "    c.difficult AS 난이도,"
+						+ "    c.book AS 교제 ,"
+						+ "    c.duringclass AS 수강 시작 날짜,"
+						+ "    c.end_duringclass AS 수강 마지막 날짜,"
+						+ " FROM "
+						+ "     class c"
+						+ " JOIN "
+						+ "   app_class ac ON ac.cno = c.cno"
+						+ " JOIN "
+						+ "    USER u ON c.uno = u.uno"
+						+ " WHERE "
+						+ "    ac.uno = ?        "
+						+ "    AND c.state = 'E'  "
+						+ "    AND ac.state = 'E'"
+						+ "    AND c.end_duringclass > NOW()";
+			
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, uno);
+			rs = psmt.executeQuery();
+			
+			 while(rs.next()) {
+				 
+					ClassVO vo = new ClassVO();
+					vo.setCno(rs.getInt("cno"));
+					vo.setUno(rs.getInt("uno"));
+					vo.setTitle(rs.getString("title"));
+					vo.setState(rs.getString("state"));
+					vo.setSubject(rs.getString("subject"));
+					vo.setDuringclass(rs.getString("duringclass"));
+					vo.setEnd_duringclass(rs.getString("end_duringclass"));
+					vo.setDifficult(rs.getString("difficult"));
+					vo.setBook(rs.getString("book"));
+					
+					
+					clist.add(vo);
+					
+				}
+			 
+			   request.setAttribute("clist", clist);
+			   
+			   request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
 			
 			
 		}catch(Exception e) {
