@@ -123,9 +123,20 @@ s
             <div class="mypage_line"></div>
             <div class="mypage_study mypage_menu"><a href="<%=request.getContextPath()%>/mypage/mypage2.do">내 강의 목록 ></a></div>
             <div class="mypage_line"></div>
-            <% if(userId2 != null) { 
+            <%
+            
+		 	UserVO userId2 = null;
+		 	userId2 = (UserVO)session.getAttribute("user");
+		 	if( userId2 == null )
+		 	{
+		 		System.out.println("세션에 정보가 없습니다");
+		 	}
+            
+            if(userId2 != null)
+            { 
             	String authorization = userId2.getAuthorization();
-            	if("A".equals(authorization)) {
+            	if("A".equals(authorization))
+            	{
             %>
             <div class="mypage_admin mypage_menu" id="admin_page"><a href="<%=request.getContextPath()%>/mypage/mypage3.do">관리자 페이지 ></a></div> <!-- ì´ëë¯¼ì¼ë¡ ë¡ê·¸ì¸ ì ë³´ì´ë divìì­-->
             <div class="mypage_line mypage_admin"></div>
