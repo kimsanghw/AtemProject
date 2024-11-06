@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
+<%@ page import ="FrontController.vo.UserVO" %>
+<%@ page import ="FrontController.vo.ClassVO" %>
+<%@ page import="FrontController.util.*" %>
+<%@ page import ="java.util.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,14 +115,7 @@
         </style>
 </head>
 <body>
-<%
-	 	UserVO userId2 = null;
-	 	userId2 = (UserVO)session.getAttribute("user");
-	 	if( userId2 == null )
-	 	{
-	 		System.out.println("세션에 정보가 없습니다");
-	 	}
-%>
+s
       <section>
         <div class="mypage">마이페이지</div>
         <div class="mypage_flex">
@@ -183,8 +180,29 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="mypage_class">수강중인 강의</div>
-            <div></div>
+            <%
+			    List<ClassVO> voList = (List<ClassVO>) request.getAttribute("clist");
+			    ClassVO firstCourse = (voList != null && !voList.isEmpty()) ? voList.get(0) : null; // Get the first course if it exists
+			%>
+			<div class="mypage_class">수강중인 강의</div>
+			
+			<% if (firstCourse != null) { %>
+			    <div class="course-item">
+			        <img src="../img/<%= firstCourse.getOrgFileName() %>">
+			        <div class="course-info">
+			            <a href="<%= request.getContextPath() %>/class/view.do?cno=<%= firstCourse.getCno() %>">
+			                <div><h2><%= firstCourse.getTitle() %></h2></div>
+			            </a>
+			            <div class="class_info">
+			                <p>난이도: <%= firstCourse.getDifficult() %></p>
+			                <p>강사: <%= firstCourse.getName() %></p>
+			                <p>강의 기간: <%= firstCourse.getDuringclass() %></p>
+			            </div>
+			        </div>
+			    </div>
+			<% } else { %>
+			    <p>현재 수강 중인 강의가 없습니다.</p>
+			<% } %>
         </div>
       </section>
       <%@ include file="../../include/footer.jsp" %>
