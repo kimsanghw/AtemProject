@@ -114,7 +114,7 @@
 <body>
       <section>
         <h2 class="notice_title">공지사항 등록</h2>
-        <form action="<%=request.getContextPath()%>/notice/notice_write.do" method="post"">
+        <form action="<%=request.getContextPath()%>/notice/notice_write.do" method="post">
             <div class="notice_title_write">
                 <input type="text" placeholder="제목을 입력해주세요." name="title">
             </div>

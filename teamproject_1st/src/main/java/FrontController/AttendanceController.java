@@ -178,7 +178,7 @@ public class AttendanceController {
 			
 			rs = psmt.executeQuery();
 			
-			 while(rs.next()) {
+			 if(rs.next()) {
 				 
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
@@ -188,7 +188,8 @@ public class AttendanceController {
 					vo.setSubject(rs.getString("subject"));
 					vo.setDuringclass(rs.getString("duringclass"));
 					vo.setEnd_duringclass(rs.getString("End_duringclass"));
-					vo.setDifficult(rs.getString("difficult"));
+					vo.setDifficult(rs.getString(""
+							+ "difficult"));
 					vo.setBook(rs.getString("book"));
 					
 					

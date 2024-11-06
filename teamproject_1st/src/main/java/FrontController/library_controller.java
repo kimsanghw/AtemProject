@@ -343,7 +343,6 @@ public class library_controller {
 	        
 	        psmt.executeUpdate();
 	        
-	        
 	        // 쿼리 실행
 	        int result = psmt.executeUpdate();
 

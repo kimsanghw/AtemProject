@@ -187,6 +187,30 @@ public class MyPageController {
 		}
 		
 		public void mypage2(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+			
+			Connection conn = null;
+		    PreparedStatement psmt = null;
+		    ResultSet rs = null;
+			
+		    int uno =  Integer.parseInt(request.getParameter("uno")); 
+			try {
+				conn = DBConn.conn();
+				
+				String sql ="SELECT c.* FROM class c JOIN app_class ac ON c.cno = ac.cno WHERE ac.uno = ? AND c.end_duringclass < NOW() ORDER BY c.end_duringclass DESC; ";
+				psmt = conn.prepareStatement(sql);
+		        psmt.setInt(1, uno);
+		        
+		        rs = psmt.executeQuery();
+		        
+			} catch (Exception e) {
+		        e.printStackTrace();
+		    } finally {
+		        try {
+		            DBConn.close(rs, psmt, conn);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+		    }
 			request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
 		}
 		
