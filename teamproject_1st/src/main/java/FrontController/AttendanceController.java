@@ -384,6 +384,7 @@ public class AttendanceController {
 	    String selectedDate = request.getParameter("date"); // 선택한 날짜 가져오기
 	    String todayDate = request.getParameter("now()");
 	    int cno = Integer.parseInt(request.getParameter("cno"));
+	    
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -393,7 +394,7 @@ public class AttendanceController {
 		
 		try {
 			conn = DBConn.conn();
-			
+			if(selectedDate != null) {
 			String sql = " SELECT u.uno AS 학생번호, u.name AS 학생이름, a.attendance AS 출결상태, "
 	                   + " a.rdate AS 출결일자, a.ano AS 출결번호 "
 	                   + " FROM attendance a "
@@ -402,7 +403,47 @@ public class AttendanceController {
 	                   + " WHERE c.cno = ? "
 	                   + " AND DATE(a.rdate) = ?"  
 	                   + " AND a.state = 'E' AND u.state = 'E' AND c.state = 'E'";
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1,cno);
+			if (selectedDate != null) {
+	            psmt.setString(2, selectedDate);
+	            System.out.println(selectedDate);
+	        }else {
+	            // 현재 날짜를 기본 값으로 설정
+	            todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+	            psmt.setString(2, todayDate); // 기본 날짜로 오늘 날짜 설정
+	        }
+		    rs = psmt.executeQuery();
+		    System.out.println(selectedDate);
+	        
+	        while (rs.next()) {
+	        	App_classVO studentInfo = new App_classVO();
+	            studentInfo.setUno(rs.getInt("학생번호"));
+	            studentInfo.setName(rs.getString("학생이름"));
+	            studentInfo.setAttendance(rs.getString("출결상태"));
+	            studentInfo.setRdate(rs.getString("출결일자"));
+	            studentInfo.setAno(rs.getInt("출결번호"));
 
+	            attendanceList.add(studentInfo);
+	        }
+	        request.setAttribute("attendanceList", attendanceList);
+			request.setAttribute("cno", cno );
+			request.setAttribute("selectedDate", selectedDate);
+			System.out.println(selectedDate);
+			request.setAttribute("todayDate", todayDate);
+			
+			request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+			
+			} else {
+				String sql = " SELECT u.uno AS 학생번호, u.name AS 학생이름, a.attendance AS 출결상태, "
+		                   + " a.rdate AS 출결일자, a.ano AS 출결번호 "
+		                   + " FROM app_class a "
+		                   + " JOIN USER u ON a.uno = u.uno "
+		                   + " JOIN class c ON a.cno = c.cno "
+		                   + " WHERE c.cno = ? "
+		                   + " AND DATE(a.rdate) = ?"  
+		                   + " AND a.state = 'E' AND u.state = 'E' AND c.state = 'E'";
+			}
 			
 			psmt = conn.prepareStatement(sql);
 			psmt.setInt(1,cno);
