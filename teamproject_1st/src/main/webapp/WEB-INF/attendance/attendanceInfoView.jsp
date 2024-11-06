@@ -2,21 +2,69 @@
     pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
 
-<title>Insert title here</title>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth'
+<title>출결 정보</title>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: function(fetchInfo, successCallback, failureCallback) {
+            $.ajax({
+                url: '<%=request.getContextPath()%>/attendance/getAttendanceData.do',
+                method: 'GET',
+                data: {
+                    start: fetchInfo.startStr,
+                    end: fetchInfo.endStr
+                },
+                dataType: 'json',
+                success: function(result) {
+                    var events = result.map(function(item) {
+                        return {
+                            title: item.status,
+                            start: item.date,
+                            color: getColorForStatus(item.status)
+                        };
+                    });
+                    // 데이터가 없는 날짜에 대해 '미입력' 상태 추가
+                    var currentDate = new Date(fetchInfo.startStr);
+                    var endDate = new Date(fetchInfo.endStr);
+                    while (currentDate < endDate) {
+                        var dateStr = currentDate.toISOString().split('T')[0];
+                        if (!result.some(item => item.date === dateStr)) {
+                            events.push({
+                                title: '미입력',
+                                start: dateStr,
+                                color: 'gray'
+                            });
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                    successCallback(events);
+                },
+                error: function() {
+                    failureCallback({ message: '서버에서 데이터를 가져오는데 실패했습니다.' });
+                }
             });
-            calendar.render();
+        }
+    });
+    calendar.render();
 
-            // 전역 변수로 calendar를 참조할 수 있도록 설정
-            window.calendar = calendar;
-        });
+    // 전역 변수로 calendar를 참조할 수 있도록 설정
+    window.calendar = calendar;
+});
 
-    </script>
+// 출결 상태에 따른 색상을 반환하는 함수
+function getColorForStatus(status) {
+    switch(status) {
+        case '출석': return 'green';
+        case '결석': return 'red';
+        case '지각': return 'orange';
+        default: return 'blue';
+    }
+}
+</script>
 <style>
 .section {
       flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
@@ -126,19 +174,21 @@
          margin-left: 50px;
 		}
     </style>
-	 <section>
-        <div class="attendance_info">출결정보</div>
-        <div class="info_flex">
-            <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClasee.do">수강중인 강의 ></a></div>
-            <div class="app_line"></div>
-            <div class="attendance_check class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceCheck.do">출석체크하기 ></a></div>
-            <div class="app_line"></div>
-            <div class="attendance_Info class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출석정보보기 ></a></div>
-            <div class="app_line"></div>
-        </div>
-        <div class="attendance_box info_flex">
-            <div class="app_check">출석정보</div>
-            <div id='calendar' ></div>
-        </div>
-    </section>
+
+<section>
+    <div class="attendance_info">출결정보</div>
+    <div class="info_flex">
+        <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClasee.do">수강중인 강의 ></a></div>
+        <div class="app_line"></div>
+        <div class="attendance_check class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceCheck.do">출석체크하기 ></a></div>
+        <div class="app_line"></div>
+        <div class="attendance_Info class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출석정보보기 ></a></div>
+        <div class="app_line"></div>
+    </div>
+    <div class="attendance_box info_flex">
+        <div class="app_check">출석정보</div>
+        <div id='calendar'></div>
+    </div>
+</section>
+
 <%@ include file="../../include/footer.jsp" %>

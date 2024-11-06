@@ -244,6 +244,7 @@
             <div class="today_date" >
               <input type="date" name="date" id="dateInput" value="<%= selectedDate != null ? selectedDate : todayDate %>" >
               <input type="hidden" name="cno" value="<%=cno%>">
+              
               <span> 현재 일자 : <%= selectedDate != null ? selectedDate : todayDate %></span>
             </div>
             </form>
@@ -257,33 +258,31 @@
                     <td style="width: 40px;">출결상태</td>
                    </tr>
                 </thead>
-                <tbody>
-                  <% int studnetNumber = 1; %>
-                  <% if (attendanceList != null) { %>
-				    <% for (App_classVO studentInfo : attendanceList) { %>
-				        <tr>
-				            <td style="width: 40px;"><%= studnetNumber %><input type="hidden" name="ano" value="<%= studentInfo.getAno() %>"></td>
-				            <td style="width: 40px;"><%= studentInfo.getName() %></td>
-				            <td><%= studentInfo.getAttendance() %></td>
-				            <td>
-				                <div>
-				                    <select name="attendanceChange">
-				                        <option value="출석">출석</option>
-				                        <option value="지각">지각</option>
-				                        <option value="조퇴">조퇴</option>
-				                        <option value="병결">병결</option>
-				                        <option value="결석">결석</option>
-				                    </select>
-				                    <button class="attendanceChange_button" type="button">등록</button>
-				                </div>
-				            </td>
-				        </tr>
-				        <% studnetNumber++; %>
-				    <% } %>
-				<% } else { %>
-				    <p>출석 데이터가 없습니다.</p>
-				<% } %>
-                </tbody>
+                 <tbody>
+        <% int studentNumber = 1; %>
+        <% if (attendanceList != null) { %>
+            <% for (App_classVO studentInfo : attendanceList) { %>
+                <tr>
+                    <td><%= studentNumber %><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
+                    <td><%= studentInfo.getName() %></td>
+                    <td><%= studentInfo.getAttendance() != null ? studentInfo.getAttendance() : "미등록" %></td> <!-- 출석 상태가 없으면 '미등록' -->
+                    <td>
+                        <select name="attendanceChange">
+                            <option value="출석" <%= "출석".equals(studentInfo.getAttendance()) ? "selected" : "" %>>출석</option>
+                            <option value="지각" <%= "지각".equals(studentInfo.getAttendance()) ? "selected" : "" %>>지각</option>
+                            <option value="조퇴" <%= "조퇴".equals(studentInfo.getAttendance()) ? "selected" : "" %>>조퇴</option>
+                            <option value="병결" <%= "병결".equals(studentInfo.getAttendance()) ? "selected" : "" %>>병결</option>
+                            <option value="결석" <%= "결석".equals(studentInfo.getAttendance()) ? "selected" : "" %>>결석</option>
+                        </select>
+                        <button class="attendanceChange_button" type="button">등록</button>
+                    </td>
+                </tr>
+                <% studentNumber++; %>
+            <% } %>
+        <% } else { %>
+            <p>출석 데이터가 없습니다.</p>
+        <% } %>
+    </tbody>
               </table>
             </div>
           </div>

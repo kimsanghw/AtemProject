@@ -373,130 +373,64 @@ public class AttendanceController {
 		
 	}
 	
-	public void attendanceView (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
+	public void attendanceView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");    
-	    List<App_classVO> attendanceList  = new ArrayList<>();
-	    if (attendanceList == null) {
-	        attendanceList = new ArrayList<>(); // 빈 리스트로 초기화
-	    }
-	    String selectedDate = request.getParameter("date"); // 선택한 날짜 가져오기
-	    String todayDate = request.getParameter("now()");
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+	    List<App_classVO> attendanceList = new ArrayList<>();
+	    String selectedDate = request.getParameter("date");
+	    String todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 	    int cno = Integer.parseInt(request.getParameter("cno"));
-	    
-		
-		Connection conn = null;
-		PreparedStatement psmt = null;
-		ResultSet rs = null;
-		
-		
-		
-		try {
-			conn = DBConn.conn();
-			if(selectedDate != null) {
-			String sql = " SELECT u.uno AS 학생번호, u.name AS 학생이름, a.attendance AS 출결상태, "
-	                   + " a.rdate AS 출결일자, a.ano AS 출결번호 "
-	                   + " FROM attendance a "
-	                   + " JOIN USER u ON a.uno = u.uno "
-	                   + " JOIN class c ON a.cno = c.cno "
-	                   + " WHERE c.cno = ? "
-	                   + " AND DATE(a.rdate) = ?"  
-	                   + " AND a.state = 'E' AND u.state = 'E' AND c.state = 'E'";
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1,cno);
-			if (selectedDate != null) {
-	            psmt.setString(2, selectedDate);
-	            System.out.println(selectedDate);
-	        }else {
-	            // 현재 날짜를 기본 값으로 설정
-	            todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-	            psmt.setString(2, todayDate); // 기본 날짜로 오늘 날짜 설정
-	        }
-		    rs = psmt.executeQuery();
-		    System.out.println(selectedDate);
-	        
+
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
+
+	    try {
+	        conn = DBConn.conn();
+
+	        // 모든 학생 목록과 출결 정보 조회 쿼리
+	        String sql = "SELECT u.uno AS 학생번호, u.name AS 학생이름, "
+	                   + "COALESCE(a.attendance, '미등록') AS 출결상태, a.rdate AS 출결일자, "
+	                   + "COALESCE(a.ano, -1) AS 출결번호 "
+	                   + "FROM app_class ac "
+	                   + "JOIN user u ON ac.uno = u.uno "
+	                   + "JOIN class c ON ac.cno = c.cno "
+	                   + "LEFT JOIN attendance a ON ac.uno = a.uno AND ac.cno = a.cno AND DATE(a.rdate) = ? "
+	                   + "WHERE ac.cno = ? AND ac.state = 'E' AND u.state = 'E'";
+
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setString(1, selectedDate != null ? selectedDate : todayDate);
+	        psmt.setInt(2, cno);
+
+	        rs = psmt.executeQuery();
+
 	        while (rs.next()) {
-	        	App_classVO studentInfo = new App_classVO();
+	            App_classVO studentInfo = new App_classVO();
 	            studentInfo.setUno(rs.getInt("학생번호"));
 	            studentInfo.setName(rs.getString("학생이름"));
 	            studentInfo.setAttendance(rs.getString("출결상태"));
 	            studentInfo.setRdate(rs.getString("출결일자"));
-	            studentInfo.setAno(rs.getInt("출결번호"));
+	            studentInfo.setAno(rs.getInt("출결번호") == 0 ? -1 : rs.getInt("출결번호"));
 
 	            attendanceList.add(studentInfo);
 	        }
-	        request.setAttribute("attendanceList", attendanceList);
-			request.setAttribute("cno", cno );
-			request.setAttribute("selectedDate", selectedDate);
-			System.out.println(selectedDate);
-			request.setAttribute("todayDate", todayDate);
-			
-			request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
-			
-			} else {
-				String sql = " SELECT u.uno AS 학생번호, u.name AS 학생이름, a.attendance AS 출결상태, "
-		                   + " a.rdate AS 출결일자, a.ano AS 출결번호 "
-		                   + " FROM app_class a "
-		                   + " JOIN USER u ON a.uno = u.uno "
-		                   + " JOIN class c ON a.cno = c.cno "
-		                   + " WHERE c.cno = ? "
-		                   + " AND DATE(a.rdate) = ?"  
-		                   + " AND a.state = 'E' AND u.state = 'E' AND c.state = 'E'";
-			}
-			
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1,cno);
-			if (selectedDate != null) {
-	            psmt.setString(2, selectedDate);
-	            System.out.println(selectedDate);
-	        }else {
-	            // 현재 날짜를 기본 값으로 설정
-	            todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-	            psmt.setString(2, todayDate); // 기본 날짜로 오늘 날짜 설정
-	        }
-		    rs = psmt.executeQuery();
-		    System.out.println(selectedDate);
-	        
-	        while (rs.next()) {
-	        	App_classVO studentInfo = new App_classVO();
-	            studentInfo.setUno(rs.getInt("학생번호"));
-	            studentInfo.setName(rs.getString("학생이름"));
-	            studentInfo.setAttendance(rs.getString("출결상태"));
-	            studentInfo.setRdate(rs.getString("출결일자"));
-	            studentInfo.setAno(rs.getInt("출결번호"));
 
-	            attendanceList.add(studentInfo);
-	        }
 	        request.setAttribute("attendanceList", attendanceList);
-			request.setAttribute("cno", cno );
-			request.setAttribute("selectedDate", selectedDate);
-			System.out.println(selectedDate);
-			request.setAttribute("todayDate", todayDate);
-			
-			
-			if (attendanceList.isEmpty()) {
-			    System.out.println("조회된 출석 데이터가 없습니다.");
-			} else {
-			    System.out.println("출석 데이터 조회 성공: " + attendanceList.size() + "개의 데이터가 있습니다.");
-			}
-			
-			
-			request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-			}finally {
-				
-				try {
-					DBConn.close(rs, psmt, conn);
-				} catch (Exception e) {
-					
-					e.printStackTrace();
-				}
-		}
-		 
-		
+	        request.setAttribute("cno", cno);
+	        request.setAttribute("selectedDate", selectedDate != null ? selectedDate : todayDate);
+
+	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
 
 }
