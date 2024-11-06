@@ -50,9 +50,16 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 				attendanceInfoView(request,response);
 				}
+		}else if(comments[comments.length-1].equals("updateRandom_number.do")) {
+			if(request.getMethod().equals("post")) {
+				updateRandom_number(request,response);
+				}
 		}
 	}
 	
+	
+	public void updateRandom_number(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+	}
 	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
