@@ -60,27 +60,21 @@
 	        });
 	    });
 	});
-	function openRandom_numberModal() {
-	    // 숨겨진 input 필드에서 인증코드를 가져옴
-	    const random_number = document.getElementById("generatedRandom_number").value;
-	    const cno = "<%= cno %>"; // JSP에서 cno 값을 가져옴
-	    
-	    console.log("Generated random number:", random_number);
-	    console.log("Course number (cno):", cno);
 
-	    
-	    // AJAX 요청을 통해 인증번호 업데이트
+	function generateAndShowRandomNumber() {
+	    const cno = "<%= cno %>"; // 서버에서 전달받은 cno를 사용
+
 	    $.ajax({
 	        url: "<%=request.getContextPath()%>/attendance/updateRandom_number.do",
 	        type: "POST",
-	        data: { random_number: random_number, cno: cno },
+	        data: { cno: cno },
 	        success: function(response) {
 	            if (response.trim() === "success") {
-	                alert("인증코드가 성공적으로 저장되었습니다.");
-	                
-	                // 모달창 열기 및 인증번호 표시
+	                // 인증코드 성공적으로 저장되면 모달창 표시
+	                const random_number = document.getElementById("generatedRandom_number").value;
 	                document.getElementById("random_number").innerText = random_number;
 	                document.getElementById("random_numberModal").style.display = "block";
+	                alert("인증코드가 성공적으로 저장되었습니다.");
 	            } else {
 	                alert("인증코드 저장에 실패했습니다.");
 	            }
@@ -92,7 +86,6 @@
 	}
 
 	function closeModal() {
-	    // 모달창 닫기
 	    document.getElementById("random_numberModal").style.display = "none";
 	}
 
@@ -230,6 +223,22 @@
         <article>
           <div class="article_inner">
            <h2>출결 관리</h2>
+	          <%
+				   // SecureRandom을 사용하여 6자리 인증코드 생성
+				   java.security.SecureRandom random = new java.security.SecureRandom();
+				   int random_number = 100000 + random.nextInt(900000); // 6자리 숫자 인증코드 (100000~999999 범위)
+			  %>
+				<input type="hidden" id="generatedRandom_number" value="">
+				<div style="margin-bottom: 20px;">
+				    <button type="button" onclick="generateAndShowRandomNumber()">인증코드 생성</button>
+				</div>
+				<div id="random_numberModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4);">
+				    <div style="background-color: #fefefe; margin: 30% auto; padding: 20px; border: 1px solid #888; width: 500px; text-align: center; font-size: 70px;">
+				        <h2>인증코드</h2>
+				        <p id="random_number"></p>
+				        <button onclick="closeModal()">닫기</button>
+				    </div>
+				</div>
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
             <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
             <div class="today_date" >
@@ -265,7 +274,7 @@
 				                        <option value="병결">병결</option>
 				                        <option value="결석">결석</option>
 				                    </select>
-				                    <button class="attendanceChange_button" type="button" >등록</button>
+				                    <button class="attendanceChange_button" type="button">등록</button>
 				                </div>
 				            </td>
 				        </tr>
