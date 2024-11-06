@@ -168,12 +168,12 @@
 			%>
 			<input type="hidden" id="generatedAuthCode" value="<%= authCode %>">
           <form id="generateAuthCodeForm" >
-	          <div>
-	          	<button type=submit onclick="openAuthModal()">인증코드 생성</button>
+	          <div style="margin-bottom: 20px;">
+	          	<button type="button" onclick="openAuthModal()">인증코드 생성</button>
 	          </div>
           </form> 
           <div id="authModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4);">
-    			<div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 300px; text-align: center;">
+    			<div style="background-color: #fefefe; margin: 30% auto; padding: 20px; border: 1px solid #888; width: 500px; text-align: center; font-size: 70px;">
         			<h2>인증코드</h2>
         			<p id="authCode"></p>
         			<button onclick="closeModal()">닫기</button>
@@ -231,30 +231,31 @@
       </section>
 <%@ include file="../../include/footer.jsp" %>
 <script>
-	$(document).ready(function() {
-	    $(".attendanceChange_button").on("click", function(e) {
-	        e.preventDefault();
-	        
-	        var attendanceChange = $(this).siblings("select[name='attendanceChange']").val();
-	        var ano = $(this).closest("tr").find("input[name='ano']").val(); // 숨겨진 input에서 ano 값 추출
-	        
-	        $.ajax({
-	            url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
-	            type: "POST",
-	            data: { attendanceChange: attendanceChange, ano: ano }, // 출결 상태와 번호 전송
-	            success: function(response) {
-	                if(response.trim() === "success") {
-	                    alert("출결 변경에 성공하였습니다.");
-	                } else {
-	                    alert("출결 변경에 실패했습니다.");
-	                }
-	            },
-	            error: function() {
-	                alert("서버와의 통신에 실패했습니다.");
-	            }
-	        });
-	    });
-	});
+		$(".attendanceChange_button").on("click", function(e) {
+		    e.preventDefault();
+		    
+		    var attendanceChange = $(this).siblings("select[name='attendanceChange']").val();
+		    var ano = $(this).closest("tr").find("input[name='ano']").val(); 
+		    console.log("Attendance Change:", attendanceChange); 
+		    console.log("ANO:", ano);
+		    
+		    $.ajax({
+		        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
+		        type: "POST",
+		        data: { attendanceChange: attendanceChange, ano: ano }, 
+		        success: function(response) {
+		            if(response.trim() === "success") {
+		                alert("출결 변경에 성공하였습니다.");
+		            } else {
+		                alert("출결 변경에 실패했습니다.");
+		            }
+		        },
+		        error: function() {
+		            alert("서버와의 통신에 실패했습니다.");
+		        }
+		    });
+		});
+
 	
 	
 	 function openAuthModal() {
