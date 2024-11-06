@@ -19,9 +19,15 @@ public class ClassVO {
 	private int uno;
 	private int cnt;
 	private int ano;
-	
+	private int random_number;
 
 	
+	public int getRandom_number() {
+		return random_number;
+	}
+	public void setRandom_number(int random_number) {
+		this.random_number = random_number;
+	}
 	public String getEnd_jdate() {
 		return end_jdate;
 	}
