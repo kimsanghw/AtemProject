@@ -1,6 +1,11 @@
+<%@page import="FrontController.vo.qnaVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ include file="../../include/header.jsp" %>
+
+<%
+	qnaVO vo = (qnaVO)request.getAttribute("vo");
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,20 +102,17 @@
 <body>
       <section>
         <h2 class="free_title">Q&A 수정</h2>
-        <form action="">
+        <form action="<%=request.getContextPath()%>/qna/qna_modify.do" method="post">
+	        <input type="hidden" name="qno" value="<%=vo.getQno()%>">
             <div class="free_title_write">
-                <input type="text" placeholder="제목을 입력해주세요." name="title">
+                <input type="text" placeholder="제목을 입력해주세요." name="title" value="<%=vo.getTitle()%>">
             </div>
             <div class="free_body_write">
-                <textarea name="content" placeholder="내용을 입력해주세요."></textarea>
-            </div>
-            <div class="box">asfafaseqfkewqkf.jpg</div>
-            <div class="free_board_file">
-                <button>첨부파일</button>
+                <textarea name="content" placeholder="내용을 입력해주세요."><%= vo.getContent() %></textarea>
             </div>
             <div class="free_board_button">
                 <button type="submit">등록</button>
-                <button type="button">취소</button>
+                <button type="button" onclick="location.href='<%=request.getContextPath()%>/qna/qna_list.do'">취소</button>
             </div>
         </form>
         <div class="free_board_line"></div>

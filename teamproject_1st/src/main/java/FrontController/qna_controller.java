@@ -22,6 +22,7 @@ import FrontController.util.DBConn;
 import FrontController.util.PagingUtil;
 import FrontController.vo.NoticeVO;
 import FrontController.vo.UserVO;
+import FrontController.vo.commentVO;
 import FrontController.vo.qnaVO;
 
 public class qna_controller {
@@ -53,11 +54,22 @@ public class qna_controller {
 			if(request.getMethod().equals("POST")) {
 				qna_delete(request,response);
 			}
-			
+		}else if(comments[comments.length-1].equals("comment_writeok.do")) {
+			if(request.getMethod().equals("POST")) {
+				comment_writeok(request,response);
+			}
+		}else if(comments[comments.length-1].equals("comment_deleteok.do")) {
+			if(request.getMethod().equals("POST")) {
+				comment_deleteok(request,response);
+			}
+		}else if(comments[comments.length-1].equals("comment_modify.do")) {
+			if(request.getMethod().equals("POST")) {
+				comment_modifyok(request,response);
+			}
 		}
 	}
 	
-	
+
 	private void qna_write(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getRequestDispatcher("/WEB-INF/qna_board/qna_write.jsp").forward(request, response);
 	}
@@ -218,8 +230,8 @@ public class qna_controller {
 		
 		int qno = 0;
 		
-		 if(request.getParameter("Qno") != null) { 
-			  qno = Integer.parseInt(request.getParameter("Qno"));
+		 if(request.getParameter("qno") != null) { 
+			  qno = Integer.parseInt(request.getParameter("qno"));
 		  }
 		 
 			Connection conn = null;
@@ -230,7 +242,8 @@ public class qna_controller {
 				conn = DBConn.conn();
 				
 				// 조회수 증가 쿼리 
-				String sql = "UPDATE qna_board SET hit = hit + 1 WHERE nno = ?";
+				String sql = "UPDATE qna_board SET hit = hit + 1 WHERE qno = ?";
+				
 				
 				psmt = conn.prepareStatement(sql);
 				
@@ -238,6 +251,31 @@ public class qna_controller {
 				
 			 	// 조회수 업데이트 실행
 				psmt.executeUpdate();
+				
+				sql = "SELECT qc.qcno, qc.content, qc.state,q.qno FROM qnacomment qc INNER JOIN qna_board q ON qc.qno = q.qno WHERE q.qno = ? AND qc.state = 'E';";
+				
+				psmt = conn.prepareStatement(sql);
+				
+				psmt.setInt(1, qno);
+				
+				rs = psmt.executeQuery();
+				
+				List<commentVO> list = new ArrayList<commentVO>(); 
+				
+				while(rs.next()) {
+					commentVO cvo = new commentVO();
+					cvo.setQcno(rs.getInt("qcno"));
+					cvo.setContent(rs.getString("content"));
+					cvo.setState(rs.getString("state"));
+					cvo.setQno(rs.getInt("qno"));
+					
+					list.add(cvo);
+				}
+				
+				request.setAttribute("list", list);
+				
+				
+				
 				
 				// 게시글 정보 가져오기 쿼리
 				sql = "SELECT q.*, u.name FROM qna_board q INNER JOIN user u ON q.uno = u.uno WHERE q.qno = ?"; 
@@ -274,26 +312,247 @@ public class qna_controller {
 			}
 		
 		request.getRequestDispatcher("/WEB-INF/qna_board/qna_view.jsp").forward(request, response);
+									  
 	}
 	
 	private void qna_modify(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		
+		int qno = Integer.parseInt(request.getParameter("qno"));
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			conn = DBConn.conn();
+			
+			String sql = "SELECT q.qno, q.title, q.content, u.id FROM qna_board q INNER JOIN user u ON q.uno = u.uno WHERE q.qno = ?";
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, qno);
+			rs = psmt.executeQuery();
+			
+			if(rs.next()) {
+				qnaVO vo = new qnaVO();
+				vo.setQno(rs.getInt("qno"));
+				vo.setTitle(rs.getString("title"));
+				vo.setContent(rs.getString("content"));
+				vo.setId(rs.getString("id"));
+				
+				request.setAttribute("vo", vo);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(rs, psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		request.getRequestDispatcher("/WEB-INF/qna_board/qna_modify.jsp").forward(request, response);
 		
 	}
 	
 	private void qna_modifyOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		
+		int qno = Integer.parseInt(request.getParameter("qno"));
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		
+		try {
+			// DB 연결
+	        conn = DBConn.conn();
+	        
+	        // 1. qna 테이블 업데이트 (title, content 수정)
+	        String sql = "UPDATE qna_board SET title = ?, content = ? WHERE qno = ?";
+	        
+	        psmt = conn.prepareStatement(sql);
+	        
+	        psmt.setString(1, title);
+	        psmt.setString(2, content);
+	        psmt.setInt(3, qno);
+	        
+	        psmt.executeUpdate();
+	        
+		     // 쿼리 실행
+	        int result = psmt.executeUpdate();
+
+	        // 성공 시 리다이렉트
+	        if (result > 0) {
+	            response.sendRedirect("qna_view.do?qno="+qno);
+	        }
+		} catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            DBConn.close(psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
 	
 	private void qna_delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		
+		int qno = Integer.parseInt(request.getParameter("qno"));
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		
+		try {
+			conn = DBConn.conn();
+			
+			String sql = "UPDATE qna_board SET state = 'D' WHERE qno = ?";
+			
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, qno);
+			
+			int result = psmt.executeUpdate();
+			
+			if(result > 0) {
+				response.sendRedirect(request.getContextPath()+"/qna/qna_list.do");
+			}	
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
+	private void comment_writeok(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		
+	    // 세션에서 로그인된 사용자 정보 가져오기
+	    HttpSession session = request.getSession();
+	    UserVO loginVO = (UserVO) session.getAttribute("loginUser");
+	    
+	    String content = request.getParameter("content");
+	    
+	    int qno = 0;
+		 if(request.getParameter("qno") != null) { 
+			  qno = Integer.parseInt(request.getParameter("qno"));
+		  }
+		 
+			Connection conn = null;
+			PreparedStatement psmt = null;
+			
+			try {
+				conn = DBConn.conn();
+				
+				String sql = "insert into qnacomment(content,qno,uno) values(?,?,?)";
+				
+				psmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+		        psmt.setString(1, content);
+		        psmt.setInt(2, qno);
+		        psmt.setInt(3, loginVO.getUno());
+		        
+		        int result = psmt.executeUpdate(); 
+		        
+		        if(result > 0) {
+		        	response.sendRedirect("qna_view.do?qno="+qno);
+		        }
+		        
+			}catch(Exception e) {
+				e.printStackTrace();
+			}finally {
+				try {
+					DBConn.close(psmt, conn);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+	}
 
+	private void comment_deleteok(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		
+	    int qno = 0;
+		 if(request.getParameter("qno") != null) { 
+			  qno = Integer.parseInt(request.getParameter("qno"));
+		  }
+		
+		int qcno = Integer.parseInt(request.getParameter("qcno"));
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		
+		try {
+			conn = DBConn.conn();
+			
+			String sql = "UPDATE qnacomment SET state = 'D' WHERE qcno = ?";
+			
+			psmt = conn.prepareStatement(sql);
+			psmt.setInt(1, qcno);
+			
+			int result = psmt.executeUpdate();
+			
+			if(result > 0) {
+				response.sendRedirect(request.getContextPath()+"/qna/qna_view.do?qno="+ qno);
+			}	
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-
-
-
-
+	private void comment_modifyok(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		
+	    int qno = 0;
+		 if(request.getParameter("qno") != null) { 
+			  qno = Integer.parseInt(request.getParameter("qno"));
+		  }
+		
+		int qcno = Integer.parseInt(request.getParameter("qcno"));
+		String content = request.getParameter("content");
+		
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		
+		try{
+			conn = DBConn.conn();
+			
+			String sql = " UPDATE qnacomment SET content=? WHERE qcno =? and qno = ? ";
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1,content);
+			psmt.setInt(2,qcno);
+			psmt.setInt(3,qno);
+			
+			psmt.executeUpdate();
+			
+			int result = psmt.executeUpdate();
+			
+			if(result > 0) {
+				response.sendRedirect(request.getContextPath()+"/qna/qna_view.do?qno="+ qno);
+			}	
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				DBConn.close(psmt, conn);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 
 

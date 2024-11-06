@@ -18,9 +18,7 @@
 			alert('로그인이 필요합니다.');
 			location.href='<%=request.getContextPath()%>/user/login.do'
 		</script>
-		
 		<%
-
 	}
 %>
 <!DOCTYPE html>
@@ -111,8 +109,8 @@
         </div>
         <div class="notice_board_button">
         
-        <%
-        if(loginUser != null && vo != null && loginUser.getUno() == vo.getUno()){%>
+        
+        <%if(loginUser != null && vo != null && loginUser.getUno() == vo.getUno()){%>
         	<button type="submit" onclick="location.href='<%=request.getContextPath()%>/notice/notice_modify.do?nno=<%= vo.getNno()%>'">수정</button>
         	<button type="button" onclick="document.frm.submit();">삭제</button>
         	<form name="frm" action="<%=request.getContextPath()%>/notice/notice_delete.do" method="post" >
