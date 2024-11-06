@@ -5,10 +5,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ "jdbc:mysql://192.168.0.4/team_project"
+ "TEAM_admin"
+**/
+
 public class DBConn {
 	public static final String URL
-			=	"jdbc:mysql://192.168.0.4/team_project";
-	public static final String USER = "TEAM_admin";
+			=	"jdbc:mysql://localhost/team_project";
+	public static final String USER = "root";
 	public static final String PASSWORD = "ezen";
 	
 	public static Connection conn() throws Exception {

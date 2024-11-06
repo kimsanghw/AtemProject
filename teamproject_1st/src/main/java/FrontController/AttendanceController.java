@@ -76,7 +76,9 @@ public class AttendanceController {
 	    String attendanceChange = request.getParameter("attendanceChange");
 	    String ano = request.getParameter("ano");
 	    String cno = request.getParameter("cno"); // cno 값을 요청에서 받도록 설정
-
+	    System.out.println("---------------------------------------------------------------------");
+	    System.out.println(ano);
+        System.out.println(attendanceChange);
 	    Connection conn = null;
 	    PreparedStatement psmt = null;
 
@@ -86,7 +88,9 @@ public class AttendanceController {
 	        psmt = conn.prepareStatement(sql);
 	        psmt.setString(1, attendanceChange); // 출결 상태 업데이트
 	        psmt.setInt(2, Integer.parseInt(ano)); // 출결 번호로 특정 행 선택
-
+	        System.out.println("---------------------------------------------------------------------");
+	        System.out.println(ano);
+	        System.out.println(attendanceChange);
 	        int rowsAffected = psmt.executeUpdate();
 
 	        response.setCharacterEncoding("utf-8");
@@ -115,7 +119,9 @@ public class AttendanceController {
 	        // cno가 null인 경우에 대한 기본 처리 (예: 기본값 설정 등)
 	        request.setAttribute("cno", 0);  // 기본값 설정 (필요에 따라 다르게 설정 가능)
 	    }
-	    request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+	    
+	    System.out.println("Received ano: " + ano);
+	    System.out.println("Received attendanceChange: " + attendanceChange);
 
 		
 	}
@@ -325,6 +331,9 @@ public class AttendanceController {
 	    HttpSession session = request.getSession();
 	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");    
 	    List<App_classVO> attendanceList  = new ArrayList<>();
+	    if (attendanceList == null) {
+	        attendanceList = new ArrayList<>(); // 빈 리스트로 초기화
+	    }
 	    String selectedDate = request.getParameter("date"); // 선택한 날짜 가져오기
 	    String todayDate = request.getParameter("now()");
 	    int cno = Integer.parseInt(request.getParameter("cno"));
@@ -376,6 +385,13 @@ public class AttendanceController {
 			request.setAttribute("selectedDate", selectedDate);
 			System.out.println(selectedDate);
 			request.setAttribute("todayDate", todayDate);
+			
+			
+			if (attendanceList.isEmpty()) {
+			    System.out.println("조회된 출석 데이터가 없습니다.");
+			} else {
+			    System.out.println("출석 데이터 조회 성공: " + attendanceList.size() + "개의 데이터가 있습니다.");
+			}
 			
 			
 			request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);

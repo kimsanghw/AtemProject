@@ -1,6 +1,11 @@
+<%@page import="FrontController.vo.NoticeVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ include file="../../include/header.jsp" %>
+
+<%
+	NoticeVO vo = (NoticeVO)request.getAttribute("vo");
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,20 +102,17 @@
 <body>
       <section>
         <h2 class="notice_title">공지사항 수정</h2>
-        <form action="">
+        <form action="<%=request.getContextPath()%>/notice/notice_modify.do" method="post">
+        	<input type="hidden" name="nno" value="<%=vo.getNno()%>">	
             <div class="notice_title_write">
-                <input type="text" placeholder="제목을 입력해주세요." name="title">
+                <input type="text" placeholder="제목을 입력해주세요." name="title" value="<%=vo.getTitle()%>">
             </div>
             <div class="notice_body_write">
-                <textarea name="content" placeholder="내용을 입력해주세요."></textarea>
-            </div>
-            <div class="box">asfafaseqfkewqkf.jpg</div>
-            <div class="notice_board_file">
-                <button>첨부파일</button>
+                <textarea name="content" placeholder="내용을 입력해주세요."><%= vo.getContent() %></textarea>
             </div>
             <div class="notice_board_button">
                 <button type="submit">등록</button>
-                <button type="button">취소</button>
+                <button type="button" onclick="location.href='<%=request.getContextPath()%>/notice/notice_list.do'">취소</button>
             </div>
         </form>
         <div class="notice_board_line"></div>

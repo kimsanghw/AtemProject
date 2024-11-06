@@ -1,23 +1,20 @@
 package FrontController.vo;
 
-public class NoticeVO {
-	private int nno;
+public class qnaVO {
+	private int qno; 
 	private String title;
 	private String content;
-	private String rdate;
 	private int hit;
+	private String rdate;
 	private String state;
-	private String topYn;
 	private int uno;
 	private String name;
 	private String id;
-	
-	
-	public int getNno() {
-		return nno;
+	public int getQno() {
+		return qno;
 	}
-	public void setNno(int nno) {
-		this.nno = nno;
+	public void setQno(int qno) {
+		this.qno = qno;
 	}
 	public String getTitle() {
 		return title;
@@ -31,29 +28,23 @@ public class NoticeVO {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getRdate() {
-		return rdate;
-	}
-	public void setRdate(String rdate) {
-		this.rdate = rdate;
-	}
 	public int getHit() {
 		return hit;
 	}
 	public void setHit(int hit) {
 		this.hit = hit;
 	}
+	public String getRdate() {
+		return rdate;
+	}
+	public void setRdate(String rdate) {
+		this.rdate = rdate;
+	}
 	public String getState() {
 		return state;
 	}
 	public void setState(String state) {
 		this.state = state;
-	}
-	public String getTopYn() {
-		return topYn;
-	}
-	public void setTopYn(String topYn) {
-		this.topYn = topYn;
 	}
 	public int getUno() {
 		return uno;
@@ -74,4 +65,3 @@ public class NoticeVO {
 		this.id = id;
 	}
 }
-	

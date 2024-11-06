@@ -10,7 +10,6 @@ public class ClassVO {
 	private String subject;
 	private String difficult;
 	private String state;
-	private String teacherName;
 	private String name;
 	private String orgFileName;
 	private String newFileName;
@@ -20,9 +19,15 @@ public class ClassVO {
 	private int uno;
 	private int cnt;
 	private int ano;
-	
+	private int random_number;
 
 	
+	public int getRandom_number() {
+		return random_number;
+	}
+	public void setRandom_number(int random_number) {
+		this.random_number = random_number;
+	}
 	public String getEnd_jdate() {
 		return end_jdate;
 	}
@@ -206,17 +211,6 @@ public class ClassVO {
 	public void setUno(int uno) {
 		this.uno = uno;
 	}
-	/**
-	 * @return the teacherName
-	 */
-	public String getTeacherName() {
-		return teacherName;
-	}
-	/**
-	 * @param teacherName the teacherName to set
-	 */
-	public void setTeacherName(String teacherName) {
-		this.teacherName = teacherName;
-	}
+	
 	
 }

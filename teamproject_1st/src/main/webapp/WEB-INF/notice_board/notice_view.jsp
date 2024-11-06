@@ -1,7 +1,28 @@
+<%@page import="FrontController.vo.NoticeVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ include file="../../include/header.jsp" %>
 
+<%
+	NoticeVO vo = (NoticeVO)request.getAttribute("vo");
+%>
+<%
+	//세션에서 로그인 정보 확인하기
+	UserVO loginUser;
+	// 세션에서 값 가져오기
+	loginUser = (UserVO)session.getAttribute("loginUser");
+	// 로그인 정보가 없으면 내보냄
+	if( loginUser == null) {	/* <!-- 로그인 정보가 없음 --> */
+		%>
+		<script>
+			alert('로그인이 필요합니다.');
+			location.href='<%=request.getContextPath()%>/user/login.do'
+		</script>
+		
+		<%
+
+	}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,16 +103,25 @@
 <body>
       <section>
         <h2 class="notice_title">공지사항 상세</h2>
-        <div class="notice_board_title">첫 번째 제목입니다.</div>
-        <div class="notice_board">작성자 관리자 등록일 2024-10-22 조회수 33</div>
-        <div class="notice_board_content">첫 번째 내용입니다.</div>
-        <div class="notice_board_file">등록된 첨부파일명.JPG</div>
+        <div class="notice_board_title"><%=vo.getTitle() %></div>
+        <div class="notice_board">작성자 <%=vo.getName() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
+        <div class="notice_board_content"><%=vo.getContent() %></div>
         <div class="notice_board_list_button">
-            <button><a href="#">목록</a></button>
+            <button onclick="location.href='<%=request.getContextPath()%>/notice/notice_list.do'">목록</button>
         </div>
         <div class="notice_board_button">
-            <button type="submit"><a href="#">등록</a></button>
-            <button type="button">취소</button>
+        
+        <%
+        if(loginUser != null && vo != null && loginUser.getUno() == vo.getUno()){%>
+        	<button type="submit" onclick="location.href='<%=request.getContextPath()%>/notice/notice_modify.do?nno=<%= vo.getNno()%>'">수정</button>
+        	<button type="button" onclick="document.frm.submit();">삭제</button>
+        	<form name="frm" action="<%=request.getContextPath()%>/notice/notice_delete.do" method="post" >
+	 			<input type="hidden" name="nno" value="<%=vo.getNno()%>">
+	 		</form>
+        <%}%>
+        
+            
+            
         </div>
       </section>
 </body>
