@@ -152,13 +152,25 @@
                         <td width="200px"><%= user.getPhone() %></td>
                         <td width="120px">
                             <div class="authority_container">
-                                <select name="authority">
-                                    <option value="S">학생</option>
-                                    <option value="T">강사</option>
-                                    <option value="A">관리자</option>
-                                </select>
-                                <button class="authority_button" type="submit">등록</button>
-                            </div>
+						        <select name="authority">
+						            <%
+						                String authorization = user.getAuthorization();
+						                String defaultOption = "";
+						                if ("S".equals(authorization)) {
+						                    defaultOption = "학생";
+						                } else if ("T".equals(authorization)) {
+						                    defaultOption = "강사";
+						                } else if ("A".equals(authorization)) {
+						                    defaultOption = "관리자";
+						                }
+						            %>
+						            <option value="<%= authorization %>" selected disabled hidden><%= defaultOption %></option>
+						            <option value="S">학생</option>
+						            <option value="T">강사</option>
+						            <option value="A">관리자</option>
+						        </select>
+						        <button class="authority_button" type="submit">등록</button>
+						    </div>
                         </td>
                     </tr>
 <%						}
