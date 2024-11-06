@@ -1,6 +1,7 @@
 package FrontController;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,8 +51,55 @@ public class AttendanceController {
 			if(request.getMethod().equals("GET")) {
 				attendanceInfoView(request,response);
 				}
+		}else if(comments[comments.length-1].equals("updateRandom_number.do")) {
+			if(request.getMethod().equals("POST")) {
+				updateRandom_number(request,response);
+				}
 		}
 	}
+	
+	
+	public void updateRandom_number(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		 request.setCharacterEncoding("UTF-8");
+	        HttpSession session = request.getSession();
+	        response.setContentType("text/html; charset=UTF-8");
+	        response.setCharacterEncoding("utf-8");
+
+	        String cno = request.getParameter("cno");
+
+	        if (cno == null || cno.isEmpty()) {
+	            response.getWriter().write("fail");
+	            return;
+	        }
+
+	        // 6자리 인증코드 생성
+	        SecureRandom random = new SecureRandom();
+	        int random_number = 100000 + random.nextInt(900000);
+
+	        // 인증코드를 세션에 저장하여 프론트엔드에서 접근할 수 있게 함
+	        session.setAttribute("generatedRandomNumber", random_number);
+
+	        // 인증코드를 데이터베이스에 저장
+	        try (Connection conn = DBConn.conn();
+	             PreparedStatement psmt = conn.prepareStatement("UPDATE class SET random_number = ? WHERE cno = ?")) {
+	            
+	            psmt.setInt(1, random_number); // 생성된 인증코드 설정
+	            psmt.setInt(2, Integer.parseInt(cno)); // cno에 맞는 강의 선택
+
+	            int rowsAffected = psmt.executeUpdate();
+	            if (rowsAffected > 0) {
+	                response.getWriter().write("success");
+	            } else {
+	                response.getWriter().write("fail");
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            response.getWriter().write("error:" + e.getMessage());
+	        }
+	    }
+	
+	    
 	
 	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
@@ -61,11 +109,47 @@ public class AttendanceController {
 	}
 	
 	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
+	    request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
 	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-		request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
+	    List<ClassVO> clist  = new ArrayList<ClassVO>();
+	    String cno = request.getParameter("cno");
+	    String random_number = request.getParameter("random_number");
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
+	    
+	    try {
+	        conn = DBConn.conn();
+	        
+	        String sql = "SELECT c.cno, c.random_number FROM class c WHERE c.cno = ? AND c.random_number = ?";
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setInt(1, Integer.parseInt(cno));
+	        psmt.setInt(2, Integer.parseInt(random_number));
+	        
+	        rs = psmt.executeQuery();
+	        
+	        if(rs.next()) {
+	            ClassVO vo = new ClassVO();
+	            vo.setCno(rs.getInt("cno"));
+	            vo.setRandom_number(rs.getInt("random_number"));
+	            clist.add(vo);
+	            request.setAttribute("vo", vo); // vo 객체를 JSP에서 사용할 수 있도록 설정
+	        }
+	        request.setAttribute("clist", clist);
+	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
+	        
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
+
 	
 	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
@@ -171,7 +255,7 @@ public class AttendanceController {
 			
 			rs = psmt.executeQuery();
 			
-			 if(rs.next()) {
+			 while(rs.next()) {
 				 
 					ClassVO vo = new ClassVO();
 					vo.setCno(rs.getInt("cno"));
@@ -181,8 +265,7 @@ public class AttendanceController {
 					vo.setSubject(rs.getString("subject"));
 					vo.setDuringclass(rs.getString("duringclass"));
 					vo.setEnd_duringclass(rs.getString("End_duringclass"));
-					vo.setDifficult(rs.getString(""
-							+ "difficult"));
+					vo.setDifficult(rs.getString("difficult"));
 					vo.setBook(rs.getString("book"));
 					
 					
@@ -326,89 +409,64 @@ public class AttendanceController {
 		
 	}
 	
-	public void attendanceView (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
+	public void attendanceView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");    
-	    List<App_classVO> attendanceList  = new ArrayList<>();
-	    if (attendanceList == null) {
-	        attendanceList = new ArrayList<>(); // 빈 리스트로 초기화
-	    }
-	    String selectedDate = request.getParameter("date"); // 선택한 날짜 가져오기
-	    String todayDate = request.getParameter("now()");
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+	    List<App_classVO> attendanceList = new ArrayList<>();
+	    String selectedDate = request.getParameter("date");
+	    String todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 	    int cno = Integer.parseInt(request.getParameter("cno"));
-		
-		Connection conn = null;
-		PreparedStatement psmt = null;
-		ResultSet rs = null;
-		
-		
-		
-		try {
-			conn = DBConn.conn();
-			
-			String sql = " SELECT u.uno AS 학생번호, u.name AS 학생이름, a.attendance AS 출결상태, "
-	                   + " a.rdate AS 출결일자, a.ano AS 출결번호 "
-	                   + " FROM attendance a "
-	                   + " JOIN USER u ON a.uno = u.uno "
-	                   + " JOIN class c ON a.cno = c.cno "
-	                   + " WHERE c.cno = ? "
-	                   + " AND DATE(a.rdate) = ?"  
-	                   + " AND a.state = 'E' AND u.state = 'E' AND c.state = 'E'";
 
-			
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1,cno);
-			if (selectedDate != null) {
-	            psmt.setString(2, selectedDate);
-	            System.out.println(selectedDate);
-	        }else {
-	            // 현재 날짜를 기본 값으로 설정
-	            todayDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-	            psmt.setString(2, todayDate); // 기본 날짜로 오늘 날짜 설정
-	        }
-		    rs = psmt.executeQuery();
-		    System.out.println(selectedDate);
-	        
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
+
+	    try {
+	        conn = DBConn.conn();
+
+	        // 모든 학생 목록과 출결 정보 조회 쿼리
+	        String sql = "SELECT u.uno AS 학생번호, u.name AS 학생이름, "
+	                   + "COALESCE(a.attendance, '미등록') AS 출결상태, a.rdate AS 출결일자, "
+	                   + "COALESCE(a.ano, -1) AS 출결번호 "
+	                   + "FROM app_class ac "
+	                   + "JOIN user u ON ac.uno = u.uno "
+	                   + "JOIN class c ON ac.cno = c.cno "
+	                   + "LEFT JOIN attendance a ON ac.uno = a.uno AND ac.cno = a.cno AND DATE(a.rdate) = ? "
+	                   + "WHERE ac.cno = ? AND ac.state = 'E' AND u.state = 'E'";
+
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setString(1, selectedDate != null ? selectedDate : todayDate);
+	        psmt.setInt(2, cno);
+
+	        rs = psmt.executeQuery();
+
 	        while (rs.next()) {
-	        	App_classVO studentInfo = new App_classVO();
+	            App_classVO studentInfo = new App_classVO();
 	            studentInfo.setUno(rs.getInt("학생번호"));
 	            studentInfo.setName(rs.getString("학생이름"));
 	            studentInfo.setAttendance(rs.getString("출결상태"));
 	            studentInfo.setRdate(rs.getString("출결일자"));
-	            studentInfo.setAno(rs.getInt("출결번호"));
+	            studentInfo.setAno(rs.getInt("출결번호") == 0 ? -1 : rs.getInt("출결번호"));
 
 	            attendanceList.add(studentInfo);
 	        }
+
 	        request.setAttribute("attendanceList", attendanceList);
-			request.setAttribute("cno", cno );
-			request.setAttribute("selectedDate", selectedDate);
-			System.out.println(selectedDate);
-			request.setAttribute("todayDate", todayDate);
-			
-			
-			if (attendanceList.isEmpty()) {
-			    System.out.println("조회된 출석 데이터가 없습니다.");
-			} else {
-			    System.out.println("출석 데이터 조회 성공: " + attendanceList.size() + "개의 데이터가 있습니다.");
-			}
-			
-			
-			request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-			}finally {
-				
-				try {
-					DBConn.close(rs, psmt, conn);
-				} catch (Exception e) {
-					
-					e.printStackTrace();
-				}
-		}
-		 
-		
+	        request.setAttribute("cno", cno);
+	        request.setAttribute("selectedDate", selectedDate != null ? selectedDate : todayDate);
+
+	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
 
 }

@@ -111,6 +111,23 @@
         .number_modify_text{
         	display: none;
         }
+		.course-item {
+		    display: flex;
+		    align-items: center;
+		    margin: 20px 50px;
+		    padding: 15px;
+		    background-color: #e0f7da;
+		    border-radius: 5px;
+		}
+		.course-item a{
+			text-decoration-line: none;
+			color: black;
+		}
+		.course-item img {
+		    width: 100px;
+		    height: 100px;
+		    margin-right: 20px;
+		}
         /*ì¹ì ìì­ ë*/
         </style>
 </head>
@@ -123,9 +140,20 @@ s
             <div class="mypage_line"></div>
             <div class="mypage_study mypage_menu"><a href="<%=request.getContextPath()%>/mypage/mypage2.do">내 강의 목록 ></a></div>
             <div class="mypage_line"></div>
-            <% if(userId2 != null) { 
+            <%
+            
+		 	UserVO userId2 = null;
+		 	userId2 = (UserVO)session.getAttribute("user");
+		 	if( userId2 == null )
+		 	{
+		 		System.out.println("세션에 정보가 없습니다");
+		 	}
+            
+            if(userId2 != null)
+            { 
             	String authorization = userId2.getAuthorization();
-            	if("A".equals(authorization)) {
+            	if("A".equals(authorization))
+            	{
             %>
             <div class="mypage_admin mypage_menu" id="admin_page"><a href="<%=request.getContextPath()%>/mypage/mypage3.do">관리자 페이지 ></a></div> <!-- ì´ëë¯¼ì¼ë¡ ë¡ê·¸ì¸ ì ë³´ì´ë divìì­-->
             <div class="mypage_line mypage_admin"></div>
@@ -180,29 +208,26 @@ s
                     </tr>
                 </tbody>
             </table>
-            <%
-			    List<ClassVO> voList = (List<ClassVO>) request.getAttribute("clist");
-			    ClassVO firstCourse = (voList != null && !voList.isEmpty()) ? voList.get(0) : null; // Get the first course if it exists
-			%>
-			<div class="mypage_class">수강중인 강의</div>
-			
-			<% if (firstCourse != null) { %>
-			    <div class="course-item">
-			        <img src="../img/<%= firstCourse.getOrgFileName() %>">
-			        <div class="course-info">
-			            <a href="<%= request.getContextPath() %>/class/view.do?cno=<%= firstCourse.getCno() %>">
-			                <div><h2><%= firstCourse.getTitle() %></h2></div>
-			            </a>
-			            <div class="class_info">
-			                <p>난이도: <%= firstCourse.getDifficult() %></p>
-			                <p>강사: <%= firstCourse.getName() %></p>
-			                <p>강의 기간: <%= firstCourse.getDuringclass() %></p>
-			            </div>
-			        </div>
-			    </div>
-			<% } else { %>
-			    <p>현재 수강 중인 강의가 없습니다.</p>
-			<% } %>
+            <% ClassVO enrolledClass = (ClassVO) request.getAttribute("enrolledClass"); %>
+		<div class="mypage_class">수강중인 강의</div>
+				<% if (enrolledClass != null) { %>
+				    <div class="course-item">
+				        <img src="<%=request.getContextPath()%>/upload/<%=enrolledClass.getNewFileName()%>">
+				        <div class="course-info">
+				            <a href="<%= request.getContextPath() %>/class/view.do?cno=<%= enrolledClass.getCno() %>">
+				                <div><h2><%= enrolledClass.getTitle() %></h2></div>
+				            </a>
+				            <div class="class_info">
+				                <p>난이도: <%= enrolledClass.getDifficult() %></p>
+				                <p>강사: <%= enrolledClass.getName() %></p>
+				                <p>강의 기간: <%= enrolledClass.getDuringclass() %></p>
+				            </div>
+				        </div>
+				    </div>
+				<% } else { %>
+				    <p>현재 수강 중인 강의가 없습니다.</p>
+				<% } %>
+
         </div>
       </section>
       <%@ include file="../../include/footer.jsp" %>

@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>    
+<%@ page import ="FrontController.vo.UserVO" %>
+<%@ page import ="FrontController.vo.ClassVO" %>
+<%@ page import="FrontController.util.*" %>
+<%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,9 +54,7 @@
             margin: 40px 50px;
         }
         .mypage_start_subject{
-            border: 1px solid black;
             width: 800px;
-            height: 80px;
             margin-left: 50px;
         }
         .mypage_class_end{
@@ -77,6 +79,23 @@
             height: 80px;
             margin-left: 50px;
         }
+        .course-item {
+		    display: flex;
+		    align-items: center;
+		    margin: 20px 50px;
+		    padding: 15px;
+		    background-color: #e0f7da;
+		    border-radius: 5px;
+		}
+		.course-item a{
+			text-decoration-line: none;
+			color: black;
+		}
+		.course-item img {
+		    width: 100px;
+		    height: 100px;
+		    margin-right: 20px;
+		}
         /*ì¹ì ë¶ë¶ ë*/
     </style>
 </head>
@@ -108,11 +127,28 @@
         </div>
         <div class="mypage_box mypage_flex">
             <div class="mypage_class_start">수강 중 강의</div>
-            <div class="mypage_start_subject"></div>
+            <div class="mypage_start_subject">
+            <% ClassVO enrolledClass = (ClassVO) request.getAttribute("enrolledClass"); %>
+	            <% if (enrolledClass != null) { %>
+					    <div class="course-item">
+					        <img src="<%=request.getContextPath()%>/upload/<%=enrolledClass.getNewFileName()%>">
+					        <div class="course-info">
+					            <a href="<%= request.getContextPath() %>/class/view.do?cno=<%= enrolledClass.getCno() %>">
+					                <div><h2><%= enrolledClass.getTitle() %></h2></div>
+					            </a>
+					            <div class="class_info">
+					                <p>난이도: <%= enrolledClass.getDifficult() %></p>
+					                <p>강사: <%= enrolledClass.getName() %></p>
+					                <p>강의 기간: <%= enrolledClass.getDuringclass() %></p>
+					            </div>
+					        </div>
+					    </div>
+					<% } else { %>
+					    <p>현재 수강 중인 강의가 없습니다.</p>
+					<% } %>
+			</div>
             <div class="mypage_class_end">수강 종료된 강의</div>
             <div class="mypage_end_subject"></div>
-            <div class="mypage_class_back">수강 취소한 강의</div>
-            <div class="mypage_back_subject"></div>
         </div>
         </section>
         <%@ include file="../../include/footer.jsp" %>

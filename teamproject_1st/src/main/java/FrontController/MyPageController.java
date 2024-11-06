@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import FrontController.util.DBConn;
+import FrontController.vo.ClassVO;
 import FrontController.vo.UserVO;
 
 public class MyPageController {
@@ -44,53 +45,82 @@ public class MyPageController {
 			}
 		}
 	}
-		public void mypage(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-			HttpSession session = request.getSession();
-			
-			UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-			
-			Connection conn = null;
-			PreparedStatement psmt = null;
-			ResultSet rs = null;
-			
-			try {
-				conn = DBConn.conn();
-				
-				String sql = "SELECT * FROM user WHERE uno = ?";
-				
-				psmt = conn.prepareStatement(sql);
-				
-				psmt.setInt(1, loginUser.getUno());
-				
-				rs = psmt.executeQuery();
-				
-				if(rs.next()) {
-					System.out.println("DB email: " + rs.getString("email"));
-				    System.out.println("DB phone: " + rs.getString("phone"));
-					UserVO user = new UserVO();
-					user.setUno(rs.getInt("uno"));
-					user.setId(rs.getString("id"));
-					user.setPassword(rs.getString("password"));
-					user.setName(rs.getString("name"));
-					user.setPhone(rs.getString("phone"));
-					user.setEmail(rs.getString("email"));
-					user.setRdate(rs.getString("rdate"));
-					user.setState(rs.getString("state"));
-					user.setAuthorization(rs.getString("authorization"));
-					
-					session.setAttribute("user", user);
-					 request.getRequestDispatcher("/WEB-INF/mypage/mypage.jsp").forward(request, response);
-				}
-			}catch(Exception e){
-				e.printStackTrace();
-			}finally {
-				try {
-					DBConn.close(rs, psmt, conn);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+	public void mypage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+	    int uno = loginUser.getUno();
+
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
+	    ClassVO enrolledClass = null; // 수강 중인 단일 강의를 저장할 객체
+
+	    try {
+	        conn = DBConn.conn();
+
+	        // 수강 중인 강의 가져오기
+	        String sqlClass = "SELECT c.cno, u.uno, c.title, c.subject, c.state, c.difficult, c.book, "
+	                        + "c.duringclass, c.end_duringclass, c.newFileName, c.name "
+	                        + "FROM class c "
+	                        + "JOIN app_class ac ON ac.cno = c.cno "
+	                        + "JOIN USER u ON c.uno = u.uno "
+	                        + "WHERE ac.uno = ? AND c.state = 'E' AND ac.state = 'E' AND c.end_duringclass > NOW()";
+
+	        psmt = conn.prepareStatement(sqlClass);
+	        psmt.setInt(1, uno);
+	        rs = psmt.executeQuery();
+
+	        if (rs.next()) {
+	            enrolledClass = new ClassVO();
+	            enrolledClass.setCno(rs.getInt("cno"));
+	            enrolledClass.setUno(rs.getInt("uno"));
+	            enrolledClass.setTitle(rs.getString("title"));
+	            enrolledClass.setState(rs.getString("state"));
+	            enrolledClass.setSubject(rs.getString("subject"));
+	            enrolledClass.setDuringclass(rs.getString("duringclass"));
+	            enrolledClass.setEnd_duringclass(rs.getString("end_duringclass"));
+	            enrolledClass.setDifficult(rs.getString("difficult"));
+	            enrolledClass.setBook(rs.getString("book"));
+	            enrolledClass.setNewFileName(rs.getString("newFileName"));
+	            enrolledClass.setName(rs.getString("name"));
+	        }
+
+	        // 사용자 정보 가져오기
+	        String sqlUser = "SELECT * FROM user WHERE uno = ?";
+	        psmt = conn.prepareStatement(sqlUser);
+	        psmt.setInt(1, uno);
+	        rs = psmt.executeQuery();
+
+	        if (rs.next()) {
+	            UserVO user = new UserVO();
+	            user.setUno(rs.getInt("uno"));
+	            user.setId(rs.getString("id"));
+	            user.setPassword(rs.getString("password"));
+	            user.setName(rs.getString("name"));
+	            user.setPhone(rs.getString("phone"));
+	            user.setEmail(rs.getString("email"));
+	            user.setRdate(rs.getString("rdate"));
+	            user.setState(rs.getString("state"));
+	            user.setAuthorization(rs.getString("authorization"));
+
+	            session.setAttribute("user", user);
+	        }
+
+	        // JSP로 데이터 전달
+	        request.setAttribute("enrolledClass", enrolledClass);
+	        request.getRequestDispatcher("/WEB-INF/mypage/mypage.jsp").forward(request, response);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
 		public void mypageOK(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		    HttpSession session = request.getSession();
 		    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
@@ -187,7 +217,64 @@ public class MyPageController {
 		}
 		
 		public void mypage2(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-			request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
+			
+			HttpSession session = request.getSession();
+		    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+		    int uno = loginUser.getUno();
+
+		    Connection conn = null;
+		    PreparedStatement psmt = null;
+		    ResultSet rs = null;
+		    ClassVO enrolledClass = null; // 수강 중인 단일 강의를 저장할 객체
+		   
+		    try {
+		        conn = DBConn.conn();
+		        
+		        String sql ="SELECT c.* FROM class c JOIN app_class ac ON c.cno = ac.cno WHERE ac.uno = ? AND c.end_duringclass < NOW() ORDER BY c.end_duringclass DESC; ";
+				psmt = conn.prepareStatement(sql);
+		        psmt.setInt(1, uno);
+		        
+		        rs = psmt.executeQuery();
+		        
+		        // 수강 중인 강의 가져오기
+		        String sqlClass = "SELECT c.cno, u.uno, c.title, c.subject, c.state, c.difficult, c.book, "
+		                        + "c.duringclass, c.end_duringclass, c.newFileName, c.name "
+		                        + "FROM class c "
+		                        + "JOIN app_class ac ON ac.cno = c.cno "
+		                        + "JOIN USER u ON c.uno = u.uno "
+		                        + "WHERE ac.uno = ? AND c.state = 'E' AND ac.state = 'E' AND c.end_duringclass > NOW()";
+
+		        psmt = conn.prepareStatement(sqlClass);
+		        psmt.setInt(1, uno);
+		        rs = psmt.executeQuery();
+
+		        if (rs.next()) {
+		            enrolledClass = new ClassVO();
+		            enrolledClass.setCno(rs.getInt("cno"));
+		            enrolledClass.setUno(rs.getInt("uno"));
+		            enrolledClass.setTitle(rs.getString("title"));
+		            enrolledClass.setState(rs.getString("state"));
+		            enrolledClass.setSubject(rs.getString("subject"));
+		            enrolledClass.setDuringclass(rs.getString("duringclass"));
+		            enrolledClass.setEnd_duringclass(rs.getString("end_duringclass"));
+		            enrolledClass.setDifficult(rs.getString("difficult"));
+		            enrolledClass.setBook(rs.getString("book"));
+		            enrolledClass.setNewFileName(rs.getString("newFileName"));
+		            enrolledClass.setName(rs.getString("name"));
+		        }
+
+	        // JSP로 데이터 전달
+	        request.setAttribute("enrolledClass", enrolledClass);
+	        request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
+		}catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 		}
 		
 		
