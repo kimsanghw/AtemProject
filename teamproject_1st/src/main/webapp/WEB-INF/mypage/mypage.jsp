@@ -191,23 +191,22 @@ s
                     </tr>
                 </tbody>
             </table>
-            <%
-			    List<ClassVO> voList = (List<ClassVO>) request.getAttribute("clist");
-			    ClassVO firstCourse = (voList != null && !voList.isEmpty()) ? voList.get(0) : null; // Get the first course if it exists
-			%>
-			<div class="mypage_class">수강중인 강의</div>
+            <% 
+    ClassVO enrolledClass = (ClassVO) request.getAttribute("enrolledClass"); 
+		%>
+		<div class="mypage_class">수강중인 강의</div>
 			
-			<% if (firstCourse != null) { %>
+			<% if (enrolledClass != null) { %>
 			    <div class="course-item">
-			        <img src="../img/<%= firstCourse.getOrgFileName() %>">
+			        <img src="../img/<%= enrolledClass.getOrgFileName() %>">
 			        <div class="course-info">
-			            <a href="<%= request.getContextPath() %>/class/view.do?cno=<%= firstCourse.getCno() %>">
-			                <div><h2><%= firstCourse.getTitle() %></h2></div>
+			            <a href="<%= request.getContextPath() %>/class/view.do?cno=<%= enrolledClass.getCno() %>">
+			                <div><h2><%= enrolledClass.getTitle() %></h2></div>
 			            </a>
 			            <div class="class_info">
-			                <p>난이도: <%= firstCourse.getDifficult() %></p>
-			                <p>강사: <%= firstCourse.getName() %></p>
-			                <p>강의 기간: <%= firstCourse.getDuringclass() %></p>
+			                <p>난이도: <%= enrolledClass.getDifficult() %></p>
+			                <p>강사: <%= enrolledClass.getName() %></p>
+			                <p>강의 기간: <%= enrolledClass.getDuringclass() %></p>
 			            </div>
 			        </div>
 			    </div>

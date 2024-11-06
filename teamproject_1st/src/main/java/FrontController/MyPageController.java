@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import FrontController.util.DBConn;
+import FrontController.vo.ClassVO;
 import FrontController.vo.UserVO;
 
 public class MyPageController {
@@ -46,8 +47,9 @@ public class MyPageController {
 	}
 		public void mypage(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 			HttpSession session = request.getSession();
-			
+			ClassVO enrolledClass = null; // 수강 중인 단일 강의를 저장할 객체
 			UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+			int uno = loginUser.getUno();
 			
 			Connection conn = null;
 			PreparedStatement psmt = null;
@@ -55,6 +57,16 @@ public class MyPageController {
 			
 			try {
 				conn = DBConn.conn();
+				
+				String sqlclass = "SELECT c.cno, u.uno, c.title, c.subject, c.state, c.difficult, c.book, "
+		                   + "c.duringclass, c.end_duringclass "
+		                   + "FROM class c "
+		                   + "JOIN app_class ac ON ac.cno = c.cno "
+		                   + "JOIN USER u ON c.uno = u.uno "
+		                   + "WHERE ac.uno = ? AND c.state = 'E' AND ac.state = 'E' AND c.end_duringclass > NOW()";
+				
+				psmt = conn.prepareStatement(sqlclass);
+				
 				
 				String sql = "SELECT * FROM user WHERE uno = ?";
 				

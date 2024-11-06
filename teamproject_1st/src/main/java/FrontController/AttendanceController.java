@@ -210,7 +210,7 @@ public class AttendanceController {
 	            enrolledClass.setDifficult(rs.getString("difficult"));
 	            enrolledClass.setBook(rs.getString("book"));
 	        }
-
+	        System.out.println(uno);
 	        request.setAttribute("enrolledClass", enrolledClass);
 	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
 
