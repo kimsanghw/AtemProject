@@ -20,6 +20,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import FrontController.util.DBConn;
 import FrontController.util.PagingUtil;
+import FrontController.vo.NoticeVO;
 import FrontController.vo.UserVO;
 import FrontController.vo.qnaVO;
 
@@ -58,7 +59,7 @@ public class qna_controller {
 	
 	
 	private void qna_write(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("/WEB-INF/qna/qna_write.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/qna_board/qna_write.jsp").forward(request, response);
 	}
 	
 	private void qna_writeok(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -213,7 +214,66 @@ public class qna_controller {
 	}
 		
 	private void qna_view(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		
+		int qno = 0;
+		
+		 if(request.getParameter("Qno") != null) { 
+			  qno = Integer.parseInt(request.getParameter("Qno"));
+		  }
+		 
+			Connection conn = null;
+			PreparedStatement psmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DBConn.conn();
+				
+				// 조회수 증가 쿼리 
+				String sql = "UPDATE qna_board SET hit = hit + 1 WHERE nno = ?";
+				
+				psmt = conn.prepareStatement(sql);
+				
+				psmt.setInt(1, qno);
+				
+			 	// 조회수 업데이트 실행
+				psmt.executeUpdate();
+				
+				// 게시글 정보 가져오기 쿼리
+				sql = "SELECT q.*, u.name FROM qna_board q INNER JOIN user u ON q.uno = u.uno WHERE q.qno = ?"; 
+				
+				// 리스트 생성
+				psmt = conn.prepareStatement(sql);
+				psmt.setInt(1, qno);
+				rs = psmt.executeQuery();
+				
+				if(rs.next()) {
+					// vo생성
+					qnaVO vo = new qnaVO();
+					// vo에 값 넣기
+					vo.setQno(rs.getInt("qno"));
+					vo.setName(rs.getString("name"));
+					vo.setTitle(rs.getString("title"));
+					vo.setContent(rs.getString("content"));
+					vo.setRdate(rs.getString("rdate"));
+					vo.setHit(rs.getInt("hit"));
+					vo.setState(rs.getString("state"));
+					vo.setUno(rs.getInt("uno"));
+					
+					// 모델에 리스트 저장
+					request.setAttribute("vo", vo);
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}finally {
+				try {
+					DBConn.close(rs, psmt, conn);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		
+		request.getRequestDispatcher("/WEB-INF/qna_board/qna_view.jsp").forward(request, response);
 	}
 	
 	private void qna_modify(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
