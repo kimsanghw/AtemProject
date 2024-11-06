@@ -330,7 +330,7 @@
     }
     %>
             <li><a href="<%=request.getContextPath()%>/notice/notice_list.do">공지사항</a></li>
-            <li><a href="#">QnA</a></li>
+            <li><a href="<%=request.getContextPath()%>/qna/qna_list.do">QnA</a></li>
             <li><a href="<%=request.getContextPath()%>/library/library_list.do">자료실</a></li>
           </ul>
         </div>
