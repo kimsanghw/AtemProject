@@ -1,11 +1,14 @@
 package FrontController;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +20,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import FrontController.util.DBConn;
 import FrontController.util.PagingUtil;
+import FrontController.vo.UserVO;
 import FrontController.vo.qnaVO;
 
 public class qna_controller {
@@ -54,36 +58,18 @@ public class qna_controller {
 	
 	
 	private void qna_write(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("/WEB-INF/qna_board/qna_write.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/qna/qna_write.jsp").forward(request, response);
 	}
 	
 	private void qna_writeok(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		
-		// 파일 업로드 설정
-	    int size = 10 * 1024 * 1024;  // 최대 파일 크기 10MB
-	    String uploadPath = request.getSession().getServletContext().getRealPath("/upload");  // 서버 상의 파일 저장 경로
-	    MultipartRequest multi = null;
+	    // 세션에서 로그인된 사용자 정보 가져오기
+	    HttpSession session = request.getSession();
+	    UserVO loginVO = (UserVO) session.getAttribute("loginUser");
 	    
-	    try {
-	        // MultipartRequest를 사용해 파일 업로드 및 폼 데이터를 처리
-	        multi = new MultipartRequest(
-	                request,
-	                uploadPath,
-	                size,
-	                "UTF-8",
-	                new DefaultFileRenamePolicy()
-	        );
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        response.sendRedirect("/error.jsp");  // 오류 페이지로 리다이렉트
-	        return;
-	    }
-	    
-		int qno = Integer.parseInt(multi.getParameter("qno"));
-		String title = multi.getParameter("title");
-		String content = multi.getParameter("content");
-		
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
@@ -91,24 +77,19 @@ public class qna_controller {
 		try {
 			conn = DBConn.conn();
 			
-	        // 1. qna 테이블 업데이트 (title, content 수정)
-	        String sql = "UPDATE qna_board SET title = ?, content = ? WHERE qno = ?";
-	        
-	        psmt = conn.prepareStatement(sql);
-	        
+	        // 1. qna_board 테이블에 데이터 삽입 (게시글 정보)
+	        String sql = "INSERT INTO qna_board(title, content, uno) VALUES(?, ?, ?)";
+	        psmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 	        psmt.setString(1, title);
 	        psmt.setString(2, content);
-	        psmt.setInt(3, qno);
+	        psmt.setInt(3, loginVO.getUno());
+			
+	        int result = psmt.executeUpdate();  // SQL 실행 (데이터 삽입)
 	        
-	        psmt.executeUpdate();
-	        
-	        // 쿼리 실행
-	        int result = psmt.executeUpdate();
-	        
-	        // 성공 시 리다이렉트
-	        if (result > 0) {
-	            response.sendRedirect("qna_view.do?qno="+qno);
+	        if(result > 0) {
+	        	response.sendRedirect("qna_list.do");
 	        }
+	    
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -217,8 +198,7 @@ public class qna_controller {
 	        request.setAttribute("paging", paging); // 전체 페이지 수
 	        request.setAttribute("searchType", searchType); // 검색 필드
 	        request.setAttribute("searchValue", searchValue); // 검색어
-	        
-			request.getRequestDispatcher("/WEB-INF/qna/qna_list.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/qna_board/qna_list.jsp").forward(request, response);
 	        
 		}catch(Exception e) {
 			e.printStackTrace();

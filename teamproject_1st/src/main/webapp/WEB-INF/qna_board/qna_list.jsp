@@ -11,7 +11,7 @@
 	String searchType = (String)request.getAttribute("searchType");
 	PagingUtil paging = (PagingUtil) request.getAttribute("paging");
 	
-	int nowpage =1;
+	int nowpage = 1;
 	if(request.getParameter("nowpage")!= null){
 		nowpage = Integer.parseInt(request.getParameter("nowpage"));
 	}
@@ -54,15 +54,13 @@
             margin-top: -62px;
         }
         .free_title{
-          position: absolute;
           left: 50%;
-          margin: 47px 0 0 -600px;
+          margin: 50px 350px;
           padding: 0;
         }
         .table{
-          position: absolute;
           left: 50%;
-          margin: 140px 0 0 -600px;
+          margin: 20px auto;
           border: 0;
           border-collapse: collapse;
           text-align: center;
@@ -86,7 +84,6 @@
           font-size: 15px;
           border: none;
           border-radius:20px;
-          margin-top: 670px;
           margin-left: 1480px;
           cursor: pointer;
         }
@@ -99,6 +96,14 @@
           height: 56px;
           margin-top: 30px;          
           text-align: center;
+        }
+        .paging{
+        	width:50px;
+        	margin: auto;
+        }
+        .paging a{
+        	color: black;
+        	text-decoration: none;
         }
         /* 내용 부분 끝 */
         </style>

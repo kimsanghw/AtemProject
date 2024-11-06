@@ -114,14 +114,13 @@
 <body>
       <section>
         <h2 class="free_title">Q&A 등록</h2>
-        <form action="<%=request.getContextPath()%>/qna/qna_write.do" method="post" enctype="multipart/form-data">
+        <form action="<%=request.getContextPath()%>/qna/qna_write.do" method="post">
             <div class="free_title_write">
                 <input type="text" placeholder="제목을 입력해주세요." name="title">
             </div>
             <div class="free_body_write">
                 <textarea name="content" placeholder="내용을 입력해주세요."></textarea>
             </div>
-            <div class="box"><input type="file" name="attach" ></div>
             <div class="free_board_button">
                 <button type="submit">등록</button>
                 <button type="button" onclick="location.href='<%=request.getContextPath()%>/qna/qna_list.do'">취소</button>
