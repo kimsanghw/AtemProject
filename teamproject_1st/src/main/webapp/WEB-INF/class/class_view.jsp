@@ -169,7 +169,7 @@
                 <div class="main_content">
                     <div class="img">
                     <!-- 현재 쿼리는 class user만 하고 있음 그래서 orgFileName을 불러오려면 서브쿼리를 사용? -->
-                        <img src="<%=request.getContextPath()%>/upload/<%=vo.getOrgFileName()%>" alt="<%=vo.getOrgFileName()%>">
+                        <img src="<%=request.getContextPath()%>/upload/<%=vo.getNewFileName()%>">
                     </div>
                     <div class="cont_info">
                         <dl>

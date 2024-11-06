@@ -2,6 +2,7 @@ package FrontController;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -155,6 +156,7 @@ public class ClassController {
 				vo.setDuringclass(rs.getString("duringclass"));
 				vo.setName(rs.getString("name"));
 				vo.setOrgFileName(rs.getString("orgFileName"));
+				vo.setNewFileName(rs.getString("newFileName"));
 				
 				coursList.add(vo);
 			}
@@ -177,8 +179,9 @@ public class ClassController {
 		request.getRequestDispatcher("/WEB-INF/class/class_add.jsp").forward(request, response);
 	}
 	public void writerOk (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		
-		int size = 10*1024*1024; // 첨부파일의 크기 4MB?
+		int size = 10*1024*1024; 
 		String uploadPath = request.getSession().getServletContext().getRealPath("/upload"); //절대경로
 		MultipartRequest multi = null;
 
@@ -230,7 +233,6 @@ public class ClassController {
 			String book = multi.getParameter("book");
 			String duringclass = multi.getParameter("duringclass");
 			String orgFileName = multi.getOriginalFileName("attach");
-			String newFileName = "";
 			String end_jdate = multi.getParameter("end_jdate");
 			String end_duringclass = multi.getParameter("end_duringclass");
 			
@@ -253,7 +255,7 @@ public class ClassController {
 		        psmt.setString(9, end_jdate);
 		        psmt.setString(10, end_duringclass);
 		        psmt.setString(11, orgFileName);
-		        psmt.setString(12, newFileName);
+		        psmt.setString(12, phyName);
 		        psmt.setInt(13, cno);
 		        
 		        psmt.executeUpdate();
@@ -386,7 +388,7 @@ public class ClassController {
 		        psmt.setString(8, end_jdate);
 		        psmt.setString(9, end_duringclass);
 		        psmt.setString(10, orgFileName);
-		        psmt.setString(11, newFileName);
+		        psmt.setString(11, phyName);
 		        psmt.setInt(12, cno);
 		        
 		        psmt.executeUpdate();
@@ -465,7 +467,13 @@ public class ClassController {
 			rs = psmt.executeQuery();
 			
 			if(rs.next()) {
-				
+		        // 이미 신청한 강의인 경우
+		        response.setContentType("text/html;charset=UTF-8");
+		        PrintWriter out = response.getWriter();
+		        out.println("<script>");
+		        out.println("alert('이미 신청한 강의입니다.');");
+		        out.println("history.back();");
+		        out.println("</script>");
 	            return;
 			}
 			//신청 안했으면 등록 

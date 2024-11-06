@@ -120,8 +120,8 @@ public class AttendanceController {
 	        request.setAttribute("cno", 0);  // 기본값 설정 (필요에 따라 다르게 설정 가능)
 	    }
 	    
-	   
-	    request.getRequestDispatcher("/WEB-INF/attendance/attendanceView.jsp").forward(request, response);
+	    System.out.println("Received ano: " + ano);
+	    System.out.println("Received attendanceChange: " + attendanceChange);
 
 		
 	}
