@@ -13,9 +13,18 @@
  if (cno == null) {
      cno = 0;  // 기본값 설정
  }
+ UserVO user = (UserVO) session.getAttribute("loginUser");
+ if (user == null) {
+		%>
+		        <script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
 
-
-%>
 <title>Insert title here</title>
 <script src='<%=request.getContextPath()%>/js/jquery-3.7.1.js'></script>
 <script>
