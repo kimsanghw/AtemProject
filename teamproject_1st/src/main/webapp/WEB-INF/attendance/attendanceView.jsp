@@ -6,7 +6,7 @@
 <%@ page import="FrontController.vo.App_classVO" %>
 
 <title>Insert title here</title>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src='<%=request.getContextPath()%>/js/jquery-3.7.1.js'></script>
 <script>
 	document.addEventListener("DOMContentLoaded", function() {
 	    const dateInput = document.getElementById("dateInput");
@@ -26,7 +26,7 @@
  if (cno == null) {
      cno = 0;  // 기본값 설정
  }
- 
+
 
 %>
 <style>
@@ -156,15 +156,29 @@
       margin-left: 7px;
     }
     </style>
+    
       <section>
         <article>
           <div class="article_inner">
            <h2>출결 관리</h2>
-          <form>
+           <%
+   			 // SecureRandom을 사용하여 6자리 인증코드 생성
+    		java.security.SecureRandom random = new java.security.SecureRandom();
+    		int authCode = 100000 + random.nextInt(900000); // 6자리 숫자 인증코드 (100000~999999 범위)
+			%>
+			<input type="hidden" id="generatedAuthCode" value="<%= authCode %>">
+          <form id="generateAuthCodeForm" >
 	          <div>
-	          	<button type=submit>인증코드 생성</button>
+	          	<button type=submit onclick="openAuthModal()">인증코드 생성</button>
 	          </div>
           </form> 
+          <div id="authModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4);">
+    			<div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 300px; text-align: center;">
+        			<h2>인증코드</h2>
+        			<p id="authCode"></p>
+        			<button onclick="closeModal()">닫기</button>
+    			</div>
+			</div>
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
             <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
             <div class="today_date" >
@@ -185,26 +199,30 @@
                 </thead>
                 <tbody>
                   <% int studnetNumber = 1; %>
-                  <%for(App_classVO studentInfo : attendanceList){%>
-                    <tr>
-                      <td style="width: 40px;"><%= studnetNumber %><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
-                      <td style="width: 40px;"><%= studentInfo.getName() %></td>
-                      <td><%= studentInfo.getAttendance() %></td>
-                      <td>
-                      	<div>
-                          <select name="attendanceChange">
-                          	<option value="출석">출석</option>
-                          	<option value="지각">지각</option>
-                          	<option value="조퇴">조퇴</option>
-                          	<option value="병결">병결</option>
-                          	<option value="결석">결석</option>
-                          </select>
-                          <button class="attendanceChange_button" type="submit">등록</button>
-                          </div>   
-                      </td>
-                    </tr>
-                    <% studnetNumber++; %> 
-                    <%} %>
+                  <% if (attendanceList != null) { %>
+				    <% for (App_classVO studentInfo : attendanceList) { %>
+				        <tr>
+				            <td style="width: 40px;"><%= studnetNumber %><input type="hidden" name="ano" value="<%= studentInfo.getAno() %>"></td>
+				            <td style="width: 40px;"><%= studentInfo.getName() %></td>
+				            <td><%= studentInfo.getAttendance() %></td>
+				            <td>
+				                <div>
+				                    <select name="attendanceChange">
+				                        <option value="출석">출석</option>
+				                        <option value="지각">지각</option>
+				                        <option value="조퇴">조퇴</option>
+				                        <option value="병결">병결</option>
+				                        <option value="결석">결석</option>
+				                    </select>
+				                    <button class="attendanceChange_button" type="submit">등록</button>
+				                </div>
+				            </td>
+				        </tr>
+				        <% studnetNumber++; %>
+				    <% } %>
+				<% } else { %>
+				    <p>출석 데이터가 없습니다.</p>
+				<% } %>
                 </tbody>
               </table>
             </div>
@@ -221,7 +239,7 @@
 	        var ano = $(this).closest("tr").find("input[name='ano']").val(); // 숨겨진 input에서 ano 값 추출
 	        
 	        $.ajax({
-	            url: "<%=request.getContextPath()%>/attendance/attendanceViewOk.do",
+	            url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
 	            type: "POST",
 	            data: { attendanceChange: attendanceChange, ano: ano }, // 출결 상태와 번호 전송
 	            success: function(response) {
@@ -237,7 +255,21 @@
 	        });
 	    });
 	});
+	
+	
+	 function openAuthModal() {
+	        // 숨겨진 input 필드에서 인증코드를 가져와 모달에 표시
+	        const authCode = document.getElementById("generatedAuthCode").value;
+	        document.getElementById("authCode").innerText = authCode;
+	        
+	        // 모달창 열기
+	        document.getElementById("authModal").style.display = "block";
+	    }
 
+	    function closeModal() {
+	        // 모달창 닫기
+	        document.getElementById("authModal").style.display = "none";
+	    }
 </script>
 
                   
