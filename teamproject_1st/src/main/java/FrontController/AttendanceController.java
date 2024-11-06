@@ -1,6 +1,7 @@
 package FrontController;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -97,9 +98,9 @@ public class AttendanceController {
 	            response.getWriter().write("error:" + e.getMessage());
 	        }
 	    }
-	}
+	
 	    
-	}
+	
 	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
@@ -216,7 +217,12 @@ public class AttendanceController {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    } finally {
-	        DBConn.close(rs, psmt, conn);
+	        try {
+				DBConn.close(rs, psmt, conn);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    }
 	}
 	

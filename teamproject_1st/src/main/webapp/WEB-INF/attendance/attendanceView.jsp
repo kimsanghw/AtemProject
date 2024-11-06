@@ -228,7 +228,7 @@
 				   java.security.SecureRandom random = new java.security.SecureRandom();
 				   int random_number = 100000 + random.nextInt(900000); // 6자리 숫자 인증코드 (100000~999999 범위)
 			  %>
-				<input type="hidden" id="generatedRandom_number" value="">
+				<input type="hidden" id="generatedRandom_number" value="<%= random_number%>">
 				<div style="margin-bottom: 20px;">
 				    <button type="button" onclick="generateAndShowRandomNumber()">인증코드 생성</button>
 				</div>
