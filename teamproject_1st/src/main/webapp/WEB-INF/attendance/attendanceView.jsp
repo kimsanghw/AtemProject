@@ -8,14 +8,47 @@
 <title>Insert title here</title>
 <script src='<%=request.getContextPath()%>/js/jquery-3.7.1.js'></script>
 <script>
-	document.addEventListener("DOMContentLoaded", function() {
-	    const dateInput = document.getElementById("dateInput");
-	    if (dateInput) {
-	        dateInput.addEventListener("change", function() {
-	            document.getElementById("dateForm").submit();
-	        });
-	    }
-	});
+document.addEventListener("DOMContentLoaded", function() {
+    const dateInput = document.getElementById("dateInput");
+    if (dateInput) {
+        dateInput.addEventListener("change", function() {
+            document.getElementById("dateForm").submit();
+        });
+    }
+
+    // 출결 변경 버튼에 대한 이벤트 리스너
+    $(".attendanceChange_button").on("click", function(e) {
+        e.preventDefault();
+        
+        var $button = $(this);
+        var $row = $button.closest("tr");
+        var attendanceChange = $row.find("select[name='attendanceChange']").val();
+        var ano = $row.find("input[name='ano']").val();
+        
+        $.ajax({
+            url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
+            type: "POST",
+            data: { attendanceChange: attendanceChange, ano: ano },
+            success: function(response) {
+                if(response.trim() === "success") {
+                    alert("출결 변경에 성공하였습니다.");
+                    
+                    // UI 즉시 업데이트
+                    var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
+                    $statusCell.text(attendanceChange);
+                    
+                    // 선택된 옵션 업데이트
+                    $row.find("select[name='attendanceChange']").val(attendanceChange);
+                } else {
+                    alert("출결 변경에 실패했습니다.");
+                }
+            },
+            error: function() {
+                alert("서버와의 통신에 실패했습니다.");
+            }
+        });
+    });
+});
 </script>
 <%
 
@@ -214,7 +247,7 @@
 				                        <option value="병결">병결</option>
 				                        <option value="결석">결석</option>
 				                    </select>
-				                    <button class="attendanceChange_button" type="submit">등록</button>
+				                    <button class="attendanceChange_button" type="button" onclick="">등록</button>
 				                </div>
 				            </td>
 				        </tr>
@@ -231,30 +264,7 @@
       </section>
 <%@ include file="../../include/footer.jsp" %>
 <script>
-		$(".attendanceChange_button").on("click", function(e) {
-		    e.preventDefault();
-		    
-		    var attendanceChange = $(this).siblings("select[name='attendanceChange']").val();
-		    var ano = $(this).closest("tr").find("input[name='ano']").val(); 
-		    console.log("Attendance Change:", attendanceChange); 
-		    console.log("ANO:", ano);
-		    
-		    $.ajax({
-		        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
-		        type: "POST",
-		        data: { attendanceChange: attendanceChange, ano: ano }, 
-		        success: function(response) {
-		            if(response.trim() === "success") {
-		                alert("출결 변경에 성공하였습니다.");
-		            } else {
-		                alert("출결 변경에 실패했습니다.");
-		            }
-		        },
-		        error: function() {
-		            alert("서버와의 통신에 실패했습니다.");
-		        }
-		    });
-		});
+
 
 	
 	

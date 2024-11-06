@@ -10,7 +10,6 @@ public class ClassVO {
 	private String subject;
 	private String difficult;
 	private String state;
-	private String teacherName;
 	private String name;
 	private String orgFileName;
 	private String newFileName;
@@ -206,17 +205,6 @@ public class ClassVO {
 	public void setUno(int uno) {
 		this.uno = uno;
 	}
-	/**
-	 * @return the teacherName
-	 */
-	public String getTeacherName() {
-		return teacherName;
-	}
-	/**
-	 * @param teacherName the teacherName to set
-	 */
-	public void setTeacherName(String teacherName) {
-		this.teacherName = teacherName;
-	}
+	
 	
 }

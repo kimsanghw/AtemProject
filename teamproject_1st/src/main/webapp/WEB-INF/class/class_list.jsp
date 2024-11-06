@@ -177,7 +177,7 @@
 			for(ClassVO vo : coursList){
 		%>
 		<div class="course-item">
-			<img src="../img/<%=vo.getOrgFileName()%>">
+			<img src="<%=request.getContextPath()%>/upload/<%=vo.getNewFileName()%>">
 			<div class="course-info">
 				<a href="<%=request.getContextPath()%>/class/view.do?cno=<%=vo.getCno() %>"><div><h2><%= vo.getTitle() %></h2></div></a>
 				<div class="class_info">
