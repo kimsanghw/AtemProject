@@ -173,87 +173,51 @@ public class AttendanceController {
 		
 	}
 	
-	public void attendanceClass(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		HttpSession session = request.getSession();
-		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-		List<ClassVO> clist  = new ArrayList<ClassVO>();
-		int uno = loginUser.getUno();
-		String cno = request.getParameter("cno");
-		
-		
-		Connection conn = null;
-		PreparedStatement psmt = null;
-		ResultSet rs = null;
-		
-		try {
-			
-			conn = DBConn.conn();
-			
-			
-			String sql  = " SELECT "
-					    + "    c.cno, "
-					    + "    u.uno, "
-						+ "    c.title ,"
-						+ "    c.subject ,"
-						+ "    c.state ,"
-						+ "    c.difficult ,"
-						+ "    c.book ,"
-						+ "    c.duringclass,"
-						+ "    c.end_duringclass"
-						+ " FROM "
-						+ "     class c"
-						+ " JOIN "
-						+ "   app_class ac ON ac.cno = c.cno"
-						+ " JOIN "
-						+ "    USER u ON c.uno = u.uno"
-						+ " WHERE "
-						+ "    ac.uno = ?        "
-						+ "    AND c.state = 'E'  "
-						+ "    AND ac.state = 'E'"
-						+ "    AND c.end_duringclass > NOW()";
-			
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1, uno);
-			
-			rs = psmt.executeQuery();
-			
-			 while(rs.next()) {
-				 
-					ClassVO vo = new ClassVO();
-					vo.setCno(rs.getInt("cno"));
-					vo.setUno(rs.getInt("uno"));
-					vo.setTitle(rs.getString("title"));
-					vo.setState(rs.getString("state"));
-					vo.setSubject(rs.getString("subject"));
-					vo.setDuringclass(rs.getString("duringclass"));
-					vo.setEnd_duringclass(rs.getString("End_duringclass"));
-					vo.setDifficult(rs.getString("difficult"));
-					vo.setBook(rs.getString("book"));
-					
-					
-					clist.add(vo);
-					
-				}
-			 
-			   request.setAttribute("clist", clist);
-			   System.out.println(clist);
-			   
-			   request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-			}finally {
-				
-				try {
-					DBConn.close(rs, psmt, conn);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		
-		
+	public void attendanceClass(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+	    ClassVO enrolledClass = null; // 수강 중인 단일 강의를 저장할 객체
+	    int uno = loginUser.getUno();
+	    
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
+	    
+	    try {
+	        conn = DBConn.conn();
+	        String sql = "SELECT c.cno, u.uno, c.title, c.subject, c.state, c.difficult, c.book, "
+	                   + "c.duringclass, c.end_duringclass "
+	                   + "FROM class c "
+	                   + "JOIN app_class ac ON ac.cno = c.cno "
+	                   + "JOIN USER u ON c.uno = u.uno "
+	                   + "WHERE ac.uno = ? AND c.state = 'E' AND ac.state = 'E' AND c.end_duringclass > NOW()";
+
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setInt(1, uno);
+	        rs = psmt.executeQuery();
+
+	        if (rs.next()) {
+	            enrolledClass = new ClassVO();
+	            enrolledClass.setCno(rs.getInt("cno"));
+	            enrolledClass.setUno(rs.getInt("uno"));
+	            enrolledClass.setTitle(rs.getString("title"));
+	            enrolledClass.setState(rs.getString("state"));
+	            enrolledClass.setSubject(rs.getString("subject"));
+	            enrolledClass.setDuringclass(rs.getString("duringclass"));
+	            enrolledClass.setEnd_duringclass(rs.getString("end_duringclass"));
+	            enrolledClass.setDifficult(rs.getString("difficult"));
+	            enrolledClass.setBook(rs.getString("book"));
+	        }
+
+	        request.setAttribute("enrolledClass", enrolledClass);
+	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBConn.close(rs, psmt, conn);
+	    }
 	}
 	
 	public void attendanceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{

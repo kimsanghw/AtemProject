@@ -188,7 +188,7 @@ public class MyPageController {
 		
 		public void mypage2(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 			
-			Connection conn = null;
+			/*Connection conn = null;
 		    PreparedStatement psmt = null;
 		    ResultSet rs = null;
 			
@@ -211,7 +211,9 @@ public class MyPageController {
 		            e.printStackTrace();
 		        }
 		    }
+		    */
 			request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
+			
 		}
 		
 		
