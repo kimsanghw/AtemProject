@@ -10,6 +10,7 @@
  String selectedDate = (String)request.getAttribute("selectedDate");
  String todayDate = (String)request.getAttribute("todayDate");
  Integer cno = (Integer) request.getAttribute("cno");
+ 
  if (cno == null) {
      cno = 0;  // 기본값 설정
  }
@@ -78,9 +79,9 @@
 	        type: "POST",
 	        data: { cno: cno },
 	        success: function(response) {
-	            if (response.trim() === "success") {
-	                // 인증코드 성공적으로 저장되면 모달창 표시
-	                const random_number = document.getElementById("generatedRandom_number").value;
+	            // 서버로부터 인증번호를 받아 모달창에 표시
+	            if (response.trim().startsWith("success:")) {
+	                const random_number = response.split(":")[1].trim(); // 받은 인증번호 추출
 	                document.getElementById("random_number").innerText = random_number;
 	                document.getElementById("random_numberModal").style.display = "block";
 	                alert("인증코드가 성공적으로 저장되었습니다.");

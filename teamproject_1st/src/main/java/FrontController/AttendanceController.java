@@ -60,47 +60,46 @@ public class AttendanceController {
 	
 	
 	public void updateRandom_number(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-		 request.setCharacterEncoding("UTF-8");
-	        HttpSession session = request.getSession();
-	        response.setContentType("text/html; charset=UTF-8");
-	        response.setCharacterEncoding("utf-8");
+		request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    response.setContentType("text/html; charset=UTF-8");
+	    response.setCharacterEncoding("utf-8");
 
-	        String cno = request.getParameter("cno");
+	    String cno = request.getParameter("cno");
 
-	        if (cno == null || cno.isEmpty()) {
+	    if (cno == null || cno.isEmpty()) {
+	        response.getWriter().write("fail");
+	        return;
+	    }
+	    
+	    // 6자리 인증코드 생성
+	    SecureRandom random = new SecureRandom();
+	    int random_number = 100000 + random.nextInt(900000); // 100000 ~ 999999 사이의 값 생성
+	    
+	    // 세션에 인증코드를 저장
+	    session.setAttribute("generatedRandomNumber", random_number);
+
+	    try (Connection conn = DBConn.conn();
+	         PreparedStatement psmt = conn.prepareStatement("UPDATE class SET random_number = ? WHERE cno = ?")) {
+	        
+	        psmt.setInt(1, random_number); // 생성된 인증코드 설정
+	        psmt.setInt(2, Integer.parseInt(cno)); // cno에 맞는 강의 선택
+
+	        int rowsAffected = psmt.executeUpdate();
+	        if (rowsAffected > 0) {
+	            // 성공 시 인증번호를 함께 응답으로 보냄
+	            response.getWriter().write("success:" + random_number);
+	        } else {
 	            response.getWriter().write("fail");
-	            return;
 	        }
 
-	        // 6자리 인증코드 생성
-	        SecureRandom random = new SecureRandom();
-	        int random_number = 100000 + random.nextInt(900000);
-
-	        // 인증코드를 세션에 저장하여 프론트엔드에서 접근할 수 있게 함
-	        session.setAttribute("generatedRandomNumber", random_number);
-
-	        // 인증코드를 데이터베이스에 저장
-	        try (Connection conn = DBConn.conn();
-	             PreparedStatement psmt = conn.prepareStatement("UPDATE class SET random_number = ? WHERE cno = ?")) {
-	            
-	            psmt.setInt(1, random_number); // 생성된 인증코드 설정
-	            psmt.setInt(2, Integer.parseInt(cno)); // cno에 맞는 강의 선택
-
-	            int rowsAffected = psmt.executeUpdate();
-	            if (rowsAffected > 0) {
-	                response.getWriter().write("success");
-	            } else {
-	                response.getWriter().write("fail");
-	            }
-
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            response.getWriter().write("error:" + e.getMessage());
-	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.getWriter().write("error:" + e.getMessage());
 	    }
 	
 	    
-	
+	}
 	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
