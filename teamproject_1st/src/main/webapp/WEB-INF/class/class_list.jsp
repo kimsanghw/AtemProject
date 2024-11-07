@@ -5,21 +5,22 @@
 <%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
 <%
-	List<ClassVO> coursList = (List<ClassVO>)request.getAttribute("coursList");
-	UserVO user = (UserVO) session.getAttribute("loginUser");
-	String searchType = (String)request.getAttribute("searchType");
-	String nowPageParam = request.getParameter("nowPage");
-	  int nowPage = 1;
-	  if(nowPageParam != null){
-		  nowPage = Integer.parseInt(nowPageParam);
-	  }
-	  PagingUtil paging = (PagingUtil)request.getAttribute("paging");
-	  int StartPage = 1;
-	  int EndPage = 1;
-	  if( paging != null ){
-		  StartPage = paging.getStartPage();
-		  EndPage = paging.getEndPage();
-	  }
+    List<ClassVO> coursList = (List<ClassVO>)request.getAttribute("coursList");
+    UserVO user = (UserVO) session.getAttribute("loginUser");
+    String searchType = (String)request.getAttribute("searchType");
+    String searchKeyword = (String)request.getAttribute("searchKeyword");
+    String nowPageParam = request.getParameter("nowPage");
+    int nowPage = 1;
+    if(nowPageParam != null){
+        nowPage = Integer.parseInt(nowPageParam);
+    }
+    PagingUtil paging = (PagingUtil)request.getAttribute("paging");
+    int StartPage = 1;
+    int EndPage = 1;
+    if( paging != null ){
+        StartPage = paging.getStartPage();
+        EndPage = paging.getEndPage();
+    }
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -157,15 +158,15 @@
     </style>
 </head>
 <body>
-	<div class="search-bar">
-		<label for="category"></label>
-		<select class="search-options" id="category">
-			<option value="title">제목</option>
-			<option value="content">내용</option>
-		</select>
-		<input type="text" placeholder="검색">
-		<button>검색</button>
-	</div>
+	<form action="<%=request.getContextPath()%>/class/list.do" method="get" class="search-bar">
+        <label for="category"></label>
+        <select class="search-options" id="category" name="category">
+            <option value="title" <%="title".equals(searchType) ? "selected" : ""%>>제목</option>
+            <option value="content" <%="content".equals(searchType) ? "selected" : ""%>>내용</option>
+        </select>
+        <input type="text" name="searchKeyword" placeholder="검색" value="<%=searchKeyword != null ? searchKeyword : ""%>">
+        <button type="submit">검색</button>
+    </form>
 
     <!-- 강의 목록 -->
 	<section class="course-list">

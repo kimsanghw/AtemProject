@@ -5,12 +5,6 @@
 <%@ page import="FrontController.util.*" %>
 <%@ page import="java.util.*" %>
 <%
-List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
-Integer cno = (Integer) request.getAttribute("cno");
-if (cno == null) {
-    cno = 0;  // 기본값 설정
-}
-
 ClassVO vo = (ClassVO) request.getAttribute("vo");
 int validCode = vo != null ? vo.getRandom_number() : 0;
 
@@ -34,6 +28,7 @@ int validCode = vo != null ? vo.getRandom_number() : 0;
        <script>
 	    function checkAttendance() {
 	        const enteredCode = document.getElementById('authCode').value;
+	        const cno = document.getElementById('cno').value;
 	        const validCode = <%= validCode %>;  // 인증 코드 가져오기
 	
 	        if (enteredCode == validCode) {
@@ -184,5 +179,13 @@ int validCode = vo != null ? vo.getRandom_number() : 0;
                 <button onclick="checkAttendance()">출석 체크</button>
             </div>
         </div>
+        <form action="<%=request.getContextPath()%>/attendance/attendanceClass.do" id="autoSubmitForm" method="GET">
+        	<input type="hidden" name="cno" value="<%= vo.getCno()%>">
+        </form>
+        <script>
+    		window.onload = function() {
+        	document.getElementById('autoSubmitForm').submit();
+    		};
+		</script>
     </section>
 <%@ include file="../../include/footer.jsp" %>

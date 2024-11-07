@@ -110,60 +110,92 @@ public class ClassController {
 	}
 	public void list (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		String searchType = request.getParameter("searchType");
-		
-		
+		String searchType = request.getParameter("category");
+		String searchKeyword = request.getParameter("searchKeyword");
+
 		List<ClassVO> coursList  = new ArrayList<ClassVO>();
 		int nowPage = 1;
-		
+
 		if(request.getParameter("nowPage") != null && !request.getParameter("nowPage").isEmpty()){
 		    nowPage = Integer.parseInt(request.getParameter("nowPage"));
 		} else {
 		    nowPage = 1;
 		}
-		
+
 		Connection conn = null;
 		PreparedStatement psmt = null;
 		ResultSet rs = null;
 		PreparedStatement psmtTotal = null;
 		ResultSet rsTotal = null;
-		
+
 		try {
-			conn = DBConn.conn();
-	        String sqlTotal = "SELECT COUNT(*) AS total FROM class c JOIN user u ON c.uno = u.uno WHERE c.state = 'E'";
+		    conn = DBConn.conn();
+		    
+		    // 기본 SQL 쿼리
+		    String sqlTotal = "SELECT COUNT(*) AS total FROM class c JOIN user u ON c.uno = u.uno WHERE c.state = 'E'";
+		    String sql = "SELECT c.* FROM class c JOIN user u ON c.uno = u.uno WHERE c.state = 'E'";
 
-	        psmtTotal = conn.prepareStatement(sqlTotal);
-	        rsTotal = psmtTotal.executeQuery();
-	        int total = 0;
-			if(rsTotal.next()){
-				total = rsTotal.getInt("total");
-			}
-			
-			PagingUtil paging = new PagingUtil(nowPage,total,5); 
-			
-			String sql = "SELECT c.* FROM class c WHERE c.state = 'E' ORDER BY c.rdate DESC LIMIT ? OFFSET ?";
+		    // 검색 조건 추가
+		    if (searchKeyword != null && !searchKeyword.isEmpty()) {
+		        if ("title".equals(searchType)) {
+		            sqlTotal += " AND c.title LIKE ?";
+		            sql += " AND c.title LIKE ?";
+		        } else if ("content".equals(searchType)) {
+		            sqlTotal += " AND c.content LIKE ?";
+		            sql += " AND c.content LIKE ?";
+		        }
+		    }
 
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1, paging.getPerPage());
-			psmt.setInt(2, (paging.getNowPage() - 1) * paging.getPerPage());
-			rs = psmt.executeQuery();
-	        
-	        while(rs.next()) {
-				ClassVO vo = new ClassVO();
-				vo.setCno(rs.getInt("cno"));
-				vo.setTitle(rs.getString("title"));
-				vo.setDifficult(rs.getString("difficult"));
-				vo.setDuringclass(rs.getString("duringclass"));
-				vo.setName(rs.getString("name"));
-				vo.setOrgFileName(rs.getString("orgFileName"));
-				vo.setNewFileName(rs.getString("newFileName"));
-				
-				coursList.add(vo);
-			}
-	        request.setAttribute("coursList", coursList);
-	        request.setAttribute("paging", paging);
-	        
-	        request.getRequestDispatcher("/WEB-INF/class/class_list.jsp").forward(request, response);
+		    // 총 개수 쿼리 준비
+		    psmtTotal = conn.prepareStatement(sqlTotal);
+		    
+		    // 검색 키워드가 있을 경우 파라미터 설정
+		    int paramIndex = 1;
+		    if (searchKeyword != null && !searchKeyword.isEmpty()) {
+		        psmtTotal.setString(paramIndex++, "%" + searchKeyword + "%");
+		    }
+
+		    rsTotal = psmtTotal.executeQuery();
+		    int total = 0;
+		    if(rsTotal.next()){
+		        total = rsTotal.getInt("total");
+		    }
+
+		    // 페이징 처리
+		    PagingUtil paging = new PagingUtil(nowPage, total, 5); 
+
+		    // 강의 목록 쿼리 준비
+		    sql += " ORDER BY c.rdate DESC LIMIT ? OFFSET ?";
+		    psmt = conn.prepareStatement(sql);
+		    
+		    paramIndex = 1; // 파라미터 인덱스 초기화
+		    if (searchKeyword != null && !searchKeyword.isEmpty()) {
+		        psmt.setString(paramIndex++, "%" + searchKeyword + "%");
+		    }
+
+		    psmt.setInt(paramIndex++, paging.getPerPage());
+		    psmt.setInt(paramIndex, (paging.getNowPage() - 1) * paging.getPerPage());
+
+		    rs = psmt.executeQuery(); // 결과 집합 가져오기
+
+		    while(rs.next()) {
+		        ClassVO vo = new ClassVO();
+		        vo.setCno(rs.getInt("cno"));
+		        vo.setTitle(rs.getString("title"));
+		        vo.setDifficult(rs.getString("difficult"));
+		        vo.setDuringclass(rs.getString("duringclass"));
+		        vo.setName(rs.getString("name"));
+		        vo.setOrgFileName(rs.getString("orgFileName"));
+		        vo.setNewFileName(rs.getString("newFileName"));
+
+		        coursList.add(vo);
+		    }
+
+		    request.setAttribute("coursList", coursList);
+		    request.setAttribute("paging", paging);
+		    
+		    request.getRequestDispatcher("/WEB-INF/class/class_list.jsp").forward(request, response);
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -241,7 +273,7 @@ public class ClassController {
 			
 			try {
 		        conn = DBConn.conn();
-		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno, end_jdate, end_duringclass, orgFileName, newFileName, cno) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno, end_jdate, end_duringclass, orgFileName, newFileName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		        
 		        psmt = conn.prepareStatement(classSql);
 		        psmt.setString(1, title);
@@ -256,12 +288,12 @@ public class ClassController {
 		        psmt.setString(10, end_duringclass);
 		        psmt.setString(11, orgFileName);
 		        psmt.setString(12, phyName);
-		        psmt.setInt(13, cno);
+		        
 		        
 		        psmt.executeUpdate();
 		        
 		       
-		        response.sendRedirect(request.getContextPath() + "/class/view.do?cno=" + cno);
+		        response.sendRedirect(request.getContextPath() + "/class/list.do");
 			    } catch (Exception e) {
 			        e.printStackTrace();
 			    } finally {
@@ -452,50 +484,54 @@ public class ClassController {
 		
 		Connection conn = null;
 		PreparedStatement psmt = null;
-		PreparedStatement psmt2 = null;
 		ResultSet rs = null;
 		
-		try {
-			conn = DBConn.conn();
-			
-			//신청한 강의인지 확인
-			String sql = "SELECT * FROM app_class WHERE uno=? AND cno=?";
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1, uno);
-			psmt.setInt(2, cno);
-			
-			rs = psmt.executeQuery();
-			
-			if(rs.next()) {
-		        // 이미 신청한 강의인 경우
-		        response.setContentType("text/html;charset=UTF-8");
-		        PrintWriter out = response.getWriter();
-		        out.println("<script>");
-		        out.println("alert('이미 신청한 강의입니다.');");
-		        out.println("history.back();");
-		        out.println("</script>");
-	            return;
-			}
-			//신청 안했으면 등록 
-			String insertSQL = "INSERT INTO app_class(uno, cno) VALUES (?, ?)";
-			psmt2 = conn.prepareStatement(insertSQL);
-			psmt2.setInt(1, uno);
-			psmt2.setInt(2, cno);
-			
-			
-			int result = psmt2.executeUpdate();
-			
-			if(result>0) {
-				request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
-			} else {
-				System.out.println("실패했습니다");
-			}
-			
-		} catch(Exception e) {
+		   try {
+		        conn = DBConn.conn();
+
+		        // 이미 다른 강의를 신청했는지 확인
+		        String sqlCheck = "SELECT COUNT(*) AS count FROM app_class WHERE uno = ?";
+		        psmt = conn.prepareStatement(sqlCheck);
+		        psmt.setInt(1, uno);
+
+		        rs = psmt.executeQuery();
+		        if (rs.next() && rs.getInt("count") > 0) {
+		            // 이미 다른 강의를 신청한 경우 경고 메시지 출력
+		            response.setContentType("text/html;charset=UTF-8");
+		            PrintWriter out = response.getWriter();
+		            out.println("<script>");
+		            out.println("alert('이미 다른 강의를 신청하셨습니다. 추가로 신청할 수 없습니다.');");
+		            out.println("history.back();");
+		            out.println("</script>");
+		            return; // 더 이상 진행하지 않음
+		        }
+
+		        // 중복되지 않은 경우에만 강의 신청
+		        String insertSQL = "INSERT INTO app_class (uno, cno) VALUES (?, ?)";
+		        psmt = conn.prepareStatement(insertSQL);
+		        psmt.setInt(1, uno);
+		        psmt.setInt(2, cno);
+
+		        int result = psmt.executeUpdate();
+
+		        if (result > 0) {
+		            // 성공적으로 등록되면 마이페이지로 이동
+		            request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
+		        } else {
+		            // 실패한 경우 오류 메시지 출력
+		            response.setContentType("text/html;charset=UTF-8");
+		            PrintWriter out = response.getWriter();
+		            out.println("<script>");
+		            out.println("alert('강의 신청에 실패했습니다. 다시 시도해주세요.');");
+		            out.println("history.back();");
+		            out.println("</script>");
+		        }
+
+		    } catch(Exception e) {
 			e.printStackTrace();
 		}finally {
 			try {
-				DBConn.close(psmt, conn);
+				DBConn.close(rs, psmt, conn);
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
