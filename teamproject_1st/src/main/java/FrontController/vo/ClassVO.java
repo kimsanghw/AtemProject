@@ -2,6 +2,10 @@ package FrontController.vo;
 
 public class ClassVO {
 	
+	
+	
+	
+	
 	private String title;
 	private String book;
 	private String rdate;
@@ -20,8 +24,15 @@ public class ClassVO {
 	private int cnt;
 	private int ano;
 	private int random_number;
+	private String class_start;
 
-	
+
+	public String getClass_start() {
+		return class_start;
+	}
+	public void setClass_start(String class_start) {
+		this.class_start = class_start;
+	}
 	public int getRandom_number() {
 		return random_number;
 	}
