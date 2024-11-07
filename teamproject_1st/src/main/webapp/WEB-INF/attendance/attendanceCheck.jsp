@@ -169,6 +169,7 @@
             <div style="margin-top: 20px; margin-left: 50px;">
                 <label for="authCode">인증 코드 입력:</label>
                 <input type="text" id="authCode" placeholder="인증 코드를 입력하세요">
+                <!-- 여기서 form으로 인증번호 넘기실 건가요? -->
                 <button onclick="checkAttendance()">출석 체크</button>
             </div>
         </div>
