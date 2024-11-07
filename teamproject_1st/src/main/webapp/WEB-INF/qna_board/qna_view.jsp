@@ -119,9 +119,10 @@
 	                    </form>
                     </div>
                     <div class="comment_button">
-	                    
-	                    <button class="register_button" type="button" style="display:none;" onclick="commentmodifyfrm(this)">저장</button>
+	                    <!-- 수정 누른 후 나오는 버튼 -->
+	                    <button class="register_button" type="submit" style="display:none;" onclick="commentmodifyfrm()">저장</button>
 	                    <button class="cencle_button" type="button"  style="display:none;" onclick="cenclefn(this)">취소</button>
+	                    <!-- 처음버튼 -->
 	                    <button class="modify_button" type="button" onclick="updateCommentFn(this)" >수정</button>
 	                     
 	                    
@@ -135,8 +136,10 @@
            
             <%}%>
             <script>
-            function cenclefn(obj){
-            	$(".commentmodifyfrm").hide();
+            
+            
+            function cenclefn(obj){ //취소버튼
+            	$(".commentmodifyfrm").hide();//저장숨김
             	$(".contentbox").show();
             	$(".register_button").hide();
             	$(".cencle_button").hide();
