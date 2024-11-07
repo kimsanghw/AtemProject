@@ -66,19 +66,22 @@ public class AttendanceController {
 	    response.setCharacterEncoding("utf-8");
 
 	    String cno = request.getParameter("cno");
+	    String randomNumberParam = request.getParameter("random_number");
 
-	    if (cno == null || cno.isEmpty()) {
+	    if (cno == null || cno.isEmpty() || randomNumberParam == null || randomNumberParam.isEmpty()) {
 	        response.getWriter().write("fail");
 	        return;
 	    }
-	    
-	    // 6자리 인증코드 생성
-	    SecureRandom random = new SecureRandom();
-	    int random_number = 100000 + random.nextInt(900000); // 100000 ~ 999999 사이의 값 생성
-	    
-	    // 세션에 인증코드를 저장
-	    session.setAttribute("generatedRandomNumber", random_number);
 
+	    int random_number;
+	    try {
+	        random_number = Integer.parseInt(randomNumberParam); // 전달된 인증번호 파싱
+	    } catch (NumberFormatException e) {
+	        response.getWriter().write("fail");
+	        return;
+	    }
+
+	    // 데이터베이스에 저장
 	    try (Connection conn = DBConn.conn();
 	         PreparedStatement psmt = conn.prepareStatement("UPDATE class SET random_number = ? WHERE cno = ?")) {
 	        
@@ -87,17 +90,14 @@ public class AttendanceController {
 
 	        int rowsAffected = psmt.executeUpdate();
 	        if (rowsAffected > 0) {
-	            // 성공 시 인증번호를 함께 응답으로 보냄
-	            response.getWriter().write("success:" + random_number);
+	            response.getWriter().write("success");
 	        } else {
 	            response.getWriter().write("fail");
 	        }
-
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        response.getWriter().write("error:" + e.getMessage());
 	    }
-	
 	    
 	}
 	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

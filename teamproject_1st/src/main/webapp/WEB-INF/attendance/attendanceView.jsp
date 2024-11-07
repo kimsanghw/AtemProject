@@ -71,33 +71,39 @@
 	    });
 	});
 
-	function generateAndShowRandomNumber() {
-	    const cno = "<%= cno %>"; // 서버에서 전달받은 cno를 사용
+	 function generateAndShowRandomNumber() {
+	        // 6자리 인증번호 생성
+	        const random_number = Math.floor(100000 + Math.random() * 900000); // 100000 ~ 999999 범위
 
-	    $.ajax({
-	        url: "<%=request.getContextPath()%>/attendance/updateRandom_number.do",
-	        type: "POST",
-	        data: { cno: cno },
-	        success: function(response) {
-	            // 서버로부터 인증번호를 받아 모달창에 표시
-	            if (response.trim().startsWith("success:")) {
-	                const random_number = response.split(":")[1].trim(); // 받은 인증번호 추출
-	                document.getElementById("random_number").innerText = random_number;
-	                document.getElementById("random_numberModal").style.display = "block";
-	                alert("인증코드가 성공적으로 저장되었습니다.");
-	            } else {
-	                alert("인증코드 저장에 실패했습니다.");
+	        const cno = "<%= cno %>"; // 서버에서 전달받은 cno 값 사용
+
+	        $.ajax({
+	            url: "<%=request.getContextPath()%>/attendance/updateRandom_number.do",
+	            type: "POST",
+	            data: { 
+	                cno: cno, 
+	                random_number: random_number  // 생성된 인증번호를 서버에 전송
+	            },
+	            success: function(response) {
+	                // 서버로부터 성공 응답을 받으면 인증번호 모달창에 표시
+	                if (response.trim() === "success") {
+	                    document.getElementById("random_number").innerText = random_number;
+	                    document.getElementById("random_numberModal").style.display = "block";
+	                    alert("인증코드가 성공적으로 저장되었습니다.");
+	                } else {
+	                    alert("인증코드 저장에 실패했습니다.");
+	                }
+	            },
+	            error: function() {
+	                alert("서버와의 통신에 실패했습니다.");
 	            }
-	        },
-	        error: function() {
-	            alert("서버와의 통신에 실패했습니다.");
-	        }
-	    });
-	}
+	        });
+	    }
 
-	function closeModal() {
-	    document.getElementById("random_numberModal").style.display = "none";
-	}
+	    // 모달창 닫기 함수
+	    function closeModal() {
+	        document.getElementById("random_numberModal").style.display = "none";
+	    }
 
 </script>
 
