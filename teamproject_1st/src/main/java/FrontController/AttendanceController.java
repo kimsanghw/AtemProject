@@ -121,6 +121,7 @@ public class AttendanceController {
 	    
 	    try {
 	        conn = DBConn.conn();
+	        //로그인 유저 번호로, DB에서 로그인 유저가 수강하고 있고, 지금 출석 가능한 수업의 cno를 조회
 	        
 	        String sql = "SELECT c.cno, c.random_number FROM class c WHERE c.cno = ? AND c.random_number = ?";
 	        psmt = conn.prepareStatement(sql);
