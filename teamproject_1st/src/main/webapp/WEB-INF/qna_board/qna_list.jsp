@@ -12,7 +12,8 @@
 	PagingUtil paging = (PagingUtil) request.getAttribute("paging");
 	
 	int nowpage = 1;
-	if(request.getParameter("nowpage")!= null){
+	if(request.getParameter("nowpage")!= null)
+	{
 		nowpage = Integer.parseInt(request.getParameter("nowpage"));
 	}
 %>
