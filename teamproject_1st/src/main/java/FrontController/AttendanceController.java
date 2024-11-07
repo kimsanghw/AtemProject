@@ -46,6 +46,8 @@ public class AttendanceController {
 		}else if(comments[comments.length-1].equals("attendanceCheck.do")) {
 			if(request.getMethod().equals("GET")) {
 				attendanceCheck(request,response);
+				} else if(request.getMethod().equals("POST")) {
+					attendanceCheckOk(request,response);
 				}
 		}else if(comments[comments.length-1].equals("attendanceInfoView.do")) {
 			if(request.getMethod().equals("GET")) {
@@ -109,57 +111,53 @@ public class AttendanceController {
 	}
 	
 	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    request.setCharacterEncoding("UTF-8");
-	    HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
-	    List<ClassVO> clist = new ArrayList<ClassVO>();
-	    String cno = request.getParameter("cno");
-	    String random_number = request.getParameter("random_number");
-	    
-	    // Null 또는 빈 문자열 확인
-	    if (cno == null || cno.isEmpty() || random_number == null || random_number.isEmpty()) {
-	        response.getWriter().write("출석 체크를 위한 필수 정보가 누락되었습니다.");
-	        return;
-	    }
-
-	    Connection conn = null;
-	    PreparedStatement psmt = null;
-	    ResultSet rs = null;
-
-	    try {
-	        conn = DBConn.conn();
-	        
-	        String sql = "SELECT u.uno, c.cno, c.random_number, c.class_start FROM class c " +
-	                     "JOIN user u ON c.uno = u.uno WHERE c.cno = ? AND c.random_number = ?";
-	        
-	        psmt = conn.prepareStatement(sql);
-	        psmt.setInt(1, Integer.parseInt(cno));
-	        psmt.setInt(2, Integer.parseInt(random_number));
-
-	        rs = psmt.executeQuery();
-
-	        if (rs.next()) {
-	            ClassVO vo = new ClassVO();
-	            vo.setCno(rs.getInt("cno"));
-	            vo.setUno(rs.getInt("uno"));
-	            vo.setRandom_number(rs.getInt("random_number"));
-	            vo.setClass_start(rs.getString("class_start")); // 강의 시작 시간 설정
-	            clist.add(vo);
-	            request.setAttribute("vo", vo);
-	        }
-	        request.setAttribute("clist", clist);
-	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-	            DBConn.close(rs, psmt, conn);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
+		 	HttpSession session = request.getSession();
+		    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+		    
+		    if (loginUser != null) {
+		        Connection conn = null;
+		        PreparedStatement psmt = null;
+		        ResultSet rs = null;
+		        
+		        try {
+		            conn = DBConn.conn();
+		            String sql = "SELECT c.* FROM class c " +
+		                         "JOIN app_class ac ON c.cno = ac.cno " +
+		                         "JOIN user u ON ac.uno = u.uno " +
+		                         "WHERE u.id = ?";
+		            
+		            psmt = conn.prepareStatement(sql);
+		            psmt.setString(1, loginUser.getId());
+		            rs = psmt.executeQuery();
+		            
+		            if (rs.next()) {
+		                ClassVO vo = new ClassVO();
+		                vo.setCno(rs.getInt("cno"));
+		                vo.setRandom_number(rs.getInt("random_number"));
+		                vo.setTitle(rs.getString("title"));
+		                // 필요한 다른 필드들도 설정
+		                
+		                request.setAttribute("vo", vo);
+		                request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
+		            } 
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		            
+		        } finally {
+		            try {
+						DBConn.close(rs, psmt, conn);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		        
+		        }
+		    
+		
+		    }
 	}
+	    
+
+
 
 	
 	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -228,7 +226,7 @@ public class AttendanceController {
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
 		int uno = loginUser.getUno();
 		String cno = request.getParameter("cno");
-		System.out.println("cno=================="+ cno);
+		
 		
 		
 		Connection conn = null;
@@ -480,5 +478,50 @@ public class AttendanceController {
 	        }
 	    }
 	}
-
+	public void attendanceCheckOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String enteredCode = request.getParameter("authCode");
+	    int cno = Integer.parseInt(request.getParameter("cno"));
+	    
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
+	    
+	    try {
+	        conn = DBConn.conn();
+	        String sql = "SELECT random_number FROM class WHERE cno = ?";
+	        
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setInt(1, cno);
+	        rs = psmt.executeQuery();
+	        
+	        if (rs.next()) {
+	            String validCode = rs.getString("random_number");
+	            System.out.println("Entered Code: " + enteredCode);
+	            System.out.println("Valid Code: " + validCode);
+	            
+	            if (enteredCode.equals(validCode)) {
+	                // 출석 기록 저장 로직
+	                // ...
+	                response.getWriter().write("success");
+	            } else {
+	                response.getWriter().write("fail");
+	            }
+	        } else {
+	            response.getWriter().write("fail");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        request.setAttribute("message", "오류가 발생했습니다.");
+	    } finally {
+	        try {
+				DBConn.close(rs, psmt, conn);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+	    
+	    request.getRequestDispatcher("/WEB-INF/attendance/attendanceResult.jsp").forward(request, response);
+	}
 }
+
