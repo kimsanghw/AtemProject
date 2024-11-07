@@ -112,8 +112,8 @@ public class AttendanceController {
 	    request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
 	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-	    List<ClassVO> clist = new ArrayList<ClassVO>();
-	    String cno = request.getParameter("cno");
+	    List<ClassVO> clist  = new ArrayList<ClassVO>();
+	    String cno =   request.getParameter("cno");
 	    String random_number = request.getParameter("random_number");
 	    Connection conn = null;
 	    PreparedStatement psmt = null;
@@ -129,25 +129,17 @@ public class AttendanceController {
 	        
 	        rs = psmt.executeQuery();
 	        
-	        ClassVO vo = null;
-	        if (rs.next()) {
-	            vo = new ClassVO();
+	        if(rs.next()) {
+	            ClassVO vo = new ClassVO();
 	            vo.setCno(rs.getInt("cno"));
 	            vo.setRandom_number(rs.getInt("random_number"));
 	            clist.add(vo);
+	            request.setAttribute("vo", vo); // vo 객체를 JSP에서 사용할 수 있도록 설정
 	        }
-
-	        // vo가 null일 경우 기본값을 설정
-	        if (vo == null) {
-	            vo = new ClassVO();
-	            vo.setRandom_number(0); // 기본 인증 코드 설정 (예: 0)
-	        }
-	        
-	        request.setAttribute("vo", vo);
 	        request.setAttribute("clist", clist);
 	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
 	        
-	    } catch (Exception e) {
+	    } catch(Exception e) {
 	        e.printStackTrace();
 	    } finally {
 	        try {
@@ -225,6 +217,7 @@ public class AttendanceController {
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
 		int uno = loginUser.getUno();
 		String cno = request.getParameter("cno");
+		System.out.println("cno=================="+ cno);
 		
 		
 		Connection conn = null;
