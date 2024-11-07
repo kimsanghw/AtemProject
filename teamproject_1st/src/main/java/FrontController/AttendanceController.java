@@ -109,46 +109,10 @@ public class AttendanceController {
 	}
 	
 	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    request.setCharacterEncoding("UTF-8");
-	    HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-	    List<ClassVO> clist  = new ArrayList<ClassVO>();
-	    String cno =   request.getParameter("cno");
-	    String random_number = request.getParameter("random_number");
-	    Connection conn = null;
-	    PreparedStatement psmt = null;
-	    ResultSet rs = null;
 	    
-	    try {
-	        conn = DBConn.conn();
-	        //로그인 유저 번호로, DB에서 로그인 유저가 수강하고 있고, 지금 출석 가능한 수업의 cno를 조회
-	        
-	        String sql = "SELECT c.cno, c.random_number FROM class c WHERE c.cno = ? AND c.random_number = ?";
-	        psmt = conn.prepareStatement(sql);
-	        psmt.setInt(1, Integer.parseInt(cno));
-	        psmt.setInt(2, Integer.parseInt(random_number));
-	        
-	        rs = psmt.executeQuery();
-	        
-	        if(rs.next()) {
-	            ClassVO vo = new ClassVO();
-	            vo.setCno(rs.getInt("cno"));
-	            vo.setRandom_number(rs.getInt("random_number"));
-	            clist.add(vo);
-	            request.setAttribute("vo", vo); // vo 객체를 JSP에서 사용할 수 있도록 설정
-	        }
-	        request.setAttribute("clist", clist);
 	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
 	        
-	    } catch(Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-	            DBConn.close(rs, psmt, conn);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
+	    
 	}
 
 	
