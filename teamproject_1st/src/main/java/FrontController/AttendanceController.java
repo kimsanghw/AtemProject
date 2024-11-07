@@ -111,36 +111,46 @@ public class AttendanceController {
 	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-	    List<ClassVO> clist  = new ArrayList<ClassVO>();
-	    String cno =   request.getParameter("cno");
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+	    List<ClassVO> clist = new ArrayList<ClassVO>();
+	    String cno = request.getParameter("cno");
 	    String random_number = request.getParameter("random_number");
+	    
+	    // Null 또는 빈 문자열 확인
+	    if (cno == null || cno.isEmpty() || random_number == null || random_number.isEmpty()) {
+	        response.getWriter().write("출석 체크를 위한 필수 정보가 누락되었습니다.");
+	        return;
+	    }
+
 	    Connection conn = null;
 	    PreparedStatement psmt = null;
 	    ResultSet rs = null;
-	    
+
 	    try {
 	        conn = DBConn.conn();
-	        //로그인 유저 번호로, DB에서 로그인 유저가 수강하고 있고, 지금 출석 가능한 수업의 cno를 조회
 	        
-	        String sql = "SELECT c.cno, c.random_number FROM class c WHERE c.cno = ? AND c.random_number = ?";
+	        String sql = "SELECT u.uno, c.cno, c.random_number, c.class_start FROM class c " +
+	                     "JOIN user u ON c.uno = u.uno WHERE c.cno = ? AND c.random_number = ?";
+	        
 	        psmt = conn.prepareStatement(sql);
 	        psmt.setInt(1, Integer.parseInt(cno));
 	        psmt.setInt(2, Integer.parseInt(random_number));
-	        
+
 	        rs = psmt.executeQuery();
-	        
-	        if(rs.next()) {
+
+	        if (rs.next()) {
 	            ClassVO vo = new ClassVO();
 	            vo.setCno(rs.getInt("cno"));
+	            vo.setUno(rs.getInt("uno"));
 	            vo.setRandom_number(rs.getInt("random_number"));
+	            vo.setClass_start(rs.getString("class_start")); // 강의 시작 시간 설정
 	            clist.add(vo);
-	            request.setAttribute("vo", vo); // vo 객체를 JSP에서 사용할 수 있도록 설정
+	            request.setAttribute("vo", vo);
 	        }
 	        request.setAttribute("clist", clist);
 	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
-	        
-	    } catch(Exception e) {
+
+	    } catch (Exception e) {
 	        e.printStackTrace();
 	    } finally {
 	        try {
