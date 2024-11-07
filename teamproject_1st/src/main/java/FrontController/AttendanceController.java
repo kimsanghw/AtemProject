@@ -80,7 +80,8 @@ public class AttendanceController {
 	        response.getWriter().write("fail");
 	        return;
 	    }
-
+	    System.out.println("cno : "+ cno);
+	    System.out.println("random_number : "+ randomNumberParam);
 	    // 데이터베이스에 저장
 	    try (Connection conn = DBConn.conn();
 	         PreparedStatement psmt = conn.prepareStatement("UPDATE class SET random_number = ? WHERE cno = ?")) {
