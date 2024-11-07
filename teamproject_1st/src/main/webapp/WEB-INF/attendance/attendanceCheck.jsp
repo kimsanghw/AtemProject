@@ -1,14 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
-<%@ page import="FrontController.vo.ClassVO" %>
-<%@ page import="FrontController.util.*" %>
-<%@ page import="java.util.*" %>
-<%
-ClassVO vo = (ClassVO) request.getAttribute("vo");
-int validCode = vo != null ? vo.getRandom_number() : 0;
-
-%>
 
 <title>Insert title here</title>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -25,30 +17,31 @@ int validCode = vo != null ? vo.getRandom_number() : 0;
         });
 
         // 인증 코드와 출석 체크 로직
-       <script>
-	    function checkAttendance() {
-	        const enteredCode = document.getElementById('authCode').value;
-	        const cno = document.getElementById('cno').value;
-	        const validCode = <%= validCode %>;  // 인증 코드 가져오기
-	
-	        if (enteredCode == validCode) {
-	            const today = new Date().toISOString().split('T')[0];
-	
-	            calendar.addEvent({
-	                title: '출석 완료',
-	                start: today,
-	                allDay: true,
-	                backgroundColor: '#0b70b9',
-	                borderColor: '#0b70b9',
-	                textColor: '#fff'
-	            });
-	
-	            alert("출석이 완료되었습니다!");
-	        } else {
-	            alert("인증 코드가 올바르지 않습니다. 다시 시도해주세요.");
-	        }
-	    }
-</script>
+        function checkAttendance() {
+            const enteredCode = document.getElementById('authCode').value;
+            const validCode = "1234ABCD";  // 인증 코드 (예시)
+
+            // 인증 코드 확인
+            if (enteredCode === validCode) {
+                // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
+                const today = new Date().toISOString().split('T')[0];
+
+                // 달력에 출석 완료 이벤트 추가
+                calendar.addEvent({
+                    title: '출석 완료',
+                    start: today,
+                    allDay: true,
+                    backgroundColor: '#0b70b9',
+                    borderColor: '#0b70b9',
+                    textColor: '#fff'
+                });
+
+                // 출석 완료 메시지 표시
+                alert("출석이 완료되었습니다!");
+            } else {
+                alert("인증 코드가 올바르지 않습니다. 다시 시도해주세요.");
+            }
+        }
     </script>
 <style>
 	.section {
@@ -162,11 +155,11 @@ int validCode = vo != null ? vo.getRandom_number() : 0;
      <section>
         <div class="attendance_info">출결정보</div>
         <div class="info_flex">
-            <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do?cno=<%=vo.getCno() %>">수강중인 강의 ></a></div>
+            <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">수강중인 강의 ></a></div>
             <div class="app_line"></div>
-            <div class="attendance_check class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceCheck.do?cno=<%=vo.getCno() %>">출석체크하기 ></a></div>
+            <div class="attendance_check class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceCheck.do">출석체크하기 ></a></div>
             <div class="app_line"></div>
-            <div class="attendance_Info class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do?cno=<%=vo.getCno() %>">출석정보보기 ></a></div>
+            <div class="attendance_Info class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceInfoView.do">출석정보보기 ></a></div>
             <div class="app_line"></div>
         </div>
         <div class="attendance_box info_flex">
