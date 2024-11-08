@@ -178,39 +178,28 @@
 %>
                 </tbody>
             </table>
+            <%
+            int startPage = (Integer) request.getAttribute("startPage");
+	        int endPage = (Integer) request.getAttribute("endPage");
+            %>
             <!-- 페이지 네비게이션 추가 -->
             <div class="pagination">
-			    <% 
-			        int startPage = (Integer) request.getAttribute("startPage");
-			        int endPage = (Integer) request.getAttribute("endPage");
-			        
-			        // Display "Previous" button if current page is beyond the first set
-			        if (startPage > 1) { 
-			    %>
+			    <% if (startPage > 1) { %>
 			        <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= startPage - 1 %>">Previous</a>
-			    <% 
-			        }
-			        
-			        // Display page numbers within the current set
-			        for (int i = startPage; i <= endPage; i++) { 
-			            if (i == currentPage) { 
-			    %>
-			                <strong><%= i %></strong> 
-			    <% 
-			            } else { 
-			    %>
-			                <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= i %>"><%= i %></a>
-			    <% 
-			            }
-			        } 
-			        
-			        // Display "Next" button if there are more pages beyond the current set
-			        if (endPage < totalPages) { 
-			    %>
+			    <% } %>
+			    
+			    <% for (int i = startPage; i <= Math.min(endPage, totalPages); i++) { %>
+			    <% if (i == currentPage) { %>
+			        <strong><%= i %></strong>
+			    <% } else { %>
+			        <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= i %>&search_option=<%= request.getParameter("search_option") %>&mypage_search=<%= request.getParameter("mypage_search") %>"><%= i %></a>
+
+			    <% } %>
+				<% } %>
+			    
+			    <% if (endPage < totalPages) { %>
 			        <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= endPage + 1 %>">Next</a>
-			    <% 
-			        } 
-			    %>
+			    <% } %>
 			</div>
             <form action="action=<%=request.getContextPath()%>/mypage/mypage3search.do" method="GET">
                 <select class="search_options" name="search_option">
