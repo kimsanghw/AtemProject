@@ -36,104 +36,105 @@
 	            document.getElementById("dateForm").submit();
 	        });
 	    }
-	
-	    // 출결 변경 버튼에 대한 이벤트 리스너
-	    function changeCheck(obj){
-	    	alret("123");  
-		    var $button = $(this);
-		    var $row = $button.closest("tr");
-		    var attendanceChange = $row.find("select[name='attendanceChange']").val();
-		    var ano = $row.find("input[name='ano']").val();
-		    var cno = $("#cno").val();  // 숨겨진 cno 값을 가져옵니다.
-		    
-		    $.ajax({
-		        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
-		        type: "POST",
-		        data: { 
-		            attendanceChange: attendanceChange, 
-		            ano: ano, 
-		            cno: cno // cno 값도 함께 전달
-		        },
-		        success: function(response) {
-		            if(response.trim() === "success") {
-		                alert("출결 변경에 성공하였습니다.");
-		                var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
-		                $statusCell.text(attendanceChange);
-		                $row.find("select[name='attendanceChange']").val(attendanceChange);
-		            } else {
-		                alert("출결 변경에 실패했습니다.");
-		            }
-		        },
-		        error: function() {
-		            alert("서버와의 통신에 실패했습니다.");
-		        }
-		    });
-	    }
-	   <%--  $(".testbtn").on("click", function(e) {
-		    alret("123");  
-		    var $button = $(this);
-		    var $row = $button.closest("tr");
-		    var attendanceChange = $row.find("select[name='attendanceChange']").val();
-		    var ano = $row.find("input[name='ano']").val();
-		    var cno = $("#cno").val();  // 숨겨진 cno 값을 가져옵니다.
-		    
-		    $.ajax({
-		        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
-		        type: "POST",
-		        data: { 
-		            attendanceChange: attendanceChange, 
-		            ano: ano, 
-		            cno: cno // cno 값도 함께 전달
-		        },
-		        success: function(response) {
-		            if(response.trim() === "success") {
-		                alert("출결 변경에 성공하였습니다.");
-		                var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
-		                $statusCell.text(attendanceChange);
-		                $row.find("select[name='attendanceChange']").val(attendanceChange);
-		            } else {
-		                alert("출결 변경에 실패했습니다.");
-		            }
-		        },
-		        error: function() {
-		            alert("서버와의 통신에 실패했습니다.");
-		        }
-		    });
-		}); --%>
-
-	 function generateAndShowRandomNumber() {
-	        // 6자리 인증번호 생성
-	        const random_number = Math.floor(100000 + Math.random() * 900000); // 100000 ~ 999999 범위
-
-	        const cno = "<%= cno %>"; // 서버에서 전달받은 cno 값 사용
-
-	        $.ajax({
-	            url: "<%=request.getContextPath()%>/attendance/updateRandom_number.do",
-	            type: "POST",
-	            data: { 
-	                cno: cno, 
-	                random_number: random_number  // 생성된 인증번호를 서버에 전송
-	            },
-	            success: function(response) {
-	                // 서버로부터 성공 응답을 받으면 인증번호 모달창에 표시
-	                if (response.trim() === "success") {
-	                    document.getElementById("random_number").innerText = random_number;
-	                    document.getElementById("random_numberModal").style.display = "block";
-	                    alert("인증코드가 성공적으로 저장되었습니다.");
-	                } else {
-	                    alert("인증코드 저장에 실패했습니다.");
-	                }
-	            },
-	            error: function() {
-	                alert("서버와의 통신에 실패했습니다.");
+	});
+	  // 출결 변경 버튼에 대한 이벤트 리스너
+    function changeCheck(obj){
+	    var $button = $(obj);
+	    var $row = $button.closest("tr");
+	    var attendanceChange = $row.find("select[name='attendanceChange']").val();
+	    var ano = $row.find("input[name='ano']").val();
+	    var cno = <%=cno%>;  // 숨겨진 cno 값을 가져옵니다.
+	    alert(attendanceChange);
+	    alert(ano);
+	    alert(cno);
+	    $.ajax({
+	        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
+	        type: "POST",
+	        data: { 
+	            attendanceChange: attendanceChange, 
+	            ano: ano, 
+	            cno: cno // cno 값도 함께 전달
+	        },
+	        success: function(response) {
+	            if(response.trim() === "success") {
+	                alert("출결 변경에 성공하였습니다.");
+	                var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
+	                $statusCell.text(attendanceChange);
+	                $row.find("select[name='attendanceChange']").val(attendanceChange);
+	            } else {
+	                alert("출결 변경에 실패했습니다.");
 	            }
-	        });
-	    }
+	        },
+	        error: function() {
+	            alert("서버와의 통신에 실패했습니다.");
+	        }
+	    });
+    }
+   <%--  $(".testbtn").on("click", function(e) {
+	    alret("123");  
+	    var $button = $(this);
+	    var $row = $button.closest("tr");
+	    var attendanceChange = $row.find("select[name='attendanceChange']").val();
+	    var ano = $row.find("input[name='ano']").val();
+	    var cno = $("#cno").val();  // 숨겨진 cno 값을 가져옵니다.
+	    
+	    $.ajax({
+	        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
+	        type: "POST",
+	        data: { 
+	            attendanceChange: attendanceChange, 
+	            ano: ano, 
+	            cno: cno // cno 값도 함께 전달
+	        },
+	        success: function(response) {
+	            if(response.trim() === "success") {
+	                alert("출결 변경에 성공하였습니다.");
+	                var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
+	                $statusCell.text(attendanceChange);
+	                $row.find("select[name='attendanceChange']").val(attendanceChange);
+	            } else {
+	                alert("출결 변경에 실패했습니다.");
+	            }
+	        },
+	        error: function() {
+	            alert("서버와의 통신에 실패했습니다.");
+	        }
+	    });
+	}); --%>
 
-	    // 모달창 닫기 함수
-	    function closeModal() {
-	        document.getElementById("random_numberModal").style.display = "none";
-	    }
+ function generateAndShowRandomNumber() {
+        // 6자리 인증번호 생성
+        const random_number = Math.floor(100000 + Math.random() * 900000); // 100000 ~ 999999 범위
+
+        const cno = "<%= cno %>"; // 서버에서 전달받은 cno 값 사용
+
+        $.ajax({
+            url: "<%=request.getContextPath()%>/attendance/updateRandom_number.do",
+            type: "POST",
+            data: { 
+                cno: cno, 
+                random_number: random_number  // 생성된 인증번호를 서버에 전송
+            },
+            success: function(response) {
+                // 서버로부터 성공 응답을 받으면 인증번호 모달창에 표시
+                if (response.trim() === "success") {
+                    document.getElementById("random_number").innerText = random_number;
+                    document.getElementById("random_numberModal").style.display = "block";
+                    alert("인증코드가 성공적으로 저장되었습니다.");
+                } else {
+                    alert("인증코드 저장에 실패했습니다.");
+                }
+            },
+            error: function() {
+                alert("서버와의 통신에 실패했습니다.");
+            }
+        });
+    }
+
+    // 모달창 닫기 함수
+    function closeModal() {
+        document.getElementById("random_numberModal").style.display = "none";
+    } 
 
 </script>
 
@@ -287,9 +288,10 @@
 				</div>
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
             <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
-             <input type="hidden" name="cno" value="<%=cno%>">
             <div class="today_date" >
               <input type="date" name="date" id="dateInput" value="<%= selectedDate != null ? selectedDate : todayDate %>" >
+              <input type="hidden" name="cno" value="<%=cno%>">
+              
               <span> 현재 일자 : <%= selectedDate != null ? selectedDate : todayDate %></span>
             </div>
             </form>
@@ -308,11 +310,10 @@
         <% if (attendanceList != null) { %>
             <% for (App_classVO studentInfo : attendanceList) { %>
                 <tr>
-                    <td><%= studentNumber %>
-                    <input type="hidden" name="ano" value="<%= studentInfo.getAno()%>">
-                    <input type="hidden" name="cno" value="<%=cno%>"></td>
+                    <td><%= studentNumber %><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
                     <td><%= studentInfo.getName() %></td>
                     <td><%= studentInfo.getAttendance() != null ? studentInfo.getAttendance() : "미등록" %></td> <!-- 출석 상태가 없으면 '미등록' -->
+                    <input type="hidden" name="cno" value="<%=cno%>">
                     <td>
                         <select name="attendanceChange" onchange="changeCheck(this)">
                             <option value="출석" <%= "출석".equals(studentInfo.getAttendance()) ? "selected" : "" %>>출석</option>
@@ -321,9 +322,9 @@
                             <option value="병결" <%= "병결".equals(studentInfo.getAttendance()) ? "selected" : "" %>>병결</option>
                             <option value="결석" <%= "결석".equals(studentInfo.getAttendance()) ? "selected" : "" %>>결석</option>
                         </select>
-                       <!--  <button class="attendanceChange_button testbtn" type="button">등록</button> -->
+                        <!-- <button class="attendanceChange_button" type="button">등록</button> -->
                     </td>
-                </tr>   
+                </tr>
                 <% studentNumber++; %>
             <% } %>
         <% } else { %>
