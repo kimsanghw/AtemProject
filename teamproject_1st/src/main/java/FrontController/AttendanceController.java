@@ -606,7 +606,7 @@ public class AttendanceController {
 			}
 	    }
 	    
-	    response.sendRedirect(request.getContextPath() + "/attendance/attendanceCheck.do");
+	    //response.sendRedirect(request.getContextPath() + "/attendance/attendanceCheck.do");
 	    //request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
 	}
 	}

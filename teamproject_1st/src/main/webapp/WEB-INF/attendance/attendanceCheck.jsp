@@ -209,12 +209,19 @@ $(document).ready(function() {
                 },
                 dataType: "json",
                 success: function(response) {
-                    console.log(response);
+                    console.log("성공 응답:", response);
                     handleAttendanceResult(response);
                 },
                 error: function(xhr, status, error) {
                     console.error("Ajax 오류:", status, error);
-                    alert("서버 통신 중 오류가 발생했습니다.");
+                    console.log("전체 응답:", xhr.responseText);
+                    try {
+                        var jsonResponse = JSON.parse(xhr.responseText);
+                        handleAttendanceResult(jsonResponse);
+                    } catch(e) {
+                        console.error("JSON 파싱 실패:", e);
+                        alert("서버 통신 중 오류가 발생했습니다.");
+                    }
                 }
             });
         }
