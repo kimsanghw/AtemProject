@@ -1,9 +1,22 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
+<%@ page import="FrontController.vo.ClassVO" %>
+<%@ page import="FrontController.util.*" %>
+<%@ page import="java.util.*" %>
+
+<%
+ClassVO vo = (ClassVO) request.getAttribute("vo");
+String errorMessage = (String) request.getAttribute("errorMessage");
+int validCode = 0;
+int cno = 0;
+if (vo != null) {
+    validCode = vo.getRandom_number();
+    cno = vo.getCno();
+}
+%>
 
 <title>Insert title here</title>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js' rel='stylesheet'></script>
 <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -16,33 +29,9 @@
             window.calendar = calendar;
         });
 
-        // 인증 코드와 출석 체크 로직
-        function checkAttendance() {
-            const enteredCode = document.getElementById('authCode').value;
-            const validCode = "1234ABCD";  // 인증 코드 (예시)
 
-            // 인증 코드 확인
-            if (enteredCode === validCode) {
-                // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
-                const today = new Date().toISOString().split('T')[0];
+</script>
 
-                // 달력에 출석 완료 이벤트 추가
-                calendar.addEvent({
-                    title: '출석 완료',
-                    start: today,
-                    allDay: true,
-                    backgroundColor: '#0b70b9',
-                    borderColor: '#0b70b9',
-                    textColor: '#fff'
-                });
-
-                // 출석 완료 메시지 표시
-                alert("출석이 완료되었습니다!");
-            } else {
-                alert("인증 코드가 올바르지 않습니다. 다시 시도해주세요.");
-            }
-        }
-    </script>
 <style>
 	.section {
       flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
@@ -167,11 +156,56 @@
             <div id='calendar' ></div>
             <!-- 인증 코드 입력 및 출석 버튼 -->
             <div style="margin-top: 20px; margin-left: 50px;">
-                <label for="authCode">인증 코드 입력:</label>
-                <input type="text" id="authCode" placeholder="인증 코드를 입력하세요">
-                <!-- 여기서 form으로 인증번호 넘기실 건가요? -->
-                <button onclick="checkAttendance()">출석 체크</button>
-            </div>
-        </div>
-    </section>
+                <form id="attendanceForm" action="<%=request.getContextPath()%>/attendance/attendanceCheckOk.do" method="post" onsubmit="return validateForm()">
+    <div style="margin-top: 20px; margin-left: 50px;">
+        <label for="authCode">인증 코드 입력:</label>
+        <input type="text" id="authCode" name="authCode" placeholder="인증 코드를 입력하세요" required>
+        <input type="hidden" name="cno" value="<%=vo.getCno()%>">
+        <%=vo.getCno() %>
+        <%=vo.getRandom_number() %>
+        <button type="submit">출석 체크</button>
+    </div>
+</form>
+
+<script>
+function validateForm() {
+    const enteredCode = document.getElementById('authCode').value.trim();
+    if (enteredCode === "") {
+        alert("인증 코드를 입력해주세요.");
+        return false;
+    }
+    return true;
+}
+
+document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (validateForm()) {
+        const formData = new FormData(this);
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(result => handleAttendanceResult(result))
+        .catch(error => console.error('Error:', error));
+    }
+});
+
+function handleAttendanceResult(result) {
+    if (result === 'success') {
+        const today = new Date().toISOString().split('T')[0];
+        calendar.addEvent({
+            title: '출석 완료',
+            start: today,
+            allDay: true,
+            backgroundColor: '#0b70b9',
+            borderColor: '#0b70b9',
+            textColor: '#fff'
+        });
+        alert("출석이 완료되었습니다!");
+    } else {
+        alert("인증 코드가 올바르지 않습니다. 다시 시도해주세요.");
+    }
+}
+</script>
 <%@ include file="../../include/footer.jsp" %>
