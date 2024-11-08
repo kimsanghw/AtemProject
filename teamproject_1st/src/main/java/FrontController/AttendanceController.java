@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -541,67 +545,77 @@ public class AttendanceController {
 	    }
 	}
 	public void attendanceCheckOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		response.setContentType("application/json; charset=UTF-8");
-		response.setCharacterEncoding("UTF-8"); // 응답 객체에 UTF-8 설정 추가
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
-		HttpSession session = request.getSession();
-		ClassVO vo = (ClassVO) session.getAttribute("vo");
+        HttpSession session = request.getSession();
+        ClassVO vo = (ClassVO) session.getAttribute("vo");
 
-		if (vo != null) {
-		    // 세션에서 ClassVO 객체를 가져와 cno를 추출
-		    int cno = vo.getCno();
-		    
-		    // 요청 파라미터로 받은 인증 코드
-		    String enteredCode = request.getParameter("authCode");
-		    
-		    // 만약 authCode가 비어있으면 처리할 수 없으므로 종료
-		    if (enteredCode == null || enteredCode.trim().isEmpty()) {
-		        response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드를 입력해주세요.\"}");
-		        return;
-		    }
+        if (vo != null) {
+            int cno = vo.getCno();
+            System.out.println("cno: " + cno);
+            String enteredCode = request.getParameter("authCode");
+            
+            Enumeration<String> names = request.getParameterNames(); 
+            while(names.hasMoreElements()) {
+                System.out.println("파라메타 이름 : " + names.nextElement());
+            }
+            System.out.println("Entered Code: " + enteredCode);
+            
+            if (enteredCode == null || enteredCode.trim().isEmpty()) {
+                response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드를 입력해주세요.\"}");
+                return;
+            }
 
-		    // DB 연결 준비
-		    Connection conn = null;
-		    PreparedStatement psmt = null;
-		    ResultSet rs = null;
+            Connection conn = null;
+            PreparedStatement psmt = null;
+            ResultSet rs = null;
 
-		    try {
-		        conn = DBConn.conn();
-		        String sql = "SELECT random_number FROM class WHERE cno = ?";
-		        
-		        // cno를 이용해 DB에서 random_number 값을 조회
-		        psmt = conn.prepareStatement(sql);
-		        psmt.setInt(1, cno);
-		        rs = psmt.executeQuery();
-		        
-		        if (rs.next()) {
-		            // DB에서 조회한 random_number와 비교
-		            String validCode = rs.getString("random_number");
-		            System.out.println("Database random_number: " + validCode);
-		            if (enteredCode.equals(validCode)) {
-		                // 인증 코드가 맞으면 출석 기록 저장 로직
-		                response.getWriter().write("{\"status\": \"success\", \"message\": \"출석 체크 완료!\"}");
-		            } else {
-		                response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드가 올바르지 않습니다.\"}");
-		            }
-		        } else {
-		            // 해당 cno에 해당하는 클래스가 없을 경우
-		            response.getWriter().write("{\"status\": \"fail\", \"message\": \"해당하는 수업을 찾을 수 없습니다.\"}");
-		        }
-		    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-				DBConn.close(rs, psmt, conn);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	    }
-	    
-	    response.sendRedirect(request.getContextPath() + "/attendance/attendanceCheck.do");
-	    //request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
-	}
-	}
+            try {
+                conn = DBConn.conn();
+                String sql = "SELECT random_number FROM class WHERE cno = ?";
+                psmt = conn.prepareStatement(sql);
+                psmt.setInt(1, cno);
+                rs = psmt.executeQuery();
+                
+                if (rs.next()) {
+                    String validCode = rs.getString("random_number");
+                    System.out.println("Database random_number: " + validCode);
+                    
+                    if (enteredCode.equals(validCode)) {
+                        LocalTime currentTime = LocalTime.now();
+                        LocalTime cutoffTime = LocalTime.of(9, 10); // 09:10
+
+                        String attendanceStatus = currentTime.isBefore(cutoffTime) ? "출석" : "지각";
+
+                        String formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                        String jsonResponse = String.format(
+                            "{\"status\": \"success\", \"message\": \"%s 처리되었습니다.\", \"attendanceStatus\": \"%s\", \"time\": \"%s\"}",
+                            attendanceStatus, attendanceStatus, formattedTime
+                        );
+                        response.getWriter().write(jsonResponse);
+                    } else {
+                        response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드가 올바르지 않습니다.\"}");
+                    }
+                } else {
+                    response.getWriter().write("{\"status\": \"fail\", \"message\": \"해당하는 수업을 찾을 수 없습니다.\"}");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.getWriter().write("{\"status\": \"error\", \"message\": \"데이터베이스 오류가 발생했습니다.\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.getWriter().write("{\"status\": \"error\", \"message\": \"서버 오류가 발생했습니다.\"}");
+            } finally {
+                try {
+                    DBConn.close(rs, psmt, conn);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            response.getWriter().write("{\"status\": \"fail\", \"message\": \"세션 정보가 없습니다.\"}");
+        }
+    }
 }
-
