@@ -92,6 +92,7 @@
 	            </div>
 	            <div class="book_input">교재 <input type="text" name="book"></div>
 	            <div>강의 기간 <input type="date" name="duringclass"> ~ <input type="date" name="end_duringclass"></div>
+	            <div>강의 시작 시간 <input type="datetime-local"  name="class_start"> 강의 종료 시간 <input type="datetime-local"  name="class_late"></div><!-- 9시 10분 -->
 	        </div>
 	        <div class="filse">
 	            <hr>

@@ -1,14 +1,15 @@
 package FrontController;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,8 @@ public class AttendanceController {
 		}else if(comments[comments.length-1].equals("attendanceCheck.do")) {
 			if(request.getMethod().equals("GET")) {
 				attendanceCheck(request,response);
+				} else if(request.getMethod().equals("POST")) {
+					attendanceCheckOk(request,response);
 				}
 		}else if(comments[comments.length-1].equals("attendanceInfoView.do")) {
 			if(request.getMethod().equals("GET")) {
@@ -102,20 +105,123 @@ public class AttendanceController {
 	    
 	}
 	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-		request.getRequestDispatcher("/WEB-INF/attendance/attendanceInfoView.jsp").forward(request, response);
-	}
-	
-	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    
-	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
-	        
-	    
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+	    String userId = loginUser != null ? loginUser.getId() : null;
+
+	    List<Map<String, Object>> attendanceData = new ArrayList<>();
+
+	    if (userId != null) {
+	        Connection conn = null;
+	        PreparedStatement psmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            conn = DBConn.conn();
+	            String sql = "SELECT a.rdate, a.attendance AS status FROM attendance a " +
+	                         "JOIN app_class ac ON a.cno = ac.cno " +
+	                         "JOIN user u ON a.uno = u.uno " +
+	                         "WHERE u.id = ?";
+	            psmt = conn.prepareStatement(sql);
+	            psmt.setString(1, userId);
+	            rs = psmt.executeQuery();
+
+	            // 날짜별로 상태를 합치는 Map
+	            Map<String, String> attendanceMap = new HashMap<>();
+
+	            while (rs.next()) {
+	                String date = rs.getString("rdate");
+	                String status = rs.getString("status");
+
+	                // 이미 해당 날짜에 출석 상태가 있는 경우
+	                if (attendanceMap.containsKey(date)) {
+	                    // 예를 들어, '출석' > '지각' > '결석' 순으로 우선순위로 선택
+	                    String existingStatus = attendanceMap.get(date);
+	                    if (existingStatus.equals("결석") && !status.equals("결석")) {
+	                        attendanceMap.put(date, status);
+	                    } else if (existingStatus.equals("지각") && !status.equals("결석") && !status.equals("지각")) {
+	                        attendanceMap.put(date, status);
+	                    } else if (existingStatus.equals("출석") && !status.equals("출석")) {
+	                        // 이미 '출석'인 경우 다른 상태로 바뀌지 않음
+	                    }
+	                } else {
+	                    attendanceMap.put(date, status);
+	                }
+	            }
+
+	            // Map에서 데이터를 리스트로 변환
+	            for (Map.Entry<String, String> entry : attendanceMap.entrySet()) {
+	                Map<String, Object> data = new HashMap<>();
+	                data.put("date", entry.getKey());
+	                data.put("status", entry.getValue());
+	                attendanceData.add(data);
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                DBConn.close(rs, psmt, conn);
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+
+	    request.setAttribute("attendanceData", attendanceData);
+	    request.getRequestDispatcher("/WEB-INF/attendance/attendanceInfoView.jsp").forward(request, response);
 	}
 
 	
+	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+
+		if (loginUser != null) {
+		    Connection conn = null;
+		    PreparedStatement psmt = null;
+		    ResultSet rs = null;
+
+		    try {
+		        conn = DBConn.conn();
+		        String sql = "SELECT c.* FROM class c " +
+		                     "JOIN app_class ac ON c.cno = ac.cno " +
+		                     "JOIN user u ON ac.uno = u.uno " +
+		                     "WHERE u.id = ?";
+		        
+		        psmt = conn.prepareStatement(sql);
+		        psmt.setString(1, loginUser.getId());
+		        rs = psmt.executeQuery();
+
+		        if (rs.next()) {
+		            ClassVO vo = new ClassVO();
+		            vo.setCno(rs.getInt("cno"));
+		            vo.setRandom_number(rs.getInt("random_number"));
+		            vo.setTitle(rs.getString("title"));
+		            // 필요한 다른 필드들도 설정
+		            
+		            // session에 vo 객체 저장
+		            session.setAttribute("vo", vo);
+		        }
+
+		        // attendanceCheck.jsp로 포워드
+		        request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
+		    } catch (Exception e) {
+		            e.printStackTrace();
+		            
+		        } finally {
+		            try {
+						DBConn.close(rs, psmt, conn);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		        
+		        }
+		    
+		
+		    }
+	}
+	    
 	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
@@ -182,7 +288,7 @@ public class AttendanceController {
 		List<ClassVO> clist  = new ArrayList<ClassVO>();
 		int uno = loginUser.getUno();
 		String cno = request.getParameter("cno");
-		System.out.println("cno=================="+ cno);
+		
 		
 		
 		Connection conn = null;
@@ -434,5 +540,68 @@ public class AttendanceController {
 	        }
 	    }
 	}
+	public void attendanceCheckOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json; charset=UTF-8");
+		response.setCharacterEncoding("UTF-8"); // 응답 객체에 UTF-8 설정 추가
 
+		HttpSession session = request.getSession();
+		ClassVO vo = (ClassVO) session.getAttribute("vo");
+
+		if (vo != null) {
+		    // 세션에서 ClassVO 객체를 가져와 cno를 추출
+		    int cno = vo.getCno();
+		    
+		    // 요청 파라미터로 받은 인증 코드
+		    String enteredCode = request.getParameter("authCode");
+		    
+		    // 만약 authCode가 비어있으면 처리할 수 없으므로 종료
+		    if (enteredCode == null || enteredCode.trim().isEmpty()) {
+		        response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드를 입력해주세요.\"}");
+		        return;
+		    }
+
+		    // DB 연결 준비
+		    Connection conn = null;
+		    PreparedStatement psmt = null;
+		    ResultSet rs = null;
+
+		    try {
+		        conn = DBConn.conn();
+		        String sql = "SELECT random_number FROM class WHERE cno = ?";
+		        
+		        // cno를 이용해 DB에서 random_number 값을 조회
+		        psmt = conn.prepareStatement(sql);
+		        psmt.setInt(1, cno);
+		        rs = psmt.executeQuery();
+		        
+		        if (rs.next()) {
+		            // DB에서 조회한 random_number와 비교
+		            String validCode = rs.getString("random_number");
+		            System.out.println("Database random_number: " + validCode);
+		            if (enteredCode.equals(validCode)) {
+		                // 인증 코드가 맞으면 출석 기록 저장 로직
+		                response.getWriter().write("{\"status\": \"success\", \"message\": \"출석 체크 완료!\"}");
+		            } else {
+		                response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드가 올바르지 않습니다.\"}");
+		            }
+		        } else {
+		            // 해당 cno에 해당하는 클래스가 없을 경우
+		            response.getWriter().write("{\"status\": \"fail\", \"message\": \"해당하는 수업을 찾을 수 없습니다.\"}");
+		        }
+		    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+				DBConn.close(rs, psmt, conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	    }
+	    
+	    response.sendRedirect(request.getContextPath() + "/attendance/attendanceCheck.do");
+	    //request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
+	}
+	}
 }
+

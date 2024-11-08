@@ -3,7 +3,7 @@
 <%@ include file="../../include/header.jsp" %>
 
 <%
-//세션에서 로그인 정보 확인하기
+	//세션에서 로그인 정보 확인하기
 	UserVO loginUser;
 	// 세션에서 값 가져오기
 	loginUser = (UserVO)session.getAttribute("loginUser");
@@ -24,7 +24,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>notice_board_write</title>
+    <title>free_board_write</title>
     <script src="<%=request.getContextPath()%>/js/jquery-3.7.1.js"></script>	
     <style>
         /* section 부분 시작 */
@@ -37,13 +37,13 @@
             position: absolute;
             left: 965px;
         }
-        .notice_title{
+        .free_title{
           position: absolute;
           left: 50%;
           margin: 47px 0 0 -600px;
           padding: 0;
         }
-        .notice_title_write input{
+        .free_title_write input{
             position: absolute;
             left: 50%;
             margin: 120px 0 0 -600px;
@@ -53,7 +53,7 @@
             width: 1200px;
             height: 45px;
         }
-        .notice_body_write textarea{
+        .free_body_write textarea{
             position: absolute;
             left: 50%;
             margin: 190px 0 0 -600px;
@@ -65,7 +65,7 @@
             border-top: none;
             outline: none;
         }
-        .notice_board_file{
+        .free_board_file{
             width: 100px;
             position: absolute;
             left: 50%;
@@ -73,14 +73,14 @@
             left: 530px;
             padding-bottom: 10px;
         }
-        .notice_board_line{
+        .free_board_line{
             top: 580px;
             left: 365px;
             position: absolute;
             border: 1px solid gray;
             width: 1200px;
         }
-        .notice_board_button{
+        .free_board_button{
             position: absolute;
             top: 600px;
             left: 500px;
@@ -92,7 +92,7 @@
             display: flex;
             width: 120px;
         }
-        .notice_board_button button{
+        .free_board_button button{
             margin-left: 10px;
             border: none;
             border-radius:10px;
@@ -114,21 +114,20 @@
 </head>
 <body>
       <section>
-        <h2 class="notice_title">공지사항 등록</h2>
-        <form action="<%=request.getContextPath()%>/notice/notice_write.do" method="post">
-            <div class="notice_title_write">
-                <input type="text" placeholder="제목을 입력해주세요." name="title">
+        <h2 class="free_title">Q&A 등록</h2>
+        <form action="<%=request.getContextPath()%>/qna/qna_write.do" method="post">
+            <div class="free_title_write">
+                <input type="text" placeholder="제목을 입력해주세요." name="title" >
             </div>
-            <div class="notice_body_write">
-                <textarea name="content" placeholder="내용을 입력해주세요."></textarea>
+            <div class="free_body_write">
+                <textarea name="content" placeholder="내용을 입력해주세요." ></textarea>
             </div>
-            <div class="notice_board_button">
+            <div class="free_board_button">
                 <button type="button" onclick="submitfn(this)">등록</button>
-                <button type="button" onclick="location.href='<%=request.getContextPath()%>/notice/notice_list.do'">취소</button>
+                <button type="button" onclick="location.href='<%=request.getContextPath()%>/qna/qna_list.do'">취소</button>
             </div>
         </form>
-        <div class="notice_board_line"></div>
-		<script>
+        <script>
             function submitfn(obj){
             	
             	 let title = $("input[name='title']").val();
@@ -143,8 +142,9 @@
             		$(obj).parent().parent().submit(); //parent() (부모)
             	}
             }
-		</script>
+            </script>
+        <div class="free_board_line"></div>
       </section>
 </body>
 </html>
-<%@ include file="../../include/footer.jsp" %>	
+<%@ include file="../../include/footer.jsp" %>

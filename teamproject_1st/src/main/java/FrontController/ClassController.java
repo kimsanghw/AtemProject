@@ -267,13 +267,15 @@ public class ClassController {
 			String orgFileName = multi.getOriginalFileName("attach");
 			String end_jdate = multi.getParameter("end_jdate");
 			String end_duringclass = multi.getParameter("end_duringclass");
+			String class_start = multi.getParameter("class_start");
+			String class_late = multi.getParameter("class_late");
 			
 			Connection conn = null;
 			PreparedStatement psmt = null;
 			
 			try {
 		        conn = DBConn.conn();
-		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno, end_jdate, end_duringclass, orgFileName, newFileName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		        String classSql = "INSERT INTO class(title, subject, jdate, difficult, book, duringclass, name, uno, end_jdate, end_duringclass, orgFileName, newFileName, class_start, class_late) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		        
 		        psmt = conn.prepareStatement(classSql);
 		        psmt.setString(1, title);
@@ -288,6 +290,8 @@ public class ClassController {
 		        psmt.setString(10, end_duringclass);
 		        psmt.setString(11, orgFileName);
 		        psmt.setString(12, phyName);
+		        psmt.setString(13, class_start);
+		        psmt.setString(14, class_late);
 		        
 		        
 		        psmt.executeUpdate();
@@ -399,14 +403,16 @@ public class ClassController {
 			String orgFileName = multi.getOriginalFileName("attach");
 			String end_jdate = multi.getParameter("end_jdate");
 			String end_duringclass = multi.getParameter("end_duringclass");
-			String newFileName = "";
+			String class_start = multi.getParameter("class_start");
+			String class_late = multi.getParameter("class_late");
+			
 			
 			Connection conn = null;
 			PreparedStatement psmt = null;
 			ResultSet rs = null;
 			try {
 		        conn = DBConn.conn();
-		        String classSql = "UPDATE class SET title=?, subject=?, jdate=?, difficult=?, book=?, duringclass=?, name=?, end_jdate=?, end_duringclass=?, orgFileName=?, newFileName=? WHERE cno = ?"; 
+		        String classSql = "UPDATE class SET title=?, subject=?, jdate=?, difficult=?, book=?, duringclass=?, name=?, end_jdate=?, end_duringclass=?, orgFileName=?, newFileName=?, class_start=?, class_late=? WHERE cno = ?"; 
 		        
 		        // Statement.RETURN_GENERATED_KEYS를 지정하여 PreparedStatement 생성
 		        psmt = conn.prepareStatement(classSql);
@@ -421,7 +427,9 @@ public class ClassController {
 		        psmt.setString(9, end_duringclass);
 		        psmt.setString(10, orgFileName);
 		        psmt.setString(11, phyName);
-		        psmt.setInt(12, cno);
+		        psmt.setString(12, class_start);
+		        psmt.setString(13, class_late);
+		        psmt.setInt(14, cno);
 		        
 		        psmt.executeUpdate();
 		        

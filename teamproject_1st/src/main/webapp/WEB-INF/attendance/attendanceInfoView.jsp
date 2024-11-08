@@ -1,58 +1,45 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
+<%@ page import="java.util.*" %>
 
-<title>출결 정보</title>
+
+<title>출석 정보</title>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+//JSP에서 서버 사이드 데이터를 자바스크립트 변수로 전달
+var attendanceEvents = [
+    <% 
+        List<Map<String, Object>> attendanceData = (List<Map<String, Object>>) request.getAttribute("attendanceData");
+        for (Map<String, Object> data : attendanceData) {
+            String status = (String) data.get("status");
+            String date = (String) data.get("date");
+    %>
+        {
+            title: "<%= status %>", // 출석 상태
+            start: "<%= date %>", // 날짜 정보
+            color: getColorForStatus("<%= status %>") // 상태에 맞는 색상
+        },
+    <% } %>
+];
+
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        events: function(fetchInfo, successCallback, failureCallback) {
-            $.ajax({
-                url: '<%=request.getContextPath()%>/attendance/getAttendanceData.do',
-                method: 'GET',
-                data: {
-                    start: fetchInfo.startStr,
-                    end: fetchInfo.endStr
-                },
-                dataType: 'json',
-                success: function(result) {
-                    var events = result.map(function(item) {
-                        return {
-                            title: item.status,
-                            start: item.date,
-                            color: getColorForStatus(item.status)
-                        };
-                    });
-                    // 데이터가 없는 날짜에 대해 '미입력' 상태 추가
-                    var currentDate = new Date(fetchInfo.startStr);
-                    var endDate = new Date(fetchInfo.endStr);
-                    while (currentDate < endDate) {
-                        var dateStr = currentDate.toISOString().split('T')[0];
-                        if (!result.some(item => item.date === dateStr)) {
-                            events.push({
-                                title: '미입력',
-                                start: dateStr,
-                                color: 'gray'
-                            });
-                        }
-                        currentDate.setDate(currentDate.getDate() + 1);
-                    }
-                    successCallback(events);
-                },
-                error: function() {
-                    failureCallback({ message: '서버에서 데이터를 가져오는데 실패했습니다.' });
-                }
-            });
-        }
+        events: attendanceEvents,
+        eventContent: function(info) {
+            var status = info.event.title;
+            return { html: "<div class='event-status'>" + status + "</div>" }; // 날짜를 숨기고 상태만 표시
+        },
+        eventTextColor: 'white',
+        eventBackgroundColor: 'transparent',
+        eventBorderColor: 'transparent',
+        eventDisplay: 'block',
     });
     calendar.render();
-
-    // 전역 변수로 calendar를 참조할 수 있도록 설정
-    window.calendar = calendar;
 });
 
 // 출결 상태에 따른 색상을 반환하는 함수
@@ -61,7 +48,7 @@ function getColorForStatus(status) {
         case '출석': return 'green';
         case '결석': return 'red';
         case '지각': return 'orange';
-        default: return 'blue';
+        default: return 'gray';
     }
 }
 </script>
@@ -172,6 +159,25 @@ function getColorForStatus(status) {
         div#calendar {
          width: 760px;
          margin-left: 50px;
+		}
+		.fc-day-number {
+	    display: none; /* 날짜를 숨깁니다. */
+		}
+	
+		.fc-event {
+	    padding: 5px;
+	    border-radius: 5px;
+	    text-align: center;
+	    font-size: 14px;
+	    color: white;
+		}
+	
+		.fc-event-title {
+	    font-weight: bold;
+		}
+	
+		.fc-event .event-status {
+	    text-align: center;
 		}
     </style>
 
