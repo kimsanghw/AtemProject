@@ -246,14 +246,17 @@ function validateForm() {
 function handleAttendanceResult(response) {
     if (response.status === 'success') {
         var today = new Date().toISOString().split('T')[0];
+        var eventTitle = response.attendanceStatus === '출석' ? '출석 완료' : '지각';
+        
         calendar.addEvent({
-            title: '출석 완료',
+            title: eventTitle,
             start: today,
             allDay: true,
             backgroundColor: '#0b70b9',
             borderColor: '#0b70b9',
             textColor: '#fff'
         });
+        
         alert(response.message);
     } else {
         alert(response.message || "출석 체크 실패");
