@@ -5,7 +5,6 @@ import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,11 +103,6 @@ public class AttendanceController {
 	    }
 	    
 	}
-	public void attendanceCheckOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-	}
-
-
 	public void attendanceInfoView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
@@ -117,7 +111,6 @@ public class AttendanceController {
 	}
 	
 	public void attendanceCheck(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-<<<<<<< HEAD
 		 	HttpSession session = request.getSession();
 		    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
 		    
@@ -163,57 +156,6 @@ public class AttendanceController {
 		    }
 	}
 	    
-
-=======
-	 	HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
-	    
-	    if (loginUser != null) {
-	        Connection conn = null;
-	        PreparedStatement psmt = null;
-	        ResultSet rs = null;
-	        
-	        try {
-	            conn = DBConn.conn();
-	            String sql = "SELECT c.* FROM class c " +
-	                         "JOIN app_class ac ON c.cno = ac.cno " +
-	                         "JOIN user u ON ac.uno = u.uno " +
-	                         "WHERE u.id = ?";
-	            
-	            psmt = conn.prepareStatement(sql);
-	            psmt.setString(1, loginUser.getId());
-	            rs = psmt.executeQuery();
-	            
-	            if (rs.next()) {
-	                ClassVO vo = new ClassVO();
-	                vo.setCno(rs.getInt("cno"));
-	                vo.setRandom_number(rs.getInt("random_number"));
-	                vo.setTitle(rs.getString("title"));
-	                // 필요한 다른 필드들도 설정
-	                
-	                request.setAttribute("vo", vo);
-	                request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
-	            } 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            
-	        } finally {
-	            try {
-					DBConn.close(rs, psmt, conn);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-	        
-	        }
-	    
-	
-	    }
-}
-    
->>>>>>> branch 'main' of https://github.com/doroo-test-organization/1st.git
-
-
-	
 	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
@@ -536,6 +478,8 @@ public class AttendanceController {
 		String enteredCode = request.getParameter("authCode");
 	    int cno = Integer.parseInt(request.getParameter("cno"));
 	    
+	    System.out.println("인증번호 : "+ enteredCode);
+	    System.out.println("cno : "+ cno);
 	    Connection conn = null;
 	    PreparedStatement psmt = null;
 	    ResultSet rs = null;
@@ -550,32 +494,30 @@ public class AttendanceController {
 	        
 	        if (rs.next()) {
 	            String validCode = rs.getString("random_number");
-	            System.out.println("Entered Code: " + enteredCode);
-	            System.out.println("Valid Code: " + validCode);
-	            
 	            if (enteredCode.equals(validCode)) {
 	                // 출석 기록 저장 로직
-	                // ...
-	                response.getWriter().write("success");
+	                response.setContentType("application/json");
+	                response.getWriter().write("{\"status\": \"success\"}");
 	            } else {
-	                response.getWriter().write("fail");
+	                response.setContentType("application/json");
+	                response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드가 올바르지 않습니다.\"}");
 	            }
 	        } else {
-	            response.getWriter().write("fail");
+	            response.setContentType("application/json");
+	            response.getWriter().write("{\"status\": \"fail\", \"message\": \"인증 코드가 존재하지 않습니다.\"}");
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        request.setAttribute("message", "오류가 발생했습니다.");
 	    } finally {
 	        try {
 				DBConn.close(rs, psmt, conn);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }
 	    
-	    request.getRequestDispatcher("/WEB-INF/attendance/attendanceResult.jsp").forward(request, response);
+	    response.sendRedirect(request.getContextPath() + "/attendance/attendanceCheck.do");
+	    //request.getRequestDispatcher("/WEB-INF/attendance/attendanceCheck.jsp").forward(request, response);
 	}
 }
 

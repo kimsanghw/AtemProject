@@ -156,16 +156,16 @@ if (vo != null) {
             <div id='calendar' ></div>
             <!-- 인증 코드 입력 및 출석 버튼 -->
             <div style="margin-top: 20px; margin-left: 50px;">
-                <form id="attendanceForm" action="<%=request.getContextPath()%>/attendance/attendanceCheckOk.do" method="post" onsubmit="return validateForm()">
-    <div style="margin-top: 20px; margin-left: 50px;">
-        <label for="authCode">인증 코드 입력:</label>
-        <input type="text" id="authCode" name="authCode" placeholder="인증 코드를 입력하세요" required>
-        <input type="hidden" name="cno" value="<%=vo.getCno()%>">
-        <%=vo.getCno() %>
-        <%=vo.getRandom_number() %>
-        <button type="submit">출석 체크</button>
-    </div>
-</form>
+            <form id="attendanceForm" action="<%=request.getContextPath()%>/attendance/attendanceCheck.do" method="POST" >
+			    <div style="margin-top: 20px; margin-left: 50px;">
+			        <label for="authCode">인증 코드 입력:</label>
+			        <input type="text" id="authCode" name="authCode" placeholder="인증 코드를 입력하세요" >
+			        <input type="hidden" name="cno" value="<%=vo.getCno()%>">
+			        <%=vo.getCno() %>
+			        <%=vo.getRandom_number() %>
+			        <button type="submit">출석 체크</button>
+			    </div>
+			</form>
 
 <script>
 function validateForm() {
@@ -177,22 +177,10 @@ function validateForm() {
     return true;
 }
 
-document.getElementById('attendanceForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    if (validateForm()) {
-        const formData = new FormData(this);
-        fetch(this.action, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text())
-        .then(result => handleAttendanceResult(result))
-        .catch(error => console.error('Error:', error));
-    }
-});
-
 function handleAttendanceResult(result) {
-    if (result === 'success') {
+    const response = JSON.parse(result);  // JSON 응답을 파싱
+
+    if (response.status === 'success') {
         const today = new Date().toISOString().split('T')[0];
         calendar.addEvent({
             title: '출석 완료',
@@ -204,8 +192,24 @@ function handleAttendanceResult(result) {
         });
         alert("출석이 완료되었습니다!");
     } else {
-        alert("인증 코드가 올바르지 않습니다. 다시 시도해주세요.");
+        alert(response.message || "인증 코드가 올바르지 않습니다. 다시 시도해주세요.");
     }
 }
+
+document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+    e.preventDefault();  // 기본 폼 제출을 방지합니다
+    
+    if (validateForm()) {
+        const formData = new FormData(this);
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())  // 응답을 텍스트로 받기
+        .then(result => handleAttendanceResult(result))  // 처리
+        .catch(error => console.error('오류:', error));
+    }
+});
+
 </script>
 <%@ include file="../../include/footer.jsp" %>
