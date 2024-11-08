@@ -209,19 +209,12 @@ $(document).ready(function() {
                 },
                 dataType: "json",
                 success: function(response) {
-                    console.log("성공 응답:", response);
+                    console.log(response);
                     handleAttendanceResult(response);
                 },
                 error: function(xhr, status, error) {
                     console.error("Ajax 오류:", status, error);
-                    console.log("전체 응답:", xhr.responseText);
-                    try {
-                        var jsonResponse = JSON.parse(xhr.responseText);
-                        handleAttendanceResult(jsonResponse);
-                    } catch(e) {
-                        console.error("JSON 파싱 실패:", e);
-                        alert("서버 통신 중 오류가 발생했습니다.");
-                    }
+                    alert("서버 통신 중 오류가 발생했습니다.");
                 }
             });
         }
@@ -246,17 +239,14 @@ function validateForm() {
 function handleAttendanceResult(response) {
     if (response.status === 'success') {
         var today = new Date().toISOString().split('T')[0];
-        var eventTitle = response.attendanceStatus === '출석' ? '출석 완료' : '지각';
-        
         calendar.addEvent({
-            title: eventTitle,
+            title: '출석 완료',
             start: today,
             allDay: true,
             backgroundColor: '#0b70b9',
             borderColor: '#0b70b9',
             textColor: '#fff'
         });
-        
         alert(response.message);
     } else {
         alert(response.message || "출석 체크 실패");
