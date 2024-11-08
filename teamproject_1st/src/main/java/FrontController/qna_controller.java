@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +63,7 @@ public class qna_controller {
 			if(request.getMethod().equals("POST")) {
 				comment_deleteok(request,response);
 			}
-		}else if(comments[comments.length-1].equals("comment_modify.do")) {
+		}else if(comments[comments.length-1].equals("comment_modifyok.do")) {
 			if(request.getMethod().equals("POST")) {
 				comment_modifyok(request,response);
 			}
@@ -515,6 +516,7 @@ public class qna_controller {
 		request.setCharacterEncoding("UTF-8");
 		
 	    int qno = 0;
+	    
 		 if(request.getParameter("qno") != null) { 
 			  qno = Integer.parseInt(request.getParameter("qno"));
 		  }
@@ -534,13 +536,16 @@ public class qna_controller {
 			psmt.setInt(2,qcno);
 			psmt.setInt(3,qno);
 			
-			psmt.executeUpdate();
+			//psmt.executeUpdate();
 			
 			int result = psmt.executeUpdate();
 			
+			PrintWriter out = response.getWriter();
 			if(result > 0) {
-				response.sendRedirect(request.getContextPath()+"/qna/qna_view.do?qno="+ qno);
-			}	
+				out.print("OK");
+			}else {
+				out.print("ERROR");
+			}
 			
 			
 		}catch(Exception e) {

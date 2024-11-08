@@ -13,7 +13,9 @@
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
   
-<!--   <error-page>
+
+
+  <!-- <error-page>
     <exception-type>java.lang.Exception</exception-type>
     <location>/error.jsp</location>
   </error-page>

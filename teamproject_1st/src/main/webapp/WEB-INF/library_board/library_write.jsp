@@ -25,6 +25,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>library_board_write</title>
+    <script src="<%=request.getContextPath()%>/js/jquery-3.7.1.js"></script>
     <style>
         /* section 부분 시작 */
         section{
@@ -116,11 +117,27 @@
             </div>
             <div class="box"><input type="file" name="attach" ></div>
             <div class="library_board_button">
-                <button type="submit">등록</button>
+                <button type="button" onclick="submitfn(this)">등록</button>
                 <button type="button" onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">취소</button>
             </div>
         </form>
         <div class="library_board_line"></div>
+        		<script>
+            function submitfn(obj){
+            	
+            	 let title = $("input[name='title']").val();
+            	 let content = $("textarea[name='content']").val();
+                 if (title == "") {
+                     alert("제목을 입력해주세요.");
+                     if(content == ""){}
+                 }
+            	if(content == ""){
+            		alert("내용을 입력해주세요");
+            	}else{
+            		$(obj).parent().parent().submit(); //parent() (부모)
+            	}
+            }
+		</script>
       </section>
 </body>
 </html>

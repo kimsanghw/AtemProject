@@ -131,8 +131,6 @@
      <section>
         <div class="attendance_info">출결정보</div>
         <div class="info_flex">
-        
-
             <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">수강중인 강의 ></a></div>
             <div class="app_line"></div>
             <div class="attendance_check class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceCheck.do">출석체크하기 ></a></div>
@@ -152,7 +150,6 @@
 	            	<div>강의 교제 : <%=vo.getBook() %></div>
 	            	<div>강의 시작 날짜 : <%=vo.getDuringclass() %></div>
 	            	<div>강의 마지막 날짜 : <%=vo.getEnd_duringclass() %></div>
-            
             </div>
              <%} %>
         </div>
