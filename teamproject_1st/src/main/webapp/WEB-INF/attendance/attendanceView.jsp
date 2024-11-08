@@ -44,9 +44,7 @@
 	    var attendanceChange = $row.find("select[name='attendanceChange']").val();
 	    var ano = $row.find("input[name='ano']").val();
 	    var cno = <%=cno%>;  // 숨겨진 cno 값을 가져옵니다.
-	    alert(attendanceChange);
-	    alert(ano);
-	    alert(cno);
+	   
 	    $.ajax({
 	        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
 	        type: "POST",
