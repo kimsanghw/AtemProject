@@ -577,6 +577,17 @@ public class AttendanceController {
 
             try {
                 conn = DBConn.conn();
+                
+                String checkAttendanceSql = "SELECT COUNT(*) FROM attendance WHERE uno = ? AND cno = ? AND DATE(rdate) = CURDATE()";
+                psmt = conn.prepareStatement(checkAttendanceSql);
+                psmt.setInt(1, uno);
+                psmt.setInt(2, cno);
+                rs = psmt.executeQuery();
+                
+                if (rs.next() && rs.getInt(1) > 0) {
+                    response.getWriter().write("{\"status\": \"fail\", \"message\": \"오늘은 이미 출석체크를 하셨습니다.\"}");
+                    return;
+                }
                 String sql = "SELECT random_number FROM class WHERE cno = ?";
                 psmt = conn.prepareStatement(sql);
                 psmt.setInt(1, cno);
