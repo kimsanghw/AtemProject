@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -551,9 +552,15 @@ public class AttendanceController {
 		if (vo != null) {
 		    // 세션에서 ClassVO 객체를 가져와 cno를 추출
 		    int cno = vo.getCno();
-		    
+		    System.out.println(cno);
 		    // 요청 파라미터로 받은 인증 코드
 		    String enteredCode = request.getParameter("authCode");
+		    
+		    Enumeration<String> names = request.getParameterNames(); 
+		    while(names.hasMoreElements()) {
+		    	System.out.println("파라메타 이름 : " + names.nextElement());
+		    }
+		    System.out.println(enteredCode);
 		    
 		    // 만약 authCode가 비어있으면 처리할 수 없으므로 종료
 		    if (enteredCode == null || enteredCode.trim().isEmpty()) {

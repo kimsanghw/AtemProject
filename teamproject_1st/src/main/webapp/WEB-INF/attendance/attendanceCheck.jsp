@@ -17,6 +17,7 @@
 
 <title>Insert title here</title>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js' rel='stylesheet'></script>
+<script src="<%=request.getContextPath()%>/js/jquery-3.7.1.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
@@ -170,16 +171,16 @@
 </div>
 </div>
 </section>
+
 <script>
 // 페이지가 완전히 로드된 후에 실행되도록 설정
-document.addEventListener("DOMContentLoaded", function() {
-    // 폼 제출 이벤트 처리
-    const form = document.getElementById('attendanceForm');
-    form.addEventListener('submit', function(e) {
+$(document).ready(function() {
+    $('#attendanceForm').submit(function(e) {
+        console.log('Form submission event fired');
         e.preventDefault();  // 기본 폼 제출 방지
 
         if (validateForm()) {
-            const formData = new FormData(form);
+            var formData = new FormData(this);
 
             // FormData 객체 확인
             if (formData.has('authCode')) {
@@ -195,35 +196,49 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // 폼 데이터 전송 전 디버깅용 데이터 출력
-            for (let [key, value] of formData.entries()) { 
-                console.log(`${key}: ${value}`); 
+            for (var pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
             }
 
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())  // 응답을 텍스트로 받기
-            .then(result => handleAttendanceResult(result))  // 처리
-            .catch(error => console.error('오류:', error));
+            $.ajax({
+                url: "<%=request.getContextPath()%>/attendance/attendanceCheck.do",
+                method: "POST",
+                data: {
+                    "cno": formData.get('cno'),
+                    "authCode": formData.get('authCode')
+                },
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+                    handleAttendanceResult(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Ajax 오류:", status, error);
+                    alert("서버 통신 중 오류가 발생했습니다.");
+                }
+            });
         }
     });
 });
 
 function validateForm() {
-    const enteredCode = document.getElementById('authCode').value.trim();
-    console.log("Entered Code:", enteredCode);  // 디버깅용
+    var enteredCode = $('#authCode').val().trim();
+    console.log("Entered Code:", enteredCode);
+    console.log("Is empty:", enteredCode === "");
+
     if (enteredCode === "") {
+        console.log("Condition met: showing alert");
         alert("인증 코드를 입력해주세요.");
         return false;
+    } else {
+        console.log("Condition not met: proceeding with form submission");
     }
     return true;
 }
 
-function handleAttendanceResult(result) {
-    const response = JSON.parse(result);  // JSON 응답을 파싱
+function handleAttendanceResult(response) {
     if (response.status === 'success') {
-        const today = new Date().toISOString().split('T')[0];
+        var today = new Date().toISOString().split('T')[0];
         calendar.addEvent({
             title: '출석 완료',
             start: today,
@@ -232,12 +247,10 @@ function handleAttendanceResult(result) {
             borderColor: '#0b70b9',
             textColor: '#fff'
         });
-        alert(response.message);  // UTF-8 인코딩으로 전달된 메시지
+        alert(response.message);
     } else {
         alert(response.message || "출석 체크 실패");
     }
 }
-
-
 </script>
 <%@ include file="../../include/footer.jsp" %>
