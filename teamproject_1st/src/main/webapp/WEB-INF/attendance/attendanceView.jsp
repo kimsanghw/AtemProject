@@ -38,38 +38,68 @@
 	    }
 	
 	    // 출결 변경 버튼에 대한 이벤트 리스너
-	    $(".attendanceChange_button").on("click", function(e) {
-	        e.preventDefault();
-	        
-	        var $button = $(this);
-	        var $row = $button.closest("tr");
-	        var attendanceChange = $row.find("select[name='attendanceChange']").val();
-	        var ano = $row.find("input[name='ano']").val();
-	        
-	        $.ajax({
-	            url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
-	            type: "POST",
-	            data: { attendanceChange: attendanceChange, ano: ano },
-	            success: function(response) {
-	                if(response.trim() === "success") {
-	                    alert("출결 변경에 성공하였습니다.");
-	                    
-	                    // UI 즉시 업데이트
-	                    var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
-	                    $statusCell.text(attendanceChange);
-	                    
-	                    // 선택된 옵션 업데이트
-	                    $row.find("select[name='attendanceChange']").val(attendanceChange);
-	                } else {
-	                    alert("출결 변경에 실패했습니다.");
-	                }
-	            },
-	            error: function() {
-	                alert("서버와의 통신에 실패했습니다.");
-	            }
-	        });
-	    });
-	});
+	    function changeCheck(obj){
+	    	alret("123");  
+		    var $button = $(this);
+		    var $row = $button.closest("tr");
+		    var attendanceChange = $row.find("select[name='attendanceChange']").val();
+		    var ano = $row.find("input[name='ano']").val();
+		    var cno = $("#cno").val();  // 숨겨진 cno 값을 가져옵니다.
+		    
+		    $.ajax({
+		        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
+		        type: "POST",
+		        data: { 
+		            attendanceChange: attendanceChange, 
+		            ano: ano, 
+		            cno: cno // cno 값도 함께 전달
+		        },
+		        success: function(response) {
+		            if(response.trim() === "success") {
+		                alert("출결 변경에 성공하였습니다.");
+		                var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
+		                $statusCell.text(attendanceChange);
+		                $row.find("select[name='attendanceChange']").val(attendanceChange);
+		            } else {
+		                alert("출결 변경에 실패했습니다.");
+		            }
+		        },
+		        error: function() {
+		            alert("서버와의 통신에 실패했습니다.");
+		        }
+		    });
+	    }
+	   <%--  $(".testbtn").on("click", function(e) {
+		    alret("123");  
+		    var $button = $(this);
+		    var $row = $button.closest("tr");
+		    var attendanceChange = $row.find("select[name='attendanceChange']").val();
+		    var ano = $row.find("input[name='ano']").val();
+		    var cno = $("#cno").val();  // 숨겨진 cno 값을 가져옵니다.
+		    
+		    $.ajax({
+		        url: "<%=request.getContextPath()%>/attendance/attendanceView.do",
+		        type: "POST",
+		        data: { 
+		            attendanceChange: attendanceChange, 
+		            ano: ano, 
+		            cno: cno // cno 값도 함께 전달
+		        },
+		        success: function(response) {
+		            if(response.trim() === "success") {
+		                alert("출결 변경에 성공하였습니다.");
+		                var $statusCell = $row.find("td:eq(2)"); // 세 번째 열(출결구분)
+		                $statusCell.text(attendanceChange);
+		                $row.find("select[name='attendanceChange']").val(attendanceChange);
+		            } else {
+		                alert("출결 변경에 실패했습니다.");
+		            }
+		        },
+		        error: function() {
+		            alert("서버와의 통신에 실패했습니다.");
+		        }
+		    });
+		}); --%>
 
 	 function generateAndShowRandomNumber() {
 	        // 6자리 인증번호 생성
@@ -257,10 +287,9 @@
 				</div>
             <div style="border-top:  5px solid #0b70b9; width: 86%;" ></div>
             <form action="<%=request.getContextPath()%>/attendance/attendanceView.do" method="get"  id="dateForm">
+             <input type="hidden" name="cno" value="<%=cno%>">
             <div class="today_date" >
               <input type="date" name="date" id="dateInput" value="<%= selectedDate != null ? selectedDate : todayDate %>" >
-              <input type="hidden" name="cno" value="<%=cno%>">
-              
               <span> 현재 일자 : <%= selectedDate != null ? selectedDate : todayDate %></span>
             </div>
             </form>
@@ -279,20 +308,22 @@
         <% if (attendanceList != null) { %>
             <% for (App_classVO studentInfo : attendanceList) { %>
                 <tr>
-                    <td><%= studentNumber %><input type="hidden" name="ano" value="<%= studentInfo.getAno()%>"></td>
+                    <td><%= studentNumber %>
+                    <input type="hidden" name="ano" value="<%= studentInfo.getAno()%>">
+                    <input type="hidden" name="cno" value="<%=cno%>"></td>
                     <td><%= studentInfo.getName() %></td>
                     <td><%= studentInfo.getAttendance() != null ? studentInfo.getAttendance() : "미등록" %></td> <!-- 출석 상태가 없으면 '미등록' -->
                     <td>
-                        <select name="attendanceChange">
+                        <select name="attendanceChange" onchange="changeCheck(this)">
                             <option value="출석" <%= "출석".equals(studentInfo.getAttendance()) ? "selected" : "" %>>출석</option>
                             <option value="지각" <%= "지각".equals(studentInfo.getAttendance()) ? "selected" : "" %>>지각</option>
                             <option value="조퇴" <%= "조퇴".equals(studentInfo.getAttendance()) ? "selected" : "" %>>조퇴</option>
                             <option value="병결" <%= "병결".equals(studentInfo.getAttendance()) ? "selected" : "" %>>병결</option>
                             <option value="결석" <%= "결석".equals(studentInfo.getAttendance()) ? "selected" : "" %>>결석</option>
                         </select>
-                        <button class="attendanceChange_button" type="button">등록</button>
+                       <!--  <button class="attendanceChange_button testbtn" type="button">등록</button> -->
                     </td>
-                </tr>
+                </tr>   
                 <% studentNumber++; %>
             <% } %>
         <% } else { %>

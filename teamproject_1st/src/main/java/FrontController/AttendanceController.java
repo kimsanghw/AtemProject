@@ -227,32 +227,82 @@ public class AttendanceController {
 		    }
 	}
 	    
-	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		request.setCharacterEncoding("UTF-8");
+	public void attendanceViewOk(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
-	    UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
 
 	    // AJAX 요청에서 넘어온 출결 상태와 출결 번호
 	    String attendanceChange = request.getParameter("attendanceChange");
-	    String ano = request.getParameter("ano");
-	    String cno = request.getParameter("cno"); // cno 값을 요청에서 받도록 설정
-	    System.out.println("---------------------------------------------------------------------");
-	    System.out.println(ano);
-        System.out.println(attendanceChange);
+	    String ano = request.getParameter("ano");  // 출결 번호
+	 // String cno = request.getParameter("cno");// 강의 번호
+       // System.out.println(cno);
+	    
+	    String cnoStr = request.getParameter("cno");
+	    int cno = 0;  // 기본값을 설정합니다.
+
+	    if (cnoStr != null && !cnoStr.isEmpty()) {
+	        try {
+	            cno = Integer.parseInt(cnoStr);
+	        } catch (NumberFormatException e) {
+	            System.out.println("cno 값이 유효하지 않습니다: " + cnoStr);
+	            response.getWriter().write("fail: invalid cno");
+	            return;
+	        }
+	    }
+
+	    System.out.println("Received ano: " + ano);
+	    System.out.println("Received attendanceChange: " + attendanceChange);
+
 	    Connection conn = null;
 	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
 
 	    try {
 	        conn = DBConn.conn();
-	        String sql = "UPDATE attendance SET attendance = ? WHERE ano = ?";
-	        psmt = conn.prepareStatement(sql);
-	        psmt.setString(1, attendanceChange); // 출결 상태 업데이트
-	        psmt.setInt(2, Integer.parseInt(ano)); // 출결 번호로 특정 행 선택
-	        System.out.println("---------------------------------------------------------------------");
-	        System.out.println(ano);
-	        System.out.println(attendanceChange);
+	        
+	        // `cno` 값이 class 테이블에 있는지 확인하는 쿼리
+	        String checkClassSql = "SELECT COUNT(*) FROM class WHERE cno = ?";
+	        psmt = conn.prepareStatement(checkClassSql);
+	        psmt.setInt(1, cno);
+	        rs = psmt.executeQuery();
+	        System.out.println("cno값은"+ cno);
+	        boolean classExists = false;
+	        if (rs.next()) {
+	            classExists = rs.getInt(1) > 0;
+	        }
+	        System.out.println(1);
+	        if (!classExists) {
+	            // cno가 class 테이블에 없으면 오류 메시지를 출력하고 종료
+	            response.getWriter().write("fail: class does not exist");
+	            return;
+	        }
+	        System.out.println(2);
+	        // cno가 존재하는 경우에만 attendance 업데이트 로직을 실행
+	        String checkSql = "SELECT COUNT(*) FROM attendance WHERE ano = ?";
+	        psmt = conn.prepareStatement(checkSql);
+	        psmt.setInt(1, Integer.parseInt(ano));
+	        rs = psmt.executeQuery();
+	        
+	        boolean exists = false;
+	        if (rs.next()) {
+	            exists = rs.getInt(1) > 0;
+	        }
+	        System.out.println(3);
+	        if (exists) {
+	            String updateSql = "UPDATE attendance SET attendance = ? WHERE ano = ?";
+	            psmt = conn.prepareStatement(updateSql);
+	            psmt.setString(1, attendanceChange);
+	            psmt.setInt(2, Integer.parseInt(ano));
+	        } else {
+	            String insertSql = "INSERT INTO attendance (ano, attendance, cno, rdate) VALUES (?, ?, ?, CURDATE())";
+	            psmt = conn.prepareStatement(insertSql);
+	            psmt.setInt(1, Integer.parseInt(ano));
+	            psmt.setString(2, attendanceChange);
+	            psmt.setInt(3, cno);
+	        }
+	        System.out.println(4);
 	        int rowsAffected = psmt.executeUpdate();
-
 	        response.setCharacterEncoding("utf-8");
 	        response.setContentType("text/html;");
 	        if (rowsAffected > 0) {
@@ -260,31 +310,21 @@ public class AttendanceController {
 	        } else {
 	            response.getWriter().write("fail");
 	        }
-
+	        System.out.println(5);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        response.getWriter().write("error:" + e.getMessage());
 	    } finally {
 	        try {
-	            DBConn.close(psmt, conn);
+	            DBConn.close(rs, psmt, conn);
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
 	    }
 
-	    // cno 속성을 JSP로 전달
-	    if (cno != null) {
-	        request.setAttribute("cno", Integer.parseInt(cno));
-	    } else {
-	        // cno가 null인 경우에 대한 기본 처리 (예: 기본값 설정 등)
-	        request.setAttribute("cno", 0);  // 기본값 설정 (필요에 따라 다르게 설정 가능)
-	    }
-	    
-	    System.out.println("Received ano: " + ano);
-	    System.out.println("Received attendanceChange: " + attendanceChange);
-
-		
+	   
 	}
+
 	
 	public void attendanceClass(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
