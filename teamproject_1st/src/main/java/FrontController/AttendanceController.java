@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -551,9 +552,11 @@ public class AttendanceController {
 
         HttpSession session = request.getSession();
         ClassVO vo = (ClassVO) session.getAttribute("vo");
+        UserVO userVo = (UserVO) session.getAttribute("loginUser");
 
-        if (vo != null) {
+        if (vo != null && userVo != null) {
             int cno = vo.getCno();
+            int uno = userVo.getUno();
             System.out.println("cno: " + cno);
             String enteredCode = request.getParameter("authCode");
             
@@ -585,9 +588,18 @@ public class AttendanceController {
                     
                     if (enteredCode.equals(validCode)) {
                         LocalTime currentTime = LocalTime.now();
-                        LocalTime cutoffTime = LocalTime.of(9, 10); // 09:10
+                        LocalTime cutoffTime = LocalTime.of(9, 10);// 09:10
 
                         String attendanceStatus = currentTime.isBefore(cutoffTime) ? "출석" : "지각";
+                        
+                        String insertSql = "INSERT INTO attendance(attendance, uno, cno, rdate) VALUES (?, ?, ?, ?)";
+                        PreparedStatement insertPsmt = conn.prepareStatement(insertSql);
+                        insertPsmt.setString(1, attendanceStatus);
+                        insertPsmt.setInt(2, uno);
+                        insertPsmt.setInt(3, cno);
+                        insertPsmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+                        insertPsmt.executeUpdate();
+                        insertPsmt.close();
 
                         String formattedTime = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
                         String jsonResponse = String.format(
