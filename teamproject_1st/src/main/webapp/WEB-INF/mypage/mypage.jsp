@@ -132,7 +132,6 @@
         </style>
 </head>
 <body>
-s
       <section>
         <div class="mypage">마이페이지</div>
         <div class="mypage_flex">

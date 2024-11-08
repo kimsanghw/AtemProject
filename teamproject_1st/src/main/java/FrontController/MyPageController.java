@@ -1,6 +1,7 @@
 package FrontController;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -387,8 +388,8 @@ public class MyPageController {
 		        }
 		    }
 		}
-		public void mypage3search(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-			String searchOption = request.getParameter("search_option"); // Selected search option
+		public void mypage3search(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		    String searchOption = request.getParameter("search_option"); // Selected search option
 		    String searchTerm = request.getParameter("mypage_search"); // Search term
 		    int page = 1; // Default to page 1
 		    if (request.getParameter("page") != null) {
@@ -403,10 +404,16 @@ public class MyPageController {
 		    try {
 		        conn = DBConn.conn();
 
-		        // Prepare SQL query based on search option
-		        String sql = "SELECT * FROM user WHERE " + searchOption + " LIKE ? AND authorization != 'A' LIMIT ? OFFSET ?";
+		        // Validate and sanitize the searchOption parameter
+		        List<String> allowedColumns = Arrays.asList("id", "name", "email", "phone"); // Allowed search columns
+		        if (!allowedColumns.contains(searchOption)) {
+		            searchOption = "id"; // Default to "id" if invalid option is passed
+		        }
+
+		        // SQL Query with wildcards around searchTerm for partial matches
+		        String sql = "SELECT * FROM user WHERE " + searchOption + " LIKE CONCAT('%', ?, '%') AND authorization != 'A' LIMIT ? OFFSET ?";
 		        psmt = conn.prepareStatement(sql);
-		        psmt.setString(1, "%" + searchTerm + "%"); // Search term with wildcards for partial matching
+		        psmt.setString(1, searchTerm); // Search term with wildcards
 		        psmt.setInt(2, recordsPerPage);
 		        psmt.setInt(3, (page - 1) * recordsPerPage);
 
@@ -439,11 +446,15 @@ public class MyPageController {
 		        }
 
 		        int totalPages = (int) Math.ceil(totalUsers * 1.0 / recordsPerPage);
+		        int startPage = Math.max(1, page - 4); // 시작 페이지
+		        int endPage = Math.min(totalPages, page + 5); // 끝 페이지
 
 		        // Set attributes for the JSP
 		        request.setAttribute("userList", userList);
 		        request.setAttribute("totalPages", totalPages);
 		        request.setAttribute("currentPage", page);
+		        request.setAttribute("startPage", startPage); // 추가된 부분
+		        request.setAttribute("endPage", endPage);
 
 		        // Forward to the same JSP page to display results
 		        request.getRequestDispatcher("/WEB-INF/mypage/mypage3.jsp").forward(request, response);
@@ -457,4 +468,5 @@ public class MyPageController {
 		        }
 		    }
 		}
+
 }
