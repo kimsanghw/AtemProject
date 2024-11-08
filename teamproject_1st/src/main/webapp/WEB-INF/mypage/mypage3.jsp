@@ -192,7 +192,7 @@
 			    <% if (i == currentPage) { %>
 			        <strong><%= i %></strong>
 			    <% } else { %>
-			        <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= i %>&search_option=<%= request.getParameter("search_option") %>&mypage_search=<%= request.getParameter("mypage_search") %>"><%= i %></a>
+			        <a href="<%= request.getContextPath() %>/mypage/mypage3.do?page=<%= i %>&search_option=<%= (request.getParameter("search_option") != null ? request.getParameter("search_option") : "id") %>&mypage_search=<%= (request.getParameter("mypage_search") != null ? request.getParameter("mypage_search") : "") %>"><%= i %></a>
 
 			    <% } %>
 				<% } %>
@@ -201,7 +201,7 @@
 			        <a href="<%=request.getContextPath()%>/mypage/mypage3.do?page=<%= endPage + 1 %>">Next</a>
 			    <% } %>
 			</div>
-            <form action="action=<%=request.getContextPath()%>/mypage/mypage3search.do" method="GET">
+            <form action="action=<%=request.getContextPath()%>/mypage/mypage3.do" method="GET">
                 <select class="search_options" name="search_option">
                     <option value="id">아이디</option>
                     <option value="name">이름</option>

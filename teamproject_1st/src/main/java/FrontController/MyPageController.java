@@ -40,11 +40,6 @@ public class MyPageController {
 				mypage3OK(request,response);
 			}
 		}
-		if(comments[comments.length-1].equals("mypage3search.do")) {
-			if(request.getMethod().equals("GET")) {
-				mypage3search(request,response);
-			}
-		}
 	}
 	public void mypage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    HttpSession session = request.getSession();
@@ -281,17 +276,21 @@ public class MyPageController {
 		
 		
 		public void mypage3(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		    int page = 1; // Default to page 1 if no page is specified
+		    int page = 1; // 기본 페이지 1로 설정
 		    if (request.getParameter("page") != null) {
-		        page = Integer.parseInt(request.getParameter("page"));
+		        try {
+		            page = Integer.parseInt(request.getParameter("page"));
+		        } catch (NumberFormatException e) {
+		            page = 1; // 페이지 값이 잘못된 경우 기본 페이지로 설정
+		        }
 		    }
 
-		    int recordsPerPage = 10; // Number of users displayed per page
+		    int recordsPerPage = 10; // 한 페이지에 표시할 레코드 수
 		    HttpSession session = request.getSession();
 
-		    // Get search parameters from request
-		    String searchOption = request.getParameter("search_option");
-		    String searchKeyword = request.getParameter("mypage_search");
+		    // 검색 파라미터 가져오기
+		    String searchOption = request.getParameter("search_option"); // 검색 옵션 (id, name, email, phone 등)
+		    String searchTerm = request.getParameter("mypage_search"); // 검색어
 
 		    Connection conn = null;
 		    PreparedStatement psmt = null;
@@ -300,35 +299,32 @@ public class MyPageController {
 		    try {
 		        conn = DBConn.conn();
 
-		        // Base query for non-admin users
-		        String sql = "SELECT * FROM user WHERE authorization != 'A'";
-
-		        // Add search filter based on search option
-		        if (searchOption != null && searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-		            // If the search option is "id", "name", "email", or "phone", apply the respective filter
-		            if ("id".equals(searchOption)) {
-		                sql += " AND id LIKE ?";
-		            } else if ("name".equals(searchOption)) {
-		                sql += " AND name LIKE ?";
-		            } else if ("email".equals(searchOption)) {
-		                sql += " AND email LIKE ?";
-		            } else if ("phone".equals(searchOption)) {
-		                sql += " AND phone LIKE ?";
-		            }
+		        // 검색 옵션 유효성 검사 (id, name, email, phone만 허용)
+		        List<String> allowedColumns = Arrays.asList("id", "name", "email", "phone");
+		        if (!allowedColumns.contains(searchOption)) {
+		            searchOption = "id"; // 유효하지 않은 검색 옵션일 경우 기본값(id) 설정
 		        }
 
-		        // Add pagination to query
-		        sql += " LIMIT ? OFFSET ?";
+		        // 기본 쿼리 작성 (검색이 없으면 단순 페이징 처리만 수행)
+		        String sql = "SELECT * FROM user WHERE authorization != 'A'"; 
+
+		        // 검색 조건이 있으면 해당 조건을 추가
+		        if (searchOption != null && searchTerm != null && !searchTerm.trim().isEmpty()) {
+		            sql += " AND " + searchOption + " LIKE CONCAT('%', ?, '%')";
+		        }
+
+		        sql += " LIMIT ? OFFSET ?"; // 페이징 처리 추가
+
 		        psmt = conn.prepareStatement(sql);
 
-		        // Set parameters for search and pagination
-		        if (searchOption != null && searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-		            psmt.setString(1, "%" + searchKeyword + "%"); // Search term (LIKE condition)
-		            psmt.setInt(2, recordsPerPage); // Number of records per page
-		            psmt.setInt(3, (page - 1) * recordsPerPage); // Offset for pagination
+		        // 검색어가 있으면 해당 검색어를 파라미터로 설정
+		        if (searchOption != null && searchTerm != null && !searchTerm.trim().isEmpty()) {
+		            psmt.setString(1, searchTerm); // 검색어
+		            psmt.setInt(2, recordsPerPage); // 한 페이지에 표시할 레코드 수
+		            psmt.setInt(3, (page - 1) * recordsPerPage); // OFFSET 값 (현재 페이지에 맞는 레코드 시작 위치)
 		        } else {
-		            psmt.setInt(1, recordsPerPage); // Number of records per page
-		            psmt.setInt(2, (page - 1) * recordsPerPage); // Offset for pagination
+		            psmt.setInt(1, recordsPerPage); // 한 페이지에 표시할 레코드 수
+		            psmt.setInt(2, (page - 1) * recordsPerPage); // OFFSET 값
 		        }
 
 		        rs = psmt.executeQuery();
@@ -349,24 +345,15 @@ public class MyPageController {
 		            userList.add(user);
 		        }
 
-		        // Count total number of users with authorization != 'A', applying the search filter if applicable
-		        String countSql = "SELECT COUNT(*) FROM user WHERE authorization != 'A'";
-		        if (searchOption != null && searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-		            if ("id".equals(searchOption)) {
-		                countSql += " AND id LIKE ?";
-		            } else if ("name".equals(searchOption)) {
-		                countSql += " AND name LIKE ?";
-		            } else if ("email".equals(searchOption)) {
-		                countSql += " AND email LIKE ?";
-		            } else if ("phone".equals(searchOption)) {
-		                countSql += " AND phone LIKE ?";
-		            }
+		        // 검색 조건에 맞는 전체 사용자 수 구하기 (검색어가 있을 경우만 적용)
+		        String countSql = "SELECT COUNT(*) FROM user WHERE authorization != 'A'"; 
+		        if (searchOption != null && searchTerm != null && !searchTerm.trim().isEmpty()) {
+		            countSql += " AND " + searchOption + " LIKE ?";
 		        }
-		        psmt = conn.prepareStatement(countSql);
 
-		        // Set parameters for counting users based on search criteria
-		        if (searchOption != null && searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-		            psmt.setString(1, "%" + searchKeyword + "%"); // Search term (LIKE condition)
+		        psmt = conn.prepareStatement(countSql);
+		        if (searchOption != null && searchTerm != null && !searchTerm.trim().isEmpty()) {
+		            psmt.setString(1, "%" + searchTerm + "%"); // 검색어
 		        }
 
 		        rs = psmt.executeQuery();
@@ -375,21 +362,20 @@ public class MyPageController {
 		            totalUsers = rs.getInt(1);
 		        }
 
-		        int totalPages = (int) Math.ceil(totalUsers * 1.0 / recordsPerPage);
+		        int totalPages = (int) Math.ceil(totalUsers * 1.0 / recordsPerPage); // 전체 페이지 수 계산
+		        int startPage = Math.max(1, page - 4); // 시작 페이지 (현재 페이지 기준 앞쪽 4페이지까지 표시)
+		        int endPage = Math.min(totalPages, page + 5); // 끝 페이지 (현재 페이지 기준 뒤쪽 5페이지까지 표시)
 
-		        // Calculate startPage and endPage for pagination
-		        int startPage = ((page - 1) / 10) * 10 + 1;
-		        int endPage = Math.min(startPage + 9, totalPages);
+		        // JSP에 필요한 데이터 설정
+		        request.setAttribute("userList", userList); // 사용자 리스트
+		        request.setAttribute("totalPages", totalPages); // 전체 페이지 수
+		        request.setAttribute("currentPage", page); // 현재 페이지
+		        request.setAttribute("startPage", startPage); // 시작 페이지
+		        request.setAttribute("endPage", endPage); // 끝 페이지
+		        request.setAttribute("search_option", searchOption); // 검색 옵션
+		        request.setAttribute("mypage_search", searchTerm); // 검색어
 
-		        // Set attributes for JSP
-		        request.setAttribute("userList", userList);
-		        request.setAttribute("totalPages", totalPages);
-		        request.setAttribute("currentPage", page);
-		        request.setAttribute("startPage", startPage);
-		        request.setAttribute("endPage", endPage);
-		        request.setAttribute("search_option", searchOption); // Set search option
-		        request.setAttribute("mypage_search", searchKeyword); // Set search keyword
-
+		        // 결과를 mypage3.jsp로 전달
 		        request.getRequestDispatcher("/WEB-INF/mypage/mypage3.jsp").forward(request, response);
 		    } catch (Exception e) {
 		        e.printStackTrace();
@@ -401,6 +387,8 @@ public class MyPageController {
 		        }
 		    }
 		}
+
+
 
 
 		public void mypage3OK(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
@@ -437,85 +425,4 @@ public class MyPageController {
 		        }
 		    }
 		}
-		public void mypage3search(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		    String searchOption = request.getParameter("search_option"); // Selected search option
-		    String searchTerm = request.getParameter("mypage_search"); // Search term
-		    int page = 1; // Default to page 1
-		    if (request.getParameter("page") != null) {
-		        page = Integer.parseInt(request.getParameter("page"));
-		    }
-
-		    int recordsPerPage = 10; // Number of records to display per page
-		    Connection conn = null;
-		    PreparedStatement psmt = null;
-		    ResultSet rs = null;
-
-		    try {
-		        conn = DBConn.conn();
-
-		        // Validate and sanitize the searchOption parameter
-		        List<String> allowedColumns = Arrays.asList("id", "name", "email", "phone"); // Allowed search columns
-		        if (!allowedColumns.contains(searchOption)) {
-		            searchOption = "id"; // Default to "id" if invalid option is passed
-		        }
-
-		        // SQL Query with wildcards around searchTerm for partial matches
-		        String sql = "SELECT * FROM user WHERE " + searchOption + " LIKE CONCAT('%', ?, '%') AND authorization != 'A' LIMIT ? OFFSET ?";
-		        psmt = conn.prepareStatement(sql);
-		        psmt.setString(1, searchTerm); // Search term with wildcards
-		        psmt.setInt(2, recordsPerPage);
-		        psmt.setInt(3, (page - 1) * recordsPerPage);
-
-		        rs = psmt.executeQuery();
-
-		        List<UserVO> userList = new ArrayList<>();
-		        while (rs.next()) {
-		            UserVO user = new UserVO();
-		            user.setUno(rs.getInt("uno"));
-		            user.setId(rs.getString("id"));
-		            user.setPassword(rs.getString("password"));
-		            user.setName(rs.getString("name"));
-		            user.setPhone(rs.getString("phone"));
-		            user.setEmail(rs.getString("email"));
-		            user.setRdate(rs.getString("rdate"));
-		            user.setState(rs.getString("state"));
-		            user.setAuthorization(rs.getString("authorization"));
-
-		            userList.add(user);
-		        }
-
-		        // Count total users based on the search criteria
-		        String countSql = "SELECT COUNT(*) FROM user WHERE " + searchOption + " LIKE ? AND authorization != 'A'";
-		        psmt = conn.prepareStatement(countSql);
-		        psmt.setString(1, "%" + searchTerm + "%");
-		        rs = psmt.executeQuery();
-		        int totalUsers = 0;
-		        if (rs.next()) {
-		            totalUsers = rs.getInt(1);
-		        }
-
-		        int totalPages = (int) Math.ceil(totalUsers * 1.0 / recordsPerPage);
-		        int startPage = Math.max(1, page - 4); // 시작 페이지
-		        int endPage = Math.min(totalPages, page + 5); // 끝 페이지
-		        
-		        // Set attributes for the JSP
-		        request.setAttribute("userList", userList);
-		        request.setAttribute("totalPages", totalPages);
-		        request.setAttribute("currentPage", page);
-		        request.setAttribute("startPage", startPage); // 추가된 부분
-		        request.setAttribute("endPage", endPage);
-
-		        // Forward to the same JSP page to display results
-		        request.getRequestDispatcher("/WEB-INF/mypage/mypage3.jsp").forward(request, response);
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    } finally {
-		        try {
-		            DBConn.close(rs, psmt, conn);
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-		    }
-		}
-
 }
