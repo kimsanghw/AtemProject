@@ -13,7 +13,20 @@
         validCode = vo.getRandom_number();
         cno = vo.getCno();
     }
-%>
+    
+    
+    UserVO user = (UserVO) session.getAttribute("loginUser");
+    if (user == null) {
+   		%> <script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
+   		
+
 
 <title>Insert title here</title>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js' rel='stylesheet'></script>

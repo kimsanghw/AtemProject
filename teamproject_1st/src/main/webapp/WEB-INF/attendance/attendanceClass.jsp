@@ -7,8 +7,18 @@
 <%
 
  List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
-
+ UserVO user = (UserVO) session.getAttribute("loginUser");
+ if (user == null) {
 %>
+			<script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
+
 
 <title>Insert title here</title>
 <style>
