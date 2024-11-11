@@ -113,8 +113,8 @@
       <section>
         <form action="<%=request.getContextPath() %>/qna/qna_list.do" method="get">
             <select name="searchType">
-                <option <%=searchType != null && searchType.equals("title")?"seleced":"" %>>제목</option>
-                <option value="content" <%=searchType != null && searchType.equals("content' ")?"seleced":"" %>>내용</option>
+                <option value="title" <%=searchType != null && searchType.equals("title")?"seleced":"" %>>제목</option>
+                <option value="content" <%=searchType != null && searchType.equals("content")?"seleced":"" %>>내용</option>
             </select>
             <input type="text" class="search_input" placeholder="검색어를 입력해주세요." name="searchValue">
             <div class="free_board_img">
@@ -148,8 +148,14 @@
           <%} %>
           </tbody>
         </table>
-            <button class="button" onclick="location.href='<%=request.getContextPath()%>/qna/qna_write.do'">등록</button>
+        <%
+    // 세션에서 로그인 정보 확인하기
+    	UserVO loginUser = (UserVO) session.getAttribute("loginUser");
 
+    // 로그인한 사용자가 있고, 권한이 "A"인 경우에만 등록 버튼을 표시
+    	if (loginUser != null && "S".equals(loginUser.getAuthorization())) {%>
+            <button class="button" onclick="location.href='<%=request.getContextPath()%>/qna/qna_write.do'">등록</button>
+	<%} %>
             <!-- 페이징 영역 -->
             <div class="paging">
         	

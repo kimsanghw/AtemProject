@@ -112,7 +112,7 @@
         <form action="<%=request.getContextPath() %>/library/library_list.do" method="get" >
             <select name="searchType">
                 <option value="title" <%=searchType != null && searchType.equals("title")?"seleced":"" %>>제목</option>
-                <option value="content" <%=searchType != null && searchType.equals("content' ")?"seleced":"" %>>내용</option>
+                <option value="content" <%=searchType != null && searchType.equals("content")?"seleced":"" %>>내용</option>
             </select>
             <input type="text" class="search_input" placeholder="검색어를 입력해주세요." name="searchValue" >
             <div class="library_board_img">

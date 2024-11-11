@@ -64,6 +64,7 @@
             border-right: none;
             border-top: none;
             outline: none;
+            
         }
         .free_board_file{
             width: 100px;
@@ -120,7 +121,7 @@
                 <input type="text" placeholder="제목을 입력해주세요." name="title" >
             </div>
             <div class="free_body_write">
-                <textarea name="content" placeholder="내용을 입력해주세요." ></textarea>
+                <textarea name="content" placeholder="내용을 입력해주세요."></textarea>
             </div>
             <div class="free_board_button">
                 <button type="button" onclick="submitfn(this)">등록</button>
