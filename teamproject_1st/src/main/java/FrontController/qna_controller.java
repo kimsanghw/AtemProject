@@ -142,11 +142,10 @@ public class qna_controller {
 			conn = DBConn.conn();
 			
 	        // 전체 게시글 수를 가져오는 쿼리 (검색 조건이 있을 경우 이를 반영)
-			String pagesql = "SELECT COUNT(*) AS total_count FROM qna_board q INNER JOIN user u ON q.uno = u.uno AND q.state='E'";
-			
+			String pagesql = "SELECT COUNT(*) AS total_count FROM qna_board q INNER JOIN user u ON q.uno = u.uno WHERE q.state='E'";
 	        // 검색 조건이 있을 경우 WHERE 절 추가
 	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
-	            pagesql += " WHERE " + searchType + " LIKE ?";
+	            pagesql += " AND " + searchType + " LIKE ?";
 	        }
 	        
 	        psmt = conn.prepareStatement(pagesql);
@@ -174,7 +173,7 @@ public class qna_controller {
 	        
 	        // 검색 조건이 있을 경우 WHERE 조건 추가
 	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
-	            boardsql += "WHERE " + searchType + " LIKE ?";
+	            boardsql += "AND " + searchType + " LIKE ?";
 	        }
 	        
 	        boardsql += "ORDER BY q.qno DESC LIMIT ?, ?"; // 최신 게시글 순으로 정렬 및 LIMIT 사용
@@ -558,12 +557,4 @@ public class qna_controller {
 			}
 		}
 	}
-
-
-
-
-
-
-	
-	
 }
