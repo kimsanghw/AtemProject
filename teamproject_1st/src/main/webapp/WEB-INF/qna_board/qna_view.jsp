@@ -52,11 +52,11 @@
         .free_board_content{
             height: 300px;
         }
-        .comment_input input{
-            width: 1200px;
-            height: 50px;
-            outline: none;
-            border: none;
+        .comment_input textarea{
+        width: 1200px;
+        height: 50px;
+        outline: none;
+        border: none;
         }
         .comment_button{
             display:flex;
@@ -105,7 +105,7 @@
                 	<input type="hidden" name="qno" value="<%=vo.getQno()%>">
                     
                     <%if (loginUser != null && "T".equals(loginUser.getAuthorization())) {%>
-                    <input type="text" placeholder="댓글을 입력해주세요." name="content" size="80">
+                    <textarea placeholder="댓글을 입력해주세요." name="content"></textarea>
                     <button type="button" onclick="submitfn(this)" >등록</button>
                     <%} %>
                 </div>
@@ -133,7 +133,14 @@
 	                    	<input type="hidden" name="qno" value="<%=vo.getQno()%>">
 	                    </form>
                     </div>
-                    <%if(loginUser != null && vo != null && loginUser.getUno() == vo.getUno()){%>
+                     <%
+                     if( loginUser != null ){
+	                     System.out.println("로그인 여부 : "+loginUser);
+	                     System.out.println("권한 : "+loginUser.getAuthorization());
+	                     System.out.println("로그인유저 번호 : "+loginUser.getUno());
+	                     System.out.println("글 작성 유저 번호 : "+cvo.getUno());
+                     }
+                     if(loginUser != null && "T".equals(loginUser.getAuthorization()) && loginUser.getUno() == cvo.getUno()){%>
                     	<div class="comment_button">
 	                    <!-- 수정 누른 후 나오는 버튼 -->
 	                    <button class="register_button" type="submit" style="display:none;" onclick="commentmodifyfrm(this)">저장</button>
@@ -148,10 +155,8 @@
 		 					<input type="hidden" name="qno" value="<%=vo.getQno()%>">
 		 				</form>
                     </div>
+                     <%} %>
                 </div>
-                    <%} %>
-                    
-           
             <%}%>
             <script>
             
@@ -258,7 +263,6 @@
             <% }%>
             
             
-            </div>
         </div>
       </section>
 </body>

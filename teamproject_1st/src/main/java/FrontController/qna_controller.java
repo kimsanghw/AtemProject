@@ -252,7 +252,7 @@ public class qna_controller {
 			 	// 조회수 업데이트 실행
 				psmt.executeUpdate();
 				
-				sql = "SELECT qc.qcno, qc.content, qc.state,q.qno FROM qnacomment qc INNER JOIN qna_board q ON qc.qno = q.qno WHERE q.qno = ? AND qc.state = 'E';";
+				sql = "SELECT qc.qcno, qc.content, qc.state,qc.uno,q.qno FROM qnacomment qc INNER JOIN qna_board q ON qc.qno = q.qno WHERE q.qno = ? AND qc.state = 'E';";
 				
 				psmt = conn.prepareStatement(sql);
 				
@@ -268,7 +268,7 @@ public class qna_controller {
 					cvo.setContent(rs.getString("content"));
 					cvo.setState(rs.getString("state"));
 					cvo.setQno(rs.getInt("qno"));
-					
+					cvo.setUno(rs.getInt("uno"));
 					list.add(cvo);
 				}
 				
