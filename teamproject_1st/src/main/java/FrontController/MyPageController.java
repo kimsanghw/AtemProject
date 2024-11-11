@@ -221,7 +221,11 @@ public class MyPageController {
 		    Connection conn = null;
 		    PreparedStatement psmt = null;
 		    ResultSet rs = null;
+		    PreparedStatement psmtend = null;
+		    ResultSet rsend = null;
 		    ClassVO enrolledClass = null; // 수강 중인 단일 강의를 저장할 객체
+		    ClassVO endClass = null;
+		    
 		   
 		    try {
 		        conn = DBConn.conn();
@@ -258,8 +262,34 @@ public class MyPageController {
 		            enrolledClass.setNewFileName(rs.getString("newFileName"));
 		            enrolledClass.setName(rs.getString("name"));
 		        }
+		        String sqlEnd = "SELECT c.cno, u.uno, c.title, c.subject, c.state, c.difficult, c.book, "
+                        + "c.duringclass, c.end_duringclass, c.newFileName, c.name "
+                        + "FROM class c "
+                        + "JOIN app_class ac ON ac.cno = c.cno "
+                        + "JOIN USER u ON c.uno = u.uno "
+                        + "WHERE ac.uno = ? AND c.state = 'E' AND ac.state = 'E' AND c.end_duringclass < NOW()";
+		        
+		        psmtend = conn.prepareStatement(sqlEnd);
+		        psmtend.setInt(1, uno);
+		        rsend = psmtend.executeQuery();
+
+		        if (rsend.next()) {
+		            endClass = new ClassVO();
+		            endClass.setCno(rsend.getInt("cno"));
+		            endClass.setUno(rsend.getInt("uno"));
+		            endClass.setTitle(rsend.getString("title"));
+		            endClass.setState(rsend.getString("state"));
+		            endClass.setSubject(rsend.getString("subject"));
+		            endClass.setDuringclass(rsend.getString("duringclass"));
+		            endClass.setEnd_duringclass(rsend.getString("end_duringclass"));
+		            endClass.setDifficult(rsend.getString("difficult"));
+		            endClass.setBook(rsend.getString("book"));
+		            endClass.setNewFileName(rsend.getString("newFileName"));
+		            endClass.setName(rsend.getString("name"));
+		        }
 
 	        // JSP로 데이터 전달
+		    request.setAttribute("endClass", endClass);
 	        request.setAttribute("enrolledClass", enrolledClass);
 	        request.getRequestDispatcher("/WEB-INF/mypage/mypage2.jsp").forward(request, response);
 		}catch (Exception e) {
