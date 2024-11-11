@@ -402,12 +402,12 @@
           </div>
           <div class="index_photo">
             <div>
-              <p><a href="#"><img src="img/선생1.png"></a></p>
-              <p><a href="#"><img src="img/선생2.png"></a></p>
+              <p><a href="<%=request.getContextPath()%>/class/view.do?cno=21"><img src="img/선생1.png"></a></p>
+              <p><a href="<%=request.getContextPath()%>/class/view.do?cno=23"><img src="img/선생2.png"></a></p>
             </div>
             <div>
-              <p><a href="#"><img src="img/선생3.png"></a></p>
-              <p><a href="#"><img src="img/선생4.png"></a></p>
+              <p><a href="<%=request.getContextPath()%>/class/view.do?cno=22"><img src="img/선생3.png"></a></p>
+              <p><a href="<%=request.getContextPath()%>/class/view.do?cno=24"><img src="img/선생4.png"></a></p>
             </div>
           </div>
           <div class="index_footer">

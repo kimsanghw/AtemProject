@@ -34,15 +34,8 @@ public class UserController {
 	    		logout(request,response);
 	    	}
 	    }else if(comments[comments.length-1].equals("checkEmail.do")){ 
-		} else if(comments[comments.length-1].equals("logout.do")) {
-	    	if(request.getMethod().equals("GET")) {
-	    		logout(request,response);
-	    	}
-	    } else if(comments[comments.length-1].equals("checkEmail.do")){ 
 			if(request.getMethod().equals("GET")){
 			checkEmail(request, response);
-			} else if(request.getMethod().equals("POST")){
-				
 			}
 		} else if(comments[comments.length-1].equals("checkid.do")){
 			if(request.getMethod().equals("GET")){
@@ -96,7 +89,8 @@ public class UserController {
 
 				response.sendRedirect(request.getContextPath()+ "/index.jsp");
 			}else {
-				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
+				request.setAttribute("errorMessage", "아이디 또는 비밀번호를 확인해 주세요");
+			    request.getRequestDispatcher("/WEB-INF/user/login.jsp").forward(request, response);
 			}
 		}catch(Exception e) {
 			e.printStackTrace();

@@ -193,6 +193,9 @@ public class ClassController {
 
 		    request.setAttribute("coursList", coursList);
 		    request.setAttribute("paging", paging);
+		    request.setAttribute("searchType", searchType);
+		    request.setAttribute("searchKeyword", searchKeyword);
+		    
 		    
 		    request.getRequestDispatcher("/WEB-INF/class/class_list.jsp").forward(request, response);
 

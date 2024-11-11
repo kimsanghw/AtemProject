@@ -88,11 +88,11 @@ public class library_controller {
 			conn = DBConn.conn();
 			
 	        // 전체 게시글 수를 가져오는 쿼리 (검색 조건이 있을 경우 이를 반영)
-			String pagesql = "SELECT COUNT(*) AS total_count FROM library l INNER JOIN user u ON l.uno = u.uno AND l.state='E'";
+			String pagesql = "SELECT COUNT(*) AS total_count FROM library l INNER JOIN user u ON l.uno = u.uno WHERE l.state='E'";
 			
 	        // 검색 조건이 있을 경우 WHERE 절 추가
 	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
-	            pagesql += " WHERE " + searchType + " LIKE ?";
+	            pagesql += " AND " + searchType + " LIKE ?";
 	        }
 	        
 	        psmt = conn.prepareStatement(pagesql);
@@ -127,7 +127,7 @@ public class library_controller {
 
 	        // 검색 조건이 있을 경우 WHERE 조건 추가
 	        if (searchType != null && !searchType.isEmpty() && searchValue != null && !searchValue.isEmpty()) {
-	            boardsql += "WHERE " + searchType + " LIKE ?";
+	            boardsql += "AND " + searchType + " LIKE ?";
 	        }
 	        
 	        boardsql += "ORDER BY l.lno DESC LIMIT ?, ?"; // 최신 게시글 순으로 정렬 및 LIMIT 사용

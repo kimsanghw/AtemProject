@@ -15,7 +15,7 @@
 			msgBox.html("<span style='color:red'>아이디를 입력하세요</span>");
 			return false;
 		} else if(!idPattern.test(id)) {
-			msgBox.html("<span style='color:red'>아이디는 4~30자의 영문과 숫자만 가능합니다</span>");
+			msgBox.html("<span style='color:red'>아이디는 4~30자의 영문과 숫자를 조합해서 입력하세요</span>");
 			return false;
 		} else {
 			console.log("ajax 통신을 시작합니다")
@@ -67,7 +67,7 @@
 			msgBox.html("<span style='color:red'>비밀번호는 8자 이상 입력하세요</span>");
 			return false;
 		} else if(!pwPattern.test(pw)){
-			msgBox.html("<span style='color:red'>비밀번호는 영문과 숫자만 입력하세요</span>");
+			msgBox.html("<span style='color:red'>비밀번호는 영문과 숫자를 조합해서 입력하세요</span>");
 			return false;
 		} else {
 			msgBox.html("");
@@ -157,7 +157,7 @@
 					if(data.trim() === "isemail"){
 						msgBox.html("<span style='color:red'>사용할 수 없는 이메일입니다.</span>");
 						emailCheckFlag = false;
-					} else {
+					} else if(data === "isNotemail") {
 						msgBox.html("<span style='color:green'>사용할 수 있는 이메일입니다</span>");
 						emailCheckFlag = true;
 					}

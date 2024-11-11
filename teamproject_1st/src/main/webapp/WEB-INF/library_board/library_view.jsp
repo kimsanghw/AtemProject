@@ -106,17 +106,39 @@
         <h2 class="library_title">자료실 상세</h2>
        	<div class="library_board_title"><%=vo.getTitle() %></div>
        	<div class="library_board">작성자 <%=vo.getName() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
-      		<div class="library_board_content"><%=vo.getContent() %>
+      		<div class="library_board_content"><%=vo.getContent().replaceAll("\n", "<br>") %>
       		<% if(vo.getNewFileName()!=null && !vo.getNewFileName().equals("")) {%>
-      		<img src="../upload/<%=vo.getNewFileName()%>">
+      		<img src="../upload/<%=vo.getNewFileName()%>"> <!-- 이미지 일대만 게시글에 보이기 아니면 안보이게  -->
       		<%} %>
       		</div>
-       	<div class="library_board_file"><%=vo.getOrgFileName() %></div>
+       	<div class="library_board_file">
+       		<a href="../upload/<%=vo.getNewFileName()%>" download="<%= request.getContextPath() %>/upload/<%=vo.getOrgFileName() %>">
+       			<%=vo.getOrgFileName() %>
+       		</a>
+       	</div><!-- 다운로드 할수 잇게 링크 입력 -->
         
         
         <div class="library_board_list_button">
             <button onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">목록</button>
         </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         <div class="library_board_button">
         
         <%
