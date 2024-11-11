@@ -121,6 +121,24 @@
         <div class="library_board_list_button">
             <button onclick="location.href='<%=request.getContextPath()%>/library/library_list.do'">목록</button>
         </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         <div class="library_board_button">
         
         <%

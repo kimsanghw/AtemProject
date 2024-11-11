@@ -95,6 +95,11 @@
             text-decoration: none;
             color: black;
         }
+        .notice_Line{
+        	border: 1px solid black;
+        	width: 1200px;
+        	margin: auto;
+        }
         /* section 부분 끝 */
     </style>
 </head>
@@ -104,6 +109,7 @@
         <div class="notice_board_title"><%=vo.getTitle() %></div>
         <div class="notice_board">작성자 <%=vo.getName() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
         <div class="notice_board_content" ><%=vo.getContent().replaceAll("\n", "<br>") %></div>
+        <div class="notice_Line"></div>
         <div class="notice_board_list_button">
             <button onclick="location.href='<%=request.getContextPath()%>/notice/notice_list.do'">목록</button>
         </div>

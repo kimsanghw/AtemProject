@@ -49,9 +49,6 @@
         .comment_title{
             border-bottom: 5px solid #007ACC;
         }
-        .free_board_content{
-            height: 300px;
-        }
         .comment_input textarea{
         width: 1200px;
         height: 50px;
