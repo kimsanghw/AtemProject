@@ -34,15 +34,8 @@ public class UserController {
 	    		logout(request,response);
 	    	}
 	    }else if(comments[comments.length-1].equals("checkEmail.do")){ 
-		} else if(comments[comments.length-1].equals("logout.do")) {
-	    	if(request.getMethod().equals("GET")) {
-	    		logout(request,response);
-	    	}
-	    } else if(comments[comments.length-1].equals("checkEmail.do")){ 
 			if(request.getMethod().equals("GET")){
 			checkEmail(request, response);
-			} else if(request.getMethod().equals("POST")){
-				
 			}
 		} else if(comments[comments.length-1].equals("checkid.do")){
 			if(request.getMethod().equals("GET")){
