@@ -308,32 +308,37 @@
           </div>
         <h1 class="index_logo headerSlide"><a href="<%=request.getContextPath()%>/index.jsp"><img src="img/로고1.png"></a></h1>
         <div class="index_nav headerSlide">
-          <ul>
-            <li><a href="<%=request.getContextPath()%>/class/list.do">수강신청</a></li>
-           <%
-           if (userId != null) {
-                       String authorization = userId.getAuthorization();
-                       if ("T".equals(authorization) || "A".equals(authorization)) {
-           %>
-                <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
-    <%
-    } else {
-    %>
-                <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
-    <%
-    }
-            } else {
-    %>
-    
-        <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
-    <%
-    }
-    %>
-            <li><a href="<%=request.getContextPath()%>/notice/notice_list.do">공지사항</a></li>
-            <li><a href="<%=request.getContextPath()%>/qna/qna_list.do">QnA</a></li>
-            <li><a href="<%=request.getContextPath()%>/library/library_list.do">자료실</a></li>
-          </ul>
-        </div>
+	  	<ul>
+	    <li><a href="<%=request.getContextPath()%>/class/list.do">수강신청</a></li>
+	    
+		    <%
+		    if (userId != null) {
+		        String authorization = userId.getAuthorization();
+		        if ("T".equals(authorization)) { // Show "출결관리" for T role
+		    %>
+		        <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
+		    <%
+		        } else if ("A".equals(authorization)) { // Show "권한변경" for A role
+		    %>
+		        <li><a href="<%=request.getContextPath()%>/mypage/mypage3.do">권한변경</a></li>
+		    <%
+		        } else if ("S".equals(authorization)) { // Show "출결정보" for S role
+		    %>
+		        <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
+		    <%
+		        }
+		    } else { // Show "출결정보" when userId is null
+		    %>
+		        <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
+		    <%
+		    }
+		    %>
+	    
+	    <li><a href="<%=request.getContextPath()%>/notice/notice_list.do">공지사항</a></li>
+	    <li><a href="<%=request.getContextPath()%>/qna/qna_list.do">QnA</a></li>
+	    <li><a href="<%=request.getContextPath()%>/library/library_list.do">자료실</a></li>
+	  </ul>
+	</div>
         <form action="<%=request.getContextPath()%>/search/search.do" method="GET">
           <div class="index_search">
             <select class="index_search_select" name="indexSearch">
