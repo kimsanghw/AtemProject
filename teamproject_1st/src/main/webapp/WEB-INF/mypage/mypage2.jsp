@@ -3,6 +3,8 @@
 <%@ page import ="FrontController.vo.UserVO" %>
 <%@ page import ="FrontController.vo.ClassVO" %>
 <%@ page import="FrontController.util.*" %>
+<%@ page import="java.time.*" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import ="java.util.*" %>
 <%@ include file="../../include/header.jsp" %>
 <!DOCTYPE html>
@@ -148,6 +150,45 @@
 					<% } %>
 			</div>
             <div class="mypage_class_end">수강 종료된 강의</div>
+				<% 
+				    LocalDate today = LocalDate.now();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); 
+				
+				    // enrolledClass와 강의 날짜 정보가 null이 아닌지 확인
+				    if (enrolledClass != null && enrolledClass.getDuringclass() != null && enrolledClass.getEnd_duringclass() != null) {
+				        LocalDate startDate = LocalDate.parse(enrolledClass.getDuringclass(), formatter);
+				        LocalDate endDate = LocalDate.parse(enrolledClass.getEnd_duringclass(), formatter);
+				
+				        // 현재 날짜가 강의 종료일 이후인지 확인
+				        if (today.isAfter(endDate)) { 
+				%>
+            <!-- 수강 종료된 강의 데이터 출력 -->
+            <div class="course-item">
+                <img src="<%=request.getContextPath()%>/upload/<%=enrolledClass.getNewFileName()%>">
+                <div class="course-info">
+                    <a href="<%= request.getContextPath() %>/class/view.do?cno=<%= enrolledClass.getCno() %>">
+                        <h2><%= enrolledClass.getTitle() %></h2>
+                    </a>
+                    <div class="class_info">
+                        <p>난이도: <%= enrolledClass.getDifficult() %></p>
+                        <p>강사: <%= enrolledClass.getName() %></p>
+                        <p>강의 기간: <%= enrolledClass.getDuringclass() %> ~ <%= enrolledClass.getEnd_duringclass() %></p>
+                    </div>
+                </div>
+            </div>
+		<% 
+		        } else { 
+		%>
+		            <p>수강 종료된 강의가 없습니다.</p>
+		<% 
+		        }
+		    } else { 
+		%>
+		    <p>수강 종료된 강의가 없습니다.</p>
+		<% 
+		    } 
+		%>
+
             <div class="mypage_end_subject"></div>
         </div>
         </section>

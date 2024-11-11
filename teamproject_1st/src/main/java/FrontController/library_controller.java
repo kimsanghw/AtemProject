@@ -55,7 +55,7 @@ public class library_controller {
 				library_delete(request,response);
 			}
 			
-		}
+		} 
 	}
 
 	private void library_list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -490,7 +490,6 @@ public class library_controller {
 			}
 		}
 	}
-
 	
 
 }
