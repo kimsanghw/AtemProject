@@ -77,7 +77,7 @@
           <% 
         if (userId != null) {
             String authorization = userId.getAuthorization();
-            if ("T".equals(authorization) || "A".equals(authorization)) { 
+            if ("T".equals(authorization)) { 
     %>
                 <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
     <% 

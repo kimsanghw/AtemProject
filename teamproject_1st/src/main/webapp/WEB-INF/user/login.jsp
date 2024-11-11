@@ -5,6 +5,11 @@
 <head>
 <meta charset="UTF-8">
 <title>login</title>
+<script>
+        <% if(request.getAttribute("errorMessage") != null) { %>
+            alert("<%= request.getAttribute("errorMessage") %>");
+        <% } %>
+    </script>
     <style>
       html,body{
         margin: 0px;

@@ -89,7 +89,8 @@ public class UserController {
 
 				response.sendRedirect(request.getContextPath()+ "/index.jsp");
 			}else {
-				 request.getRequestDispatcher("/user/login.jsp").forward(request, response);
+				request.setAttribute("errorMessage", "아이디 또는 비밀번호를 확인해 주세요");
+			    request.getRequestDispatcher("/WEB-INF/user/login.jsp").forward(request, response);
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
