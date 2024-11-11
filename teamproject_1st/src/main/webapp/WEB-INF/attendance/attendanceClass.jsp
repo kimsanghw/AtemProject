@@ -7,8 +7,18 @@
 <%
 
  List<ClassVO> clist = (List<ClassVO>)request.getAttribute("clist");
-
+ UserVO user = (UserVO) session.getAttribute("loginUser");
+ if (user == null) {
 %>
+			<script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
+
 
 <title>Insert title here</title>
 <style>
@@ -129,7 +139,7 @@
 		}
     </style>
      <section>
-        <div class="attendance_info">출결정보</div>
+        <div class="attendance_info">수강정보</div>
         <div class="info_flex">
             <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">수강중인 강의 ></a></div>
             <div class="app_line"></div>

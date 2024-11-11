@@ -13,7 +13,20 @@
         validCode = vo.getRandom_number();
         cno = vo.getCno();
     }
-%>
+    
+    
+    UserVO user = (UserVO) session.getAttribute("loginUser");
+    if (user == null) {
+   		%> <script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
+   		
+
 
 <title>Insert title here</title>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js' rel='stylesheet'></script>
@@ -141,7 +154,7 @@
 		}
     </style>
      <section>
-        <div class="attendance_info">출결정보</div>
+        <div class="attendance_info">출석체크</div>
 	    <div class="info_flex">
 	        <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">수강중인 강의 ></a></div>
 	        <div class="app_line"></div>
@@ -160,8 +173,8 @@
                     <label for="authCode">인증 코드 입력:</label>
                     <input type="text" id="authCode" name="authCode" placeholder="인증 코드를 입력하세요">
 			        <input type="hidden" name="cno" value="<%= cno %>">
-			        <%= cno %>
-			        <%= vo.getRandom_number() %>
+			        <!--  <%= cno %>-->
+			        <!--<%= vo.getRandom_number() %>--> 
 			        <% System.out.println("Received authCode: " + vo.getRandom_number());
 			        System.out.println("Received cno: " + cno);
 					%>

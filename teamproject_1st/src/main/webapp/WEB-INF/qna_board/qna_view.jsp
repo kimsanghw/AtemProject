@@ -95,7 +95,7 @@
             <div class="free_board">작성자 <%=vo.getName() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
         </div>
         <hr>
-        <div class="free_board_content"><%=vo.getContent() %></div>
+        <div class="free_board_content"><%=vo.getContent().replaceAll("\n", "<br>") %></div>
         <div>
             <div class="comment_title">
                 <h3>댓글</h3>
@@ -103,8 +103,11 @@
             <form action="comment_writeok.do" method="POST">
                 <div class="comment_input">
                 	<input type="hidden" name="qno" value="<%=vo.getQno()%>">
+                    
+                    <%if (loginUser != null && "T".equals(loginUser.getAuthorization())) {%>
                     <input type="text" placeholder="댓글을 입력해주세요." name="content" size="80">
                     <button type="button" onclick="submitfn(this)" >등록</button>
+                    <%} %>
                 </div>
             </form>
             

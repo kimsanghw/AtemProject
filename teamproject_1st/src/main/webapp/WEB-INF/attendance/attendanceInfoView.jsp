@@ -2,7 +2,17 @@
     pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp" %>
 <%@ page import="java.util.*" %>
-
+<%  UserVO user = (UserVO) session.getAttribute("loginUser");
+    if (user == null) {
+%> <script>
+		            alert("로그인이 필요한 서비스입니다.");
+		            window.location.href = "<%=request.getContextPath()%>/user/login.do";
+		        </script>
+		<%
+		        return;  
+		    }
+		%>
+   		
 
 <title>출석 정보</title>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -182,9 +192,9 @@ function getColorForStatus(status) {
     </style>
 
 <section>
-    <div class="attendance_info">출결정보</div>
+    <div class="attendance_info">출석정보</div>
     <div class="info_flex">
-        <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClasee.do">수강중인 강의 ></a></div>
+        <div class="app_class class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">수강중인 강의 ></a></div>
         <div class="app_line"></div>
         <div class="attendance_check class_menu"><a href="<%=request.getContextPath()%>/attendance/attendanceCheck.do">출석체크하기 ></a></div>
         <div class="app_line"></div>
