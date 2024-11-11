@@ -103,31 +103,6 @@
 	    <li><a href="<%=request.getContextPath()%>/library/library_list.do">자료실</a></li>
 	  </ul>
 	</div>
-        <ul>
-          <li><a href="<%=request.getContextPath()%>/class/list.do">수강신청</a></li>
-          <% 
-        if (userId != null) {
-            String authorization = userId.getAuthorization();
-            if ("T".equals(authorization)) { 
-    %>
-                <li><a href="<%=request.getContextPath()%>/attendance/attendanceList.do">출결관리</a></li>
-    <% 
-            } else { 
-    %>
-                <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
-    <% 
-            }
-        } else { 
-    %>
-        <li><a href="<%=request.getContextPath()%>/attendance/attendanceClass.do">출결정보</a></li>
-    <% 
-        } 
-    %>
-          <li><a href="<%=request.getContextPath()%>/notice/notice_list.do">공지사항</a></li>
-          <li><a href="<%=request.getContextPath()%>/qna/qna_list.do">QnA</a></li>
-          <li><a href="<%=request.getContextPath()%>/library/library_list.do">자료실</a></li>
-        </ul>
-      </div>
       <div class="index_loginPage headerSlide">
          <% if(userId == null) { %>
             <a href="<%=request.getContextPath()%>/user/login.do">로그인</a>　|　<a href="<%=request.getContextPath()%>/user/join.do">회원가입</a>
