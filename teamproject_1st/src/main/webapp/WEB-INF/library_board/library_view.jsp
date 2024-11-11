@@ -111,7 +111,11 @@
       		<img src="../upload/<%=vo.getNewFileName()%>"> <!-- 이미지 일대만 게시글에 보이기 아니면 안보이게  -->
       		<%} %>
       		</div>
-       	<div class="library_board_file"><%=vo.getOrgFileName() %></div><!-- 다운로드 할수 잇게 링크 입력 -->
+       	<div class="library_board_file">
+       		<a href="../upload/<%=vo.getNewFileName()%>" download="<%= request.getContextPath() %>/upload/<%=vo.getOrgFileName() %>">
+       			<%=vo.getOrgFileName() %>
+       		</a>
+       	</div><!-- 다운로드 할수 잇게 링크 입력 -->
         
         
         <div class="library_board_list_button">
