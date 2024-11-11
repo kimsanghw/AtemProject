@@ -8,7 +8,9 @@
     List<ClassVO> coursList = (List<ClassVO>)request.getAttribute("coursList");
     UserVO user = (UserVO) session.getAttribute("loginUser");
     String searchType = (String)request.getAttribute("searchType");
+    System.out.println("searchtype : "+ searchType );
     String searchKeyword = (String)request.getAttribute("searchKeyword");
+    System.out.println("searchkeyword : "+ searchKeyword );
     String nowPageParam = request.getParameter("nowPage");
     int nowPage = 1;
     if(nowPageParam != null){
@@ -194,35 +196,26 @@
 			<div class="paging-container">
 				<span class="paging">
 			<%
-					if(paging.getStartPage() > 1){
-						
+				String queryString = "";
+				if (searchType != null && !searchType.isEmpty()) {
+				    queryString += "&category=" + searchType;
+				}
+				if (searchKeyword != null && !searchKeyword.isEmpty()) {
+				    queryString += "&searchKeyword=" + java.net.URLEncoder.encode(searchKeyword, "UTF-8");
+				}
 				%>
-					
-					<a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=paging.getStartPage()-1%>&searchType=<%=searchType%>"> &lt; </a>
-				<%
-					}
 				
-					for(int i= paging.getStartPage();
-							i<= paging.getEndPage(); i++){
-						if(i == nowPage){
-						%>
-						<strong><%= i %></strong>
-						<%
-						}else{
-						%>
-						<a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=i%>&searchType=<%=searchType%>"><%=i %></a>
-						<%	
-						}
-					}
-					
-					if(paging.getLastPage()>paging.getEndPage()){
-						
-						%>
-						<a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=paging.getEndPage()+1%>&searchType=<%=searchType%>">&gt;</a>
-						<%
-					}
-					
-				%>
+				<% if(paging.getStartPage() > 1) { %>
+				    <a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=paging.getStartPage()-1%><%=queryString%>"> &lt; </a>
+				<% } %>
+				
+				<% for(int i = paging.getStartPage(); i <= paging.getEndPage(); i++) { %>
+				    <% if(i == nowPage) { %>
+				        <strong><%= i %></strong>
+				    <% } else { %>
+				        <a href="<%=request.getContextPath()%>/class/list.do?nowPage=<%=i%><%=queryString%>"><%=i %></a>
+				    <% } %>
+				<% } %>
 					</span>
 			</div>
 			<div class="button-container">
