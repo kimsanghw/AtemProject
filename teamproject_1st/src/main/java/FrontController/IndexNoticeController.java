@@ -38,6 +38,7 @@ public class IndexNoticeController extends HttpServlet {
             while (rs.next()) {
                 NoticeVO notice = new NoticeVO();
                 notice.setTitle(rs.getString("title"));
+                notice.setNno(rs.getInt("nno"));
                 
                 // 필요 시 다른 속성도 설정
                 // notice.setOtherField(rs.getString("other_column"));

@@ -355,7 +355,7 @@
           
           <div class="index_notice">
             <h2>공지사항</h2>
-            <div class="index_notice_look"><a href="#">+ 더보기</a></div>
+            <div class="index_notice_look"><a href="<%=request.getContextPath()%>/notice/notice_list.do">+ 더보기</a></div>
             <div class="index_notice_content">
             <%
             IndexNoticeController nCon = new IndexNoticeController();
@@ -369,7 +369,7 @@
               if(list != null){
 	              for( NoticeVO nVO : list )
     	          {	%>
-	                <div class="notice_content"><a href="#"><%= nVO.getTitle() %></a></div>
+	                <div class="notice_content"><a href="<%=request.getContextPath()%>/notice/notice_view.do?Nno=<%= nVO.getNno() %>"><%= nVO.getTitle() %></a></div>
 	                <div class="index_notice_line"><!--라인--></div>
             <%	  }
 	          }%>
@@ -378,7 +378,7 @@
           </div>
           <div class="index_library">
             <h2>자료실</h2>
-            <div class="index_library_look"><a href="#">+ 더보기</a></div>
+            <div class="index_library_look"><a href="<%=request.getContextPath()%>/library/library_list.do">+ 더보기</a></div>
             <div class="index_library_content">
               <div>
               <%
@@ -393,7 +393,7 @@
               if(list != null){
 	              for( libraryVO lVO : llist )
     	          {	%>
-	                <div class="notice_content"><a href="#"><%= lVO.getTitle() %></a></div>
+	                <div class="notice_content"><a href="<%=request.getContextPath()%>/library/library_view.do?lno=<%= lVO.getLno() %>"><%= lVO.getTitle() %></a></div>
 	                <div class="index_notice_line"><!--라인--></div>
             <%	  }
 	          }%>
