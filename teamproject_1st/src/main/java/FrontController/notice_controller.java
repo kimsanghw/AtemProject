@@ -63,7 +63,7 @@ public class notice_controller {
 	    UserVO loginVO = (UserVO) session.getAttribute("loginUser");
 	    
 	    String title = request.getParameter("title");
-	    String content = request.getParameter("title");
+	    String content = request.getParameter("title");//	    String content = request.getParameter("content");
 	    
 	    Connection conn = null;  // DB 연결
 	    PreparedStatement psmt = null;

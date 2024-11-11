@@ -108,10 +108,10 @@
        	<div class="library_board">작성자 <%=vo.getName() %> 등록일 <%=vo.getRdate() %> 조회수 <%=vo.getHit() %></div>
       		<div class="library_board_content"><%=vo.getContent() %>
       		<% if(vo.getNewFileName()!=null && !vo.getNewFileName().equals("")) {%>
-      		<img src="../upload/<%=vo.getNewFileName()%>">
+      		<img src="../upload/<%=vo.getNewFileName()%>"> <!-- 이미지 일대만 게시글에 보이기 아니면 안보이게  -->
       		<%} %>
       		</div>
-       	<div class="library_board_file"><%=vo.getOrgFileName() %></div>
+       	<div class="library_board_file"><%=vo.getOrgFileName() %></div><!-- 다운로드 할수 잇게 링크 입력 -->
         
         
         <div class="library_board_list_button">
