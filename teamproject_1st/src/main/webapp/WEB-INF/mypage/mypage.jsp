@@ -135,7 +135,7 @@
       <section>
         <div class="mypage">마이페이지</div>
         <div class="mypage_flex">
-            <div class="mypage_mypage mypage_menu"><a href="#">마이페이지 ></a></div>
+            <div class="mypage_mypage mypage_menu"><a href="<%=request.getContextPath()%>/mypage/mypage.do">마이페이지 ></a></div>
             <div class="mypage_line"></div>
             <div class="mypage_study mypage_menu"><a href="<%=request.getContextPath()%>/mypage/mypage2.do">내 강의 목록 ></a></div>
             <div class="mypage_line"></div>
