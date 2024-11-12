@@ -326,89 +326,73 @@ public class AttendanceController {
 	}
 
 	
-	public void attendanceClass(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		HttpSession session = request.getSession();
-		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
-		List<ClassVO> clist  = new ArrayList<ClassVO>();
-		int uno = loginUser.getUno();
-		String cno = request.getParameter("cno");
-		
-		
-		
-		Connection conn = null;
-		PreparedStatement psmt = null;
-		ResultSet rs = null;
-		
-		try {
-			
-			conn = DBConn.conn();
-			
-			
-			String sql  = " SELECT "
-					    + "    c.cno, "
-					    + "    u.uno, "
-						+ "    c.title ,"
-						+ "    c.subject ,"
-						+ "    c.state ,"
-						+ "    c.difficult ,"
-						+ "    c.book ,"
-						+ "    c.duringclass,"
-						+ "    c.end_duringclass"
-						+ " FROM "
-						+ "     class c"
-						+ " JOIN "
-						+ "   app_class ac ON ac.cno = c.cno"
-						+ " JOIN "
-						+ "    USER u ON c.uno = u.uno"
-						+ " WHERE "
-						+ "    ac.uno = ?        "
-						+ "    AND c.state = 'E'  "
-						+ "    AND ac.state = 'E'"
-						+ "    AND c.end_duringclass > NOW()";
-			
-			psmt = conn.prepareStatement(sql);
-			psmt.setInt(1, uno);
-			
-			rs = psmt.executeQuery();
-			
-			 while(rs.next()) {
-				 
-					ClassVO vo = new ClassVO();
-					vo.setCno(rs.getInt("cno"));
-					vo.setUno(rs.getInt("uno"));
-					vo.setTitle(rs.getString("title"));
-					vo.setState(rs.getString("state"));
-					vo.setSubject(rs.getString("subject"));
-					vo.setDuringclass(rs.getString("duringclass"));
-					vo.setEnd_duringclass(rs.getString("End_duringclass"));
-					vo.setDifficult(rs.getString("difficult"));
-					vo.setBook(rs.getString("book"));
-					
-					
-					clist.add(vo);
-					
-				}
-			 
-			   request.setAttribute("clist", clist);
-			   System.out.println(clist);
-			   
-			   request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-			}finally {
-				
-				try {
-					DBConn.close(rs, psmt, conn);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		
-		
+	public void attendanceClass(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession();
+	    UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+
+	    // 로그인 상태 확인
+	    if (loginUser == null) {
+	        response.setCharacterEncoding("UTF-8");
+	        response.setContentType("text/html;charset=utf-8;");
+	        response.getWriter().append("<script>alert('로그인이 필요한 서비스입니다.');location.href='" + request.getContextPath() + "/user/login.do';</script>");
+	        return;  // 로그인 페이지로 이동 후 메서드 종료
+	    }
+
+	    int uno = loginUser.getUno();
+	    int cno = 0;
+	    if(request.getParameter("cno") != null) {
+	    	cno = Integer.parseInt(request.getParameter("cno"));
+	    }
+	    System.out.println("loginUserCno"+cno);
+
+	    Connection conn = null;
+	    PreparedStatement psmt = null;
+	    ResultSet rs = null;
+	    List<ClassVO> clist = new ArrayList<ClassVO>();
+
+	    try {
+	        conn = DBConn.conn();
+
+	        String sql = "SELECT c.cno, u.uno, c.title, c.subject, c.state, c.difficult, c.book, c.duringclass, c.end_duringclass " +
+	                     "FROM class c " +
+	                     "JOIN app_class ac ON ac.cno = c.cno " +
+	                     "JOIN USER u ON c.uno = u.uno " +
+	                     "WHERE ac.uno = ? AND c.state = 'E' AND ac.state = 'E' AND c.end_duringclass > NOW()";
+
+	        psmt = conn.prepareStatement(sql);
+	        psmt.setInt(1, uno);
+
+	        rs = psmt.executeQuery();
+
+	        while (rs.next()) {
+	            ClassVO vo = new ClassVO();
+	            vo.setCno(rs.getInt("cno"));
+	            vo.setUno(rs.getInt("uno"));
+	            vo.setTitle(rs.getString("title"));
+	            vo.setState(rs.getString("state"));
+	            vo.setSubject(rs.getString("subject"));
+	            vo.setDuringclass(rs.getString("duringclass"));
+	            vo.setEnd_duringclass(rs.getString("end_duringclass"));
+	            vo.setDifficult(rs.getString("difficult"));
+	            vo.setBook(rs.getString("book"));
+	            clist.add(vo);
+	        }
+
+	        request.setAttribute("clist", clist);
+	        request.getRequestDispatcher("/WEB-INF/attendance/attendanceClass.jsp").forward(request, response);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            DBConn.close(rs, psmt, conn);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
+
 	
 	public void attendanceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		request.setCharacterEncoding("UTF-8");
