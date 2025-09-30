@@ -25,9 +25,13 @@ Q&A (학생 질문, 강사 답변)
 
 ## 기술 스택
 Backend: Java (JSP/Servlet, JDBC)
+
 Web: JSP, HTML5, CSS3, JavaScript(jQuery)
+
 DB: MySQL 8.x
+
 서버/IDE: Apache Tomcat 9, Eclipse
+
 라이브러리:
 mysql-connector-j-8.4.0.jar (JDBC)
 cos-05Nov2002.jar (파일 업로드)
