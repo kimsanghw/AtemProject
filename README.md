@@ -35,7 +35,7 @@ json-simple-1.1.1.jar (경량 JSON 처리)
 
 
 ## 프로젝트 구조
-
+```text
 .
 ├─ LICENSE
 ├─ README.md
@@ -125,3 +125,5 @@ json-simple-1.1.1.jar (경량 JSON 처리)
             ├─ js/jquery-3.7.1.js
             ├─ teamProject.erm                   # ERD
             └─ upload/                           # 업로드 저장소
+```
+
