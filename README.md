@@ -152,3 +152,32 @@ json-simple-1.1.1.jar (경량 JSON 처리)
             └─ upload/                           # 업로드 저장소
 ```
 
+
+## 라우팅 개요
+FrontController에서 *.do를 받아 각 Controller에서 처리 후 JSP로 forward
+
+사용자: /user/login.do, /user/join.do, /user/logout.do
+
+공지: /notice/notice_list.do, /notice/notice_view.do, /notice/notice_write.do, /notice/notice_modify.do, /notice/notice_delete.do
+
+자료실: /library/library_list.do, /library/library_view.do, /library/library_write.do, /library/library_modify.do, /library/library_delete.do
+
+Q&A: /qna/qna_list.do, /qna/qna_view.do, /qna/qna_write.do, /qna/qna_modify.do, /qna/qna_delete.do
+
+댓글: /qna/comment_writeok.do, /qna/comment_modifyok.do, /qna/comment_deleteok.do
+
+강의: /class/list.do, /class/view.do, /class/writer.do, /class/modify.do, /class/delete.do, /class/app_class.do
+
+출결: /attendance/...
+
+마이/관리자: /mypage/mypage.do, /mypage/mypage2.do, /mypage/mypage3.do(권한 변경 AJAX POST)
+
+
+## 권한별 기능 요약
+| 역할     | 주요 권한                                    |
+| ------ | ---------------------------------------- |
+| 관리자(A) | 공지/강의 CRUD, 사용자 권한 변경, 전역 관리             |
+| 강사(T)  | 자료실 CRUD, Q&A 댓글 CRUD, 본인 글 수정/삭제, 출결 관리 |
+| 학생(S)  | Q&A 질문 CRUD, 강의 신청/조회, 출결 확인, 마이페이지      |
+
+
