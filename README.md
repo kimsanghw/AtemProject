@@ -154,76 +154,133 @@ json-simple-1.1.1.jar (경량 JSON 처리)
 ---
 ## 데이터 모델(VO 기준 개요)
 
-UserVO : 사용자(uno, id, pw, name, email, phone, authorization(A/T/S), …)
+UserVO : 사용자(uno, id, pw, name, email, phone, authorization(A/T/S), …) 
+
 ClassVO : 강의(cno, title, subject, name(강사), difficult, book, 기간 등, 파일명 등)
+
 App_classVO : 수강신청(학생–강의 매핑)
+
 AttendanceVO : 출결(학생–강의–일자–상태)
+
 NoticeVO : 공지
+
 libraryVO : 자료실
+
 qnaVO / commentVO : Q&A 본문/댓글
+
 SearchVO : 통합검색 결과 DTO
 
 ---
 
 ## 라우팅 개요
+
 라우팅 구조(Front Controller)
 모든 요청은 FrontController를 통해 서브 컨트롤러(모듈)로 위임됩니다.
 URL 패턴은 /모듈/핸들러.do 형태이며, JSP는 WEB-INF 하위로 직접 접근을 막고 컨트롤러가 forward 합니다.
+
 사용자(User)
 GET /user/login.do → user/login.jsp
+
 POST /user/login.do → 로그인 처리, 세션 loginUser 저장
+
 GET /user/logout.do → 세션 무효화
+
 GET /user/join.do → user/join.jsp
+
 POST /user/join.do → 회원가입 처리
+
 GET /user/checkid.do?id=… → 아이디 중복 체크 (AJAX, "isid"|"isNotId")
+
 GET /user/checkEmail.do?email=… → 이메일 중복 체크 (AJAX)
+
 강의(Class)
 GET /class/list.do → 강의 목록(검색/페이징) → class/class_list.jsp
+
 GET /class/view.do?cno=… → 강의 상세 → class/class_view.jsp
+
 GET /class/writer.do → (권한 A) 등록 폼 → class/class_add.jsp
+
 POST /class/writer.do → 강의 등록(파일 업로드 포함)
+
 GET /class/modify.do?cno=… → (권한 A) 수정 폼 → class/class_modify.jsp
+
 POST /class/modify.do → 수정 처리
+
 POST /class/delete.do → 삭제
+
 POST /class/app_class.do → (권한 S) 수강신청
+
 공지(Notice)
+
 GET /notice/notice_list.do
+
 GET /notice/notice_view.do?nno=…
+
 GET /notice/notice_write.do (권한 A)
+
 POST /notice/notice_write.do
+
 GET /notice/notice_modify.do?nno=… (권한 A)
+
 POST /notice/notice_modify.do
+
 POST /notice/notice_delete.do
+
 자료실(Library)
+
 GET /library/library_list.do (검색/페이징)
+
 GET /library/library_view.do?lno=…
+
 GET /library/library_write.do (권한 T)
+
 POST /library/library_write.do (파일 업로드)
+
 GET /library/library_modify.do?lno=… (작성자 본인)
+
 POST /library/library_modify.do
+
 POST /library/library_delete.do
+
 Q&A
 GET /qna/qna_list.do (검색/페이징)
+
 GET /qna/qna_view.do?qno=…
+
 GET /qna/qna_write.do (권한 S)
+
 POST /qna/qna_write.do
+
 GET /qna/qna_modify.do?qno=… (작성자 본인)
+
 POST /qna/qna_modify.do
+
 POST /qna/qna_delete.do
+
 댓글(권한 T)
 POST /qna/comment_writeok.do
+
 POST /qna/comment_modifyok.do (작성자 본인, AJAX 응답 "OK")
+
 POST /qna/comment_deleteok.do
+
 통합검색
 GET /search.do?search=…&indexSearch=… → index_search/index_search.jsp
+
 마이페이지
 GET /mypage/mypage.do → 기본 정보/이메일·연락처 수정 폼
+
 POST /mypage/mypage.do → 이메일/연락처 업데이트 (action=modifyEmail|modifyPhone)
+
 GET /mypage/mypage2.do → 수강 중/종료 강의 목록
+
 GET /mypage/mypage3.do → (권한 A) 권한 관리 + 페이징/검색
+
 POST /mypage/mypage3.do → (권한 A) AJAX 권한 변경 { id, authority }
+
 ---
 ## 출결(Attendance) 모듈 — 자세한 흐름
+
 SP 구성과 프로젝트 전반의 라우팅 규칙을 바탕으로, 출결 기능의 유저 흐름과 엔드포인트/파라미터/권한 요구사항을 아래처럼 정리했습니다.
 관련 JSP
 WEB-INF/attendance/attendanceList.jsp : 출결 메인(강의/기간 검색, 리스트)
@@ -266,12 +323,16 @@ AttendanceVO(예시): ano(PK), cno, uno, adate(date), status(‘P’ 출석, ‘
 학생별 라디오/셀렉트: P/A/L 입력 후 저장(POST)
 학생별 상세 확인 → /attendance/view.do?cno=10&uno=501
 통계 확인 → /attendance/info.do?cno=10 (출석률, 결석 상위자 등)
+
 ---
+
 ## 권한별 기능 요약
+
 | 역할     | 주요 권한                                    |
 | ------ | ---------------------------------------- |
 | 관리자(A) | 공지/강의 CRUD, 사용자 권한 변경, 전역 관리             |
 | 강사(T)  | 자료실 CRUD, Q&A 댓글 CRUD, 본인 글 수정/삭제, 출결 관리 |
 | 학생(S)  | Q&A 질문 CRUD, 강의 신청/조회, 출결 확인, 마이페이지      |
+
 ---
 
