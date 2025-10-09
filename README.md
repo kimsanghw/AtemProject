@@ -153,6 +153,7 @@ json-simple-1.1.1.jar (경량 JSON 처리)
 ```
 ---
 ## 데이터 모델(VO 기준 개요)
+
 UserVO : 사용자(uno, id, pw, name, email, phone, authorization(A/T/S), …)
 ClassVO : 강의(cno, title, subject, name(강사), difficult, book, 기간 등, 파일명 등)
 App_classVO : 수강신청(학생–강의 매핑)
@@ -161,6 +162,7 @@ NoticeVO : 공지
 libraryVO : 자료실
 qnaVO / commentVO : Q&A 본문/댓글
 SearchVO : 통합검색 결과 DTO
+
 ---
 
 ## 라우팅 개요
