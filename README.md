@@ -146,103 +146,114 @@ Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지
 
 ```mermaid
 erDiagram
-    `USER` ||--o{ `CLASS_TB` : "teaches (uno)"
-    `USER` ||--o{ `APP_CLASS` : "enrolls (uno)"
-    `CLASS_TB` ||--o{ `APP_CLASS` : "has enrollments (cno)"
+  USERS ||--o{ CLASSES : teaches
+  USERS ||--o{ APP_CLASS : enrolls
+  CLASSES ||--o{ APP_CLASS : has
 
-    `USER` ||--o{ `ATTENDANCE` : "has marks (uno)"
-    `CLASS_TB` ||--o{ `ATTENDANCE` : "has marks (cno)"
+  USERS ||--o{ ATTENDANCE : marks
+  CLASSES ||--o{ ATTENDANCE : includes
 
-    `USER` ||--o{ `LIBRARY` : "writes (uno)"
-    `LIBRARY` ||--o{ `FILE_TB` : "has files (lno)"
+  USERS ||--o{ LIBRARY : writes
+  LIBRARY ||--o{ FILES : attaches
 
-    `USER` ||--o{ `NOTICE_BOARD` : "posts (uno)"
-    `USER` ||--o{ `QNA_BOARD` : "asks (uno)"
-    `QNA_BOARD` ||--o{ `QNACOMMENT` : "has comments (qno)"
-    `USER` ||--o{ `QNACOMMENT` : "comments (uno)"
+  USERS ||--o{ NOTICE_BOARD : posts
+  USERS ||--o{ QNA_BOARD : asks
+  QNA_BOARD ||--o{ QNA_COMMENT : comments
+  USERS ||--o{ QNA_COMMENT : writes
 
-    `USER` {
-      int PK uno
-      varchar id
-      varchar password
-      char(11) phone
-      varchar email
-      varchar name
-      char(1) state
-      char(1) authorization
-      timestamp rdate
-    }
+  USERS {
+    int uno PK
+    string id
+    string password
+    string phone
+    string email
+    string name
+    string authorization
+    string state
+    datetime rdate
+  }
 
-    `CLASS_TB` {
-      int PK cno
-      varchar title
-      varchar subject
-      char(1) state
-      char(1) difficult
-      varchar book
-      timestamp duringclass
-      timestamp end_duringclass
-      timestamp rdate
-      varchar name
-      varchar orgfilename
-      int hit
-      int FK uno
-      varchar random_number
-      varchar newfilename
-    }
+  CLASSES {
+    int cno PK
+    int uno FK         %% instructor -> USERS.uno
+    string title
+    string subject
+    string state
+    string difficult
+    string book
+    datetime duringclass
+    datetime end_duringclass
+    string random_number
+    string orgfilename
+    string newfilename
+    int hit
+    datetime rdate
+  }
 
-    `APP_CLASS` {
-      int PK acno
-      timestamp rdate
-      char(1) state
-      int FK uno
-      int FK cno
-    }
+  APP_CLASS {
+    int acno PK
+    int uno FK         %% student -> USERS.uno
+    int cno FK         %% -> CLASSES.cno
+    string state
+    datetime rdate
+  }
 
-    `ATTENDANCE` {
-      int PK ano
-      varchar(10) attendance
-      timestamp rdate
-      char(1) state
-      int FK uno
-      int FK cno
-    }
+  ATTENDANCE {
+    int ano PK
+    int uno FK         %% student -> USERS.uno
+    int cno FK         %% -> CLASSES.cno
+    string attendance  %% 출석/지각/결석/병결/조퇴 등
+    string state
+    datetime rdate
+  }
 
-    `LIBRARY` {
-      int PK lno
-      varchar title
-      text content
-      timestamp rdate
-      int hit
-      char(1) state
-      int FK uno
-    }
+  LIBRARY {
+    int lno PK
+    int uno FK         %% writer -> USERS.uno
+    string title
+    string content
+    int hit
+    string state
+    datetime rdate
+  }
 
-    `FILE_TB` {
-      int PK fno
-      varchar orgFileName
-      varchar newFileName
-      int FK lno
-      int cno
-    }
+  FILES {
+    int fno PK
+    int lno FK         %% -> LIBRARY.lno
+    int cno            %% (exists in DB; no FK in DDL)
+    string orgFileName
+    string newFileName
+  }
 
-    `NOTICE_BOARD` {
-      int PK nno
-      varchar title
-      text content
-      timestamp rdate
-      int hit
-      char(1) state
-      char(1) topYn
-      int FK uno
-    }
+  NOTICE_BOARD {
+    int nno PK
+    int uno FK         %% -> USERS.uno
+    string title
+    string content
+    int hit
+    string state
+    string topYn
+    datetime rdate
+  }
 
-    `QNA_BOARD` {
-      int PK qno
-      varchar title
-      text content
-      int hit
-      timestamp rdate
+  QNA_BOARD {
+    int qno PK
+    int uno FK         %% author -> USERS.uno
+    string title
+    string content
+    int hit
+    string state
+    datetime rdate
+  }
+
+  QNA_COMMENT {
+    int qcno PK
+    int qno FK         %% -> QNA_BOARD.qno
+    int uno FK         %% commenter -> USERS.uno
+    string content
+    string state
+    datetime rdate
+  }
 
 
 ```
