@@ -322,10 +322,9 @@ URL 패턴은 `/모듈/핸들러.do` 형태이며, JSP는 `WEB-INF` 하위에 �
 
 
 ### 6) 출석정보(개인 요약 캘린더)
-- ** URL: GET /attendance/attendanceInfoView.do → WEB-INF/attendance/attendanceInfoView.jsp **
-- ** 목적: 로그인 사용자의 날짜별 단일 상태 요약을 FullCalendar에 표시 **
-- **
-쿼리 **
+- **URL: GET /attendance/attendanceInfoView.do → WEB-INF/attendance/attendanceInfoView.jsp**
+- **목적: 로그인 사용자의 날짜별 단일 상태 요약을 FullCalendar에 표시**
+- **쿼리**
 ```sql
 SELECT a.rdate, a.attendance AS status
   FROM attendance a
@@ -333,11 +332,11 @@ SELECT a.rdate, a.attendance AS status
   JOIN user u      ON a.uno=u.uno
  WHERE u.id=?
 ```
-- ** 우선순위 병합 로직(동일 날짜 중복 기록 시) **
-- ** 출석 > 지각 > 결석 순으로 더 우선 상태만 남김 **
-- ** JSP 포인트 ** 
--상태별 색상: 출석(초록), 지각(주황), 결석(빨강), 기타(회색)
--달력에는 날짜 텍스트 대신 상태만 표시
+- **우선순위 병합 로직(동일 날짜 중복 기록 시)**
+- **출석 > 지각 > 결석 순으로 더 우선 상태만 남김**
+- **JSP 포인트** 
+  -상태별 색상: 출석(초록), 지각(주황), 결석(빨강), 기타(회색)
+  -달력에는 날짜 텍스트 대신 상태만 표시
 
 ---
 
