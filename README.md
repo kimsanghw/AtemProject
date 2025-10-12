@@ -1,10 +1,11 @@
 # AtemProject (teamproject_1st)
-JSP/Servlet 기반의 간단한 LMS + 출결 관리 웹 애플리케이션입니다.
 
+JSP/Servlet 기반의 간단한 LMS + 출결 관리 웹 애플리케이션입니다.
 Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지 기능을 모듈화했고, 권한(A/T/S) 에 따라 화면과 동작이 달라집니다.
 
  ---
 ## 핵심 기능
+
 인증/세션
 로그인, 로그아웃
 세션에 loginUser 저장 (권한, 사용자 식별자 등 포함)
@@ -30,6 +31,7 @@ Q&A(학생 질문, 강사 답변)
 
 ---
 ## 기술 스택
+
 Backend: Java (JSP, Servlet, JDBC)
 Frontend: JSP, HTML5, CSS3, JavaScript(jQuery)
 Database: MySQL 8.x
