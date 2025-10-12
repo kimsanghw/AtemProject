@@ -143,6 +143,7 @@ Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지
 ```
 ---
 ## ERD
+
 ```mermaid
 erDiagram
     `USER` ||--o{ `CLASS_TB` : "teaches (uno)"
@@ -245,6 +246,8 @@ erDiagram
 
 
 ```
+---
+
 ## 데이터 모델(VO 기준 개요)
 
 - **UserVO** : `uno`, `id`, `pw`, `name`, `email`, `phone`, `authorization`[A/T/S], `state` …
