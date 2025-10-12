@@ -142,7 +142,125 @@ Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지
             └─ upload/                           # 업로드 저장소
 ```
 ---
+## ERD
+```mermaid
+erDiagram
+    USER ||--o{ CLASS : "teaches (uno)"
+    USER ||--o{ APP_CLASS : "enrolls (uno)"
+    CLASS ||--o{ APP_CLASS : "has enrollments (cno)"
 
+    USER ||--o{ ATTENDANCE : "has marks (uno)"
+    CLASS ||--o{ ATTENDANCE : "has marks (cno)"
+
+    USER ||--o{ LIBRARY : "writes (uno)"
+    LIBRARY ||--o{ FILE : "has files (lno)"
+    %% FILE.cno exists but no FK
+
+    USER ||--o{ NOTICE_BOARD : "posts (uno)"
+    USER ||--o{ QNA_BOARD : "asks (uno)"
+    QNA_BOARD ||--o{ QNACOMMENT : "has comments (qno)"
+    USER ||--o{ QNACOMMENT : "comments (uno)"
+
+    USER {
+      int PK uno
+      varchar id
+      varchar password
+      char(11) phone
+      varchar email
+      varchar name
+      char(1) state
+      char(1) authorization
+      timestamp rdate
+    }
+
+    CLASS {
+      int PK cno
+      varchar title
+      varchar subject
+      char(1) state
+      char(1) difficult
+      varchar book
+      timestamp duringclass
+      timestamp end_duringclass
+      timestamp jdate
+      timestamp end_jdate
+      timestamp rdate
+      varchar name
+      varchar orgfilename
+      timestamp class_start
+      timestamp class_late
+      int hit
+      int FK uno        %% -> USER.uno (instructor)
+      varchar random_number
+      varchar newfilename
+    }
+
+    APP_CLASS {
+      int PK acno
+      timestamp rdate
+      char(1) state
+      int FK uno        %% -> USER.uno (student)
+      int FK cno        %% -> CLASS.cno
+    }
+
+    ATTENDANCE {
+      int PK ano
+      varchar(10) attendance  %% 출석/지각/결석/병결/조퇴 등
+      timestamp rdate
+      char(1) state
+      int FK uno              %% -> USER.uno (student)
+      int FK cno              %% -> CLASS.cno
+    }
+
+    LIBRARY {
+      int PK lno
+      varchar title
+      text content
+      timestamp rdate
+      int hit
+      char(1) state
+      int FK uno              %% -> USER.uno (writer)
+    }
+
+    FILE {
+      int PK fno
+      varchar orgFileName
+      varchar newFileName
+      int FK lno              %% -> LIBRARY.lno
+      int cno                 %% (column exists, no FK)
+    }
+
+    NOTICE_BOARD {
+      int PK nno
+      varchar title
+      text content
+      timestamp rdate
+      int hit
+      char(1) state
+      char(1) topYn
+      int FK uno              %% -> USER.uno
+    }
+
+    QNA_BOARD {
+      int PK qno
+      varchar title
+      text content
+      int hit
+      timestamp rdate
+      char(1) state
+      int FK uno              %% -> USER.uno (author)
+    }
+
+    QNACOMMENT {
+      int PK qcno
+      varchar(100) content
+      timestamp rdate
+      char(1) state
+      int FK qno              %% -> QNA_BOARD.qno
+      int FK uno              %% -> USER.uno (commenter)
+    }
+
+```
 ## 데이터 모델(VO 기준 개요)
 
 - **UserVO** : `uno`, `id`, `pw`, `name`, `email`, `phone`, `authorization`[A/T/S], `state` …
