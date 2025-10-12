@@ -6,55 +6,36 @@ Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지
  ---
 ## 핵심 기능
 인증/세션
-
-로그인/로그아웃, 세션에 loginUser 저장
-
+로그인, 로그아웃
+세션에 loginUser 저장 (권한, 사용자 식별자 등 포함)
 권한: A(관리자) / T(강사) / S(학생)
-
-공지사항 (관리자)
-
-목록/상세/등록/수정/삭제
-
+공지사항(관리자)
+목록, 상세, 등록, 수정, 삭제
 관리자만 작성·수정·삭제 가능
-
-자료실 (강사, 파일 업로드)
-
-목록/상세/등록/수정/삭제
-
-COS 라이브러리로 파일 업로드, /upload 저장
-
-Q&A (학생 질문, 강사 답변)
-
+자료실(강사, 파일 업로드)
+목록, 상세, 등록, 수정, 삭제
+COS 라이브러리 사용 파일 업로드, 서버 내 /upload 디렉터리 저장
+Q&A(학생 질문, 강사 답변)
 학생: 질문(게시글) CRUD
-
-강사: 댓글(답변) CRUD (일부 AJAX 수정 반영)
-
+강사: 댓글(답변) CRUD
+댓글 일부 AJAX 수정 처리
 강의/수강신청/출결
-
-관리자: 강의 등록/수정/삭제
-
+관리자: 강의 등록, 수정, 삭제
 학생: 강의 상세에서 수강신청
-
-출결 관련 화면 분리(강사/학생)
-
-마이페이지 & 관리자 페이지
-
-내 정보 및 수강중·종료 강의
-
-관리자: 사용자 목록 페이징 + 권한 변경(AJAX)
+출결: 강사용 수업별 체크(수기), 학생용 인증코드 출석
+마이페이지 및 관리자 페이지
+내 정보 및 연락처 수정
+수강 중/종료 강의 조회
+관리자: 사용자 목록 페이징 및 권한 변경(AJAX)
 
 ---
 ## 기술 스택
-Backend: Java (JSP/Servlet, JDBC)
-
-Web: JSP, HTML5, CSS3, JavaScript(jQuery)
-
-DB: MySQL 8.x
-
+Backend: Java (JSP, Servlet, JDBC)
+Frontend: JSP, HTML5, CSS3, JavaScript(jQuery)
+Database: MySQL 8.x
 서버/IDE: Apache Tomcat 9, Eclipse
-
-라이브러리:
-mysql-connector-j-8.4.0.jar (JDBC)
+라이브러리
+mysql-connector-j-8.4.0.jar (JDBC 드라이버)
 cos-05Nov2002.jar (파일 업로드)
 json-simple-1.1.1.jar (경량 JSON 처리)
 
@@ -154,20 +135,13 @@ json-simple-1.1.1.jar (경량 JSON 처리)
 ---
 ## 데이터 모델(VO 기준 개요)
 
-UserVO : 사용자(uno, id, pw, name, email, phone, authorization(A/T/S), …) 
-
-ClassVO : 강의(cno, title, subject, name(강사), difficult, book, 기간 등, 파일명 등)
-
-App_classVO : 수강신청(학생–강의 매핑)
-
-AttendanceVO : 출결(학생–강의–일자–상태)
-
+UserVO : 사용자(uno, id, pw, name, email, phone, authorization[A/T/S], state 등)
+ClassVO : 강의(cno, uno[강사], title, subject, state, difficult, book, duringclass, end_duringclass, random_number, 파생필드 cnt 등)
+App_classVO : 수강신청(uno–cno 매핑, state)
+AttendanceVO : 출결(ano, uno, cno, rdate, attendance[출석/지각/결석/조퇴/병결/미등록])
 NoticeVO : 공지
-
 libraryVO : 자료실
-
 qnaVO / commentVO : Q&A 본문/댓글
-
 SearchVO : 통합검색 결과 DTO
 
 ---
@@ -179,150 +153,168 @@ SearchVO : 통합검색 결과 DTO
 URL 패턴은 /모듈/핸들러.do 형태이며, JSP는 WEB-INF 하위로 직접 접근을 막고 컨트롤러가 forward 합니다.
 
 사용자(User)
-GET /user/login.do → user/login.jsp
-
+GET /user/login.do → user/login.jsp 반환
 POST /user/login.do → 로그인 처리, 세션 loginUser 저장
-
-GET /user/logout.do → 세션 무효화
-
-GET /user/join.do → user/join.jsp
-
+GET /user/logout.do → 세션 무효화 후 리다이렉트
+GET /user/join.do → user/join.jsp 반환
 POST /user/join.do → 회원가입 처리
-
-GET /user/checkid.do?id=… → 아이디 중복 체크 (AJAX, "isid"|"isNotId")
-
-GET /user/checkEmail.do?email=… → 이메일 중복 체크 (AJAX)
+GET /user/checkid.do?id=아이디 → 아이디 중복 검사(AJAX, "isid" 또는 "isNotId")
+GET /user/checkEmail.do?email=이메일 → 이메일 중복 검사(AJAX, "isemail" 또는 "isNotemail")
 
 강의(Class)
-GET /class/list.do → 강의 목록(검색/페이징) → class/class_list.jsp
-
-GET /class/view.do?cno=… → 강의 상세 → class/class_view.jsp
-
-GET /class/writer.do → (권한 A) 등록 폼 → class/class_add.jsp
-
+GET /class/list.do → 강의 목록 조회(검색, 페이징) → class/class_list.jsp
+GET /class/view.do?cno=정수 → 강의 상세 → class/class_view.jsp
+GET /class/writer.do → 강의 등록 폼(권한 A) → class/class_add.jsp
 POST /class/writer.do → 강의 등록(파일 업로드 포함)
-
-GET /class/modify.do?cno=… → (권한 A) 수정 폼 → class/class_modify.jsp
-
-POST /class/modify.do → 수정 처리
-
-POST /class/delete.do → 삭제
-
-POST /class/app_class.do → (권한 S) 수강신청
+GET /class/modify.do?cno=정수 → 강의 수정 폼(권한 A) → class/class_modify.jsp
+POST /class/modify.do → 강의 수정 처리
+POST /class/delete.do → 강의 삭제 처리
+POST /class/app_class.do → 학생 수강신청 처리(권한 S)
 
 공지(Notice)
-
-GET /notice/notice_list.do
-
-GET /notice/notice_view.do?nno=…
-
-GET /notice/notice_write.do (권한 A)
-
-POST /notice/notice_write.do
-
-GET /notice/notice_modify.do?nno=… (권한 A)
-
-POST /notice/notice_modify.do
-
-POST /notice/notice_delete.do
+GET /notice/notice_list.do → 공지 목록
+GET /notice/notice_view.do?nno=정수 → 공지 상세
+GET /notice/notice_write.do → 공지 등록 폼(권한 A)
+POST /notice/notice_write.do → 공지 등록 처리
+GET /notice/notice_modify.do?nno=정수 → 공지 수정 폼(권한 A)
+POST /notice/notice_modify.do → 공지 수정 처리
+POST /notice/notice_delete.do → 공지 삭제 처리
 
 자료실(Library)
-
-GET /library/library_list.do (검색/페이징)
-
-GET /library/library_view.do?lno=…
-
-GET /library/library_write.do (권한 T)
-
-POST /library/library_write.do (파일 업로드)
-
-GET /library/library_modify.do?lno=… (작성자 본인)
-
-POST /library/library_modify.do
-
-POST /library/library_delete.do
+GET /library/library_list.do → 자료실 목록(검색, 페이징)
+GET /library/library_view.do?lno=정수 → 자료 상세
+GET /library/library_write.do → 자료 등록 폼(권한 T)
+POST /library/library_write.do → 자료 등록 처리(파일 업로드)
+GET /library/library_modify.do?lno=정수 → 자료 수정 폼(작성자 본인)
+POST /library/library_modify.do → 자료 수정 처리
+POST /library/library_delete.do → 자료 삭제 처리
 
 Q&A
-GET /qna/qna_list.do (검색/페이징)
+GET /qna/qna_list.do → 질문 목록(검색, 페이징)
+GET /qna/qna_view.do?qno=정수 → 질문 상세
+GET /qna/qna_write.do → 질문 등록 폼(권한 S)
+POST /qna/qna_write.do → 질문 등록 처리
+GET /qna/qna_modify.do?qno=정수 → 질문 수정 폼(작성자 본인)
+POST /qna/qna_modify.do → 질문 수정 처리
+POST /qna/qna_delete.do → 질문 삭제 처리
 
-GET /qna/qna_view.do?qno=…
+Q&A 댓글(권한 T)
+POST /qna/comment_writeok.do → 댓글 등록
+POST /qna/comment_modifyok.do → 댓글 수정(AJAX, 성공 시 "OK")
+POST /qna/comment_deleteok.do → 댓글 삭제
 
-GET /qna/qna_write.do (권한 S)
-
-POST /qna/qna_write.do
-
-GET /qna/qna_modify.do?qno=… (작성자 본인)
-
-POST /qna/qna_modify.do
-
-POST /qna/qna_delete.do
-
-댓글(권한 T)
-POST /qna/comment_writeok.do
-
-POST /qna/comment_modifyok.do (작성자 본인, AJAX 응답 "OK")
-
-POST /qna/comment_deleteok.do
-
-통합검색
-GET /search.do?search=…&indexSearch=… → index_search/index_search.jsp
+통합 검색
+GET /search.do?search=키워드&indexSearch=옵션 → 통합 결과 → index_search/index_search.jsp
 
 마이페이지
-GET /mypage/mypage.do → 기본 정보/이메일·연락처 수정 폼
-
-POST /mypage/mypage.do → 이메일/연락처 업데이트 (action=modifyEmail|modifyPhone)
-
-GET /mypage/mypage2.do → 수강 중/종료 강의 목록
-
-GET /mypage/mypage3.do → (권한 A) 권한 관리 + 페이징/검색
-
-POST /mypage/mypage3.do → (권한 A) AJAX 권한 변경 { id, authority }
+GET /mypage/mypage.do → 기본 정보 및 이메일·연락처 수정 폼
+POST /mypage/mypage.do → 이메일 또는 연락처 수정(action=modifyEmail | modifyPhone)
+GET /mypage/mypage2.do → 수강 중 및 종료 강의 목록
+GET /mypage/mypage3.do → 관리자 전용 사용자 권한 관리(페이징, 검색)
+POST /mypage/mypage3.do → 관리자 권한 변경 처리(AJAX: { id, authority })
 
 ---
 ## 출결(Attendance) 모듈 — 자세한 흐름
 
-SP 구성과 프로젝트 전반의 라우팅 규칙을 바탕으로, 출결 기능의 유저 흐름과 엔드포인트/파라미터/권한 요구사항을 아래처럼 정리했습니다.
-관련 JSP
-WEB-INF/attendance/attendanceList.jsp : 출결 메인(강의/기간 검색, 리스트)
-WEB-INF/attendance/attendanceClass.jsp : 특정 강의의 수강생/출결 개요
-WEB-INF/attendance/attendanceView.jsp : 특정 수강생의 출결 상세(캘린더/일자별 상태)
-WEB-INF/attendance/attendanceCheck.jsp : (강사용) 일자별 출결 체크 폼
-WEB-INF/attendance/attendanceInfoView.jsp : 종합 요약(출결 통계/요약 카드)
-권한
-강사(T): 출결 등록/수정 가능
-학생(S): 자신의 출결 조회만 가능
-관리자(A): 전반 조회/관리 가능
-추정 엔드포인트 (컨트롤러 디스패치 기반)
-GET /attendance/list.do
-용도: 출결 대시보드/검색(강의, 기간, 상태 필터)
-뷰: attendanceList.jsp
-파라미터 예: subject, cno, startDate, endDate, status(P/A/L)
-GET /attendance/class.do?cno=…
-용도: 특정 강의의 수강생 목록과 최근 출결 요약
-뷰: attendanceClass.jsp
-GET /attendance/view.do?cno=…&uno=…
-용도: 특정 수강생의 출결 상세(한 강의 기준)
-뷰: attendanceView.jsp
-GET /attendance/check.do?cno=…&date=…
-용도: (강사) 특정 날짜의 해당 강의 출결 체크 폼 로드
-뷰: attendanceCheck.jsp
-POST /attendance/check.do
-용도: (강사) 일괄 출결 저장/수정
-폼데이터 예: cno, date, attendance[uno]=P|A|L…
-처리 후: /attendance/class.do?cno=… 또는 /attendance/view.do?cno=…&uno=… 리다이렉트
-GET /attendance/info.do?cno=…
-용도: (관리자/강사) 출결 통계(지각/결석 횟수, 출석률 등)
-뷰: attendanceInfoView.jsp
-데이터 모델 (VO/테이블 개념)
-AttendanceVO(예시): ano(PK), cno, uno, adate(date), status(‘P’ 출석, ‘A’ 결석, ‘L’ 지각), memo
-연동: UserVO(uno), ClassVO(cno), 수강신청 App_classVO(uno,cno)
-화면 흐름 예시
-강사 T가 로그인 → 출결 목록 /attendance/list.do → 기간/강의 필터
-강좌 선택 → /attendance/class.do?cno=10
-특정 날짜 체크 → /attendance/check.do?cno=10&date=2025-10-02
-학생별 라디오/셀렉트: P/A/L 입력 후 저장(POST)
-학생별 상세 확인 → /attendance/view.do?cno=10&uno=501
-통계 확인 → /attendance/info.do?cno=10 (출석률, 결석 상위자 등)
+출결(Attendance) 모듈 — 페이지/로직 상세
+출결 모듈은 강사용(관리/코드발급), 학생용(인증코드로 출석), 개인 요약(캘린더), 리스트/페이징으로 구성됩니다.
+1) 출결 리스트(강사·학생 공통 진입)
+URL: GET /attendance/attendanceList.do → WEB-INF/attendance/attendanceList.jsp
+목적: 로그인 사용자의 강의 목록과 페이징 제공
+파라미터
+nowPage(옵션): 현재 페이지 (기본 1)
+searchType(옵션): "강의" 선택 시 개강일 내림차순 정렬
+핵심 쿼리/로직
+총 건수: class c INNER JOIN user u ON c.uno=u.uno WHERE u.uno=? AND u.name=?
+목록: c.name=u.name AND c.state='E' AND u.name=?
+파생 컬럼: (SELECT COUNT(*) FROM app_class a WHERE a.cno=c.cno) AS cnt (수강생 수)
+PagingUtil로 페이징 계산 후 JSP에서 페이지 네비게이션 출력
+JSP 포인트
+과목/제목/수강생 수 표시
+각 강의에 대해 “출결관리” 버튼 → /attendance/attendanceView.do?cno=...
+2) 수강 중 강의(학생용 정보 카드)
+URL: GET /attendance/attendanceClass.do → WEB-INF/attendance/attendanceClass.jsp
+목적: 로그인 학생의 “수강 중(진행 중)” 강의 카드형 목록
+권한/가드: 미로그인 시 로그인 페이지로 이동
+핵심 쿼리
+JOIN app_class ac ON ac.cno=c.cno
+WHERE ac.uno=? AND c.state='E' AND ac.state='E' AND c.end_duringclass > NOW()
+JSP 포인트
+강의 제목/과목/난이도/교재/기간을 카드로 출력
+3) 출결 관리(강사용, 특정 날짜의 명단·상태)
+URL
+GET /attendance/attendanceView.do?cno=...&date=YYYY-MM-DD
+POST /attendance/attendanceView.do (AJAX로 상태 저장)
+목적: 해당 강의의 수강생 명단 + 선택 날짜의 출결 상태 조회/수정
+GET 파라미터
+cno(필수): 강의 번호
+date(옵션): 미지정 시 오늘(yyyy-MM-dd)
+조회 쿼리(핵심)
+```sql
+SELECT u.uno AS 학생번호, u.name AS 학생이름,
+       COALESCE(a.attendance,'미등록') AS 출결상태, a.rdate AS 출결일자,
+       COALESCE(a.ano,-1) AS 출결번호
+  FROM app_class ac
+  JOIN user u  ON ac.uno=u.uno
+  JOIN class c ON ac.cno=c.cno
+  LEFT JOIN attendance a 
+    ON ac.uno=a.uno AND ac.cno=a.cno AND DATE(a.rdate)=?
+ WHERE ac.cno=? AND ac.state='E' AND u.state='E'
+```
+POST(AJAX) 파라미터
+attendanceChange: 변경 상태(출석/지각/조퇴/병결/결석)
+ano: 출결 PK(없으면 -1 로 오며, 구현에서는 ano 기반으로 INSERT/UPDATE 분기)
+cno: 강의 번호 (유효성 검증: class 존재 확인)
+저장 로직
+attendance에 ano가 존재하면 UPDATE, 없으면 INSERT(CURDATE())
+응답: "success" 또는 "fail"
+JSP 포인트
+날짜 선택(input date) 변경 시 자동 submit → 해당 날짜 데이터 조회
+학생별 셀렉트 박스로 상태 변경 시 자동 AJAX 저장 (changeCheck())
+5) 출석체크(학생용, 인증코드 기반)
+GET: GET /attendance/attendanceCheck.do → WEB-INF/attendance/attendanceCheck.jsp
+세션 loginUser의 id로 수강 중 강의를 조회, ClassVO(cno, random_number, title)를 세션에 vo 이름으로 저장
+페이지에는 FullCalendar + 인증코드 입력 폼
+POST (AJAX): POST /attendance/attendanceCheck.do
+입력: authCode(사용자 입력 코드), cno(히든)
+검증
+당일 attendance에 기존 기록 있는지 확인 (DATE(rdate)=CURDATE()) → 있으면 거절
+class.random_number 조회하여 authCode와 비교
+기록 규칙(시간에 따라 상태 자동 결정)
+09:10 이전: 출석
+09:10 이후: 지각
+INSERT INTO attendance(attendance, uno, cno, rdate) VALUES (?, ?, ?, NOW())
+JSON 응답 예시
+```json
+{
+  "status": "success",
+  "message": "출석 처리되었습니다.",
+  "attendanceStatus": "출석",
+  "time": "09:03:12"
+}
+```
+실패 시: status: "fail" + 메시지(인증코드 미입력/불일치/중복출석 등)
+인증코드 발급(강사용)
+URL: POST /attendance/updateRandom_number.do
+입력: cno, random_number (클라이언트에서 6자리 생성)
+동작: UPDATE class SET random_number=? WHERE cno=?
+JSP 예시: “인증코드 생성” 버튼 클릭 → 6자리 생성 → AJAX 저장 → 모달로 코드 표시
+6) 출석정보(개인 요약 캘린더)
+URL: GET /attendance/attendanceInfoView.do → WEB-INF/attendance/attendanceInfoView.jsp
+목적: 로그인 사용자의 날짜별 단일 상태 요약을 FullCalendar에 표시
+쿼리
+```sql
+SELECT a.rdate, a.attendance AS status
+  FROM attendance a
+  JOIN app_class ac ON a.cno=ac.cno
+  JOIN user u      ON a.uno=u.uno
+ WHERE u.id=?
+```
+우선순위 병합 로직(동일 날짜 중복 기록 시)
+출석 > 지각 > 결석 순으로 더 우선 상태만 남김
+JSP 포인트
+상태별 색상: 출석(초록), 지각(주황), 결석(빨강), 기타(회색)
+달력에는 날짜 텍스트 대신 상태만 표시
 
 ---
 
