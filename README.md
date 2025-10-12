@@ -142,8 +142,11 @@ Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지
             └─ upload/                           # 업로드 저장소
 ```
 ---
+
 ## ERD
+
 ```mermaid
+
 erDiagram
   USERS ||--o{ CLASSES : teaches
   USERS ||--o{ APP_CLASS : enrolls
@@ -174,7 +177,7 @@ erDiagram
 
   CLASSES {
     int cno PK
-    int uno FK         %% instructor -> USERS.uno
+    int uno FK
     string title
     string subject
     string state
@@ -191,24 +194,24 @@ erDiagram
 
   APP_CLASS {
     int acno PK
-    int uno FK         %% student -> USERS.uno
-    int cno FK         %% -> CLASSES.cno
+    int uno FK
+    int cno FK
     string state
     datetime rdate
   }
 
   ATTENDANCE {
     int ano PK
-    int uno FK         %% student -> USERS.uno
-    int cno FK         %% -> CLASSES.cno
-    string attendance  %% 출석/지각/결석/병결/조퇴 등
+    int uno FK
+    int cno FK
+    string attendance
     string state
     datetime rdate
   }
 
   LIBRARY {
     int lno PK
-    int uno FK         %% writer -> USERS.uno
+    int uno FK
     string title
     string content
     int hit
@@ -218,15 +221,15 @@ erDiagram
 
   FILES {
     int fno PK
-    int lno FK         %% -> LIBRARY.lno
-    int cno            %% (exists in DB; no FK in DDL)
+    int lno FK
+    int cno
     string orgFileName
     string newFileName
   }
 
   NOTICE_BOARD {
     int nno PK
-    int uno FK         %% -> USERS.uno
+    int uno FK
     string title
     string content
     int hit
@@ -237,7 +240,7 @@ erDiagram
 
   QNA_BOARD {
     int qno PK
-    int uno FK         %% author -> USERS.uno
+    int uno FK
     string title
     string content
     int hit
@@ -247,12 +250,13 @@ erDiagram
 
   QNA_COMMENT {
     int qcno PK
-    int qno FK         %% -> QNA_BOARD.qno
-    int uno FK         %% commenter -> USERS.uno
+    int qno FK
+    int uno FK
     string content
     string state
     datetime rdate
   }
+
 
 ```
 
