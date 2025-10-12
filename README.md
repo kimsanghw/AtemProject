@@ -1,47 +1,54 @@
 # AtemProject (teamproject_1st)
 
 JSP/Servlet 기반의 간단한 LMS + 출결 관리 웹 애플리케이션입니다.
-Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지 기능을 모듈화했고, 권한(A/T/S) 에 따라 화면과 동작이 달라집니다.
 
- ---
+Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지 기능을 모듈화했고, 권한(A/T/S)에 따라 화면과 동작이 달라집니다.
+
+---
+
 ## 핵심 기능
 
-인증/세션
-로그인, 로그아웃
-세션에 loginUser 저장 (권한, 사용자 식별자 등 포함)
-권한: A(관리자) / T(강사) / S(학생)
-공지사항(관리자)
-목록, 상세, 등록, 수정, 삭제
-관리자만 작성·수정·삭제 가능
-자료실(강사, 파일 업로드)
-목록, 상세, 등록, 수정, 삭제
-COS 라이브러리 사용 파일 업로드, 서버 내 /upload 디렉터리 저장
-Q&A(학생 질문, 강사 답변)
-학생: 질문(게시글) CRUD
-강사: 댓글(답변) CRUD
-댓글 일부 AJAX 수정 처리
-강의/수강신청/출결
-관리자: 강의 등록, 수정, 삭제
-학생: 강의 상세에서 수강신청
-출결: 강사용 수업별 체크(수기), 학생용 인증코드 출석
-마이페이지 및 관리자 페이지
-내 정보 및 연락처 수정
-수강 중/종료 강의 조회
-관리자: 사용자 목록 페이징 및 권한 변경(AJAX)
+- **인증/세션**
+  - 로그인, 로그아웃
+  - 세션에 `loginUser` 저장(권한, 사용자 식별자 등 포함)
+  - 권한: A(관리자) / T(강사) / S(학생)
+
+- **공지사항(관리자)**
+  - 목록, 상세, 등록, 수정, 삭제
+  - 관리자만 작성·수정·삭제 가능
+
+- **자료실(강사, 파일 업로드)**
+  - 목록, 상세, 등록, 수정, 삭제
+  - COS 라이브러리 사용 파일 업로드 → 서버 `/upload` 저장
+
+- **Q&A(학생 질문, 강사 답변)**
+  - 학생: 질문(게시글) CRUD
+  - 강사: 댓글(답변) CRUD (일부 AJAX 수정 처리)
+
+- **강의/수강신청/출결**
+  - 관리자: 강의 등록/수정/삭제
+  - 학생: 강의 상세에서 수강신청
+  - 출결: 강사용 수업별 체크(수기/AJAX), 학생용 인증코드 출석
+
+- **마이페이지 & 관리자 페이지**
+  - 내 정보 및 연락처 수정, 수강 중/종료 강의 조회
+  - 관리자: 사용자 목록 페이징 + 권한 변경(AJAX)
 
 ---
+
 ## 기술 스택
 
-Backend: Java (JSP, Servlet, JDBC)
-Frontend: JSP, HTML5, CSS3, JavaScript(jQuery)
-Database: MySQL 8.x
-서버/IDE: Apache Tomcat 9, Eclipse
-라이브러리
-mysql-connector-j-8.4.0.jar (JDBC 드라이버)
-cos-05Nov2002.jar (파일 업로드)
-json-simple-1.1.1.jar (경량 JSON 처리)
+- **Backend**: Java (JSP, Servlet, JDBC)
+- **Frontend**: JSP, HTML5, CSS3, JavaScript(jQuery)
+- **Database**: MySQL 8.x
+- **서버/IDE**: Apache Tomcat 9, Eclipse
+- **라이브러리**
+  - `mysql-connector-j-8.4.0.jar` (JDBC 드라이버)
+  - `cos-05Nov2002.jar` (파일 업로드)
+  - `json-simple-1.1.1.jar` (경량 JSON 처리)
 
 ---
+
 ## 프로젝트 구조
 ```text
 .
@@ -135,6 +142,7 @@ json-simple-1.1.1.jar (경량 JSON 처리)
             └─ upload/                           # 업로드 저장소
 ```
 ---
+
 ## 데이터 모델(VO 기준 개요)
 
 UserVO : 사용자(uno, id, pw, name, email, phone, authorization[A/T/S], state 등)
