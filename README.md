@@ -145,23 +145,22 @@ Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지
 ## ERD
 ```mermaid
 erDiagram
-    USER ||--o{ CLASS : "teaches (uno)"
-    USER ||--o{ APP_CLASS : "enrolls (uno)"
-    CLASS ||--o{ APP_CLASS : "has enrollments (cno)"
+    `USER` ||--o{ `CLASS_TB` : "teaches (uno)"
+    `USER` ||--o{ `APP_CLASS` : "enrolls (uno)"
+    `CLASS_TB` ||--o{ `APP_CLASS` : "has enrollments (cno)"
 
-    USER ||--o{ ATTENDANCE : "has marks (uno)"
-    CLASS ||--o{ ATTENDANCE : "has marks (cno)"
+    `USER` ||--o{ `ATTENDANCE` : "has marks (uno)"
+    `CLASS_TB` ||--o{ `ATTENDANCE` : "has marks (cno)"
 
-    USER ||--o{ LIBRARY : "writes (uno)"
-    LIBRARY ||--o{ FILE : "has files (lno)"
-    %% FILE.cno exists but no FK
+    `USER` ||--o{ `LIBRARY` : "writes (uno)"
+    `LIBRARY` ||--o{ `FILE_TB` : "has files (lno)"
 
-    USER ||--o{ NOTICE_BOARD : "posts (uno)"
-    USER ||--o{ QNA_BOARD : "asks (uno)"
-    QNA_BOARD ||--o{ QNACOMMENT : "has comments (qno)"
-    USER ||--o{ QNACOMMENT : "comments (uno)"
+    `USER` ||--o{ `NOTICE_BOARD` : "posts (uno)"
+    `USER` ||--o{ `QNA_BOARD` : "asks (uno)"
+    `QNA_BOARD` ||--o{ `QNACOMMENT` : "has comments (qno)"
+    `USER` ||--o{ `QNACOMMENT` : "comments (uno)"
 
-    USER {
+    `USER` {
       int PK uno
       varchar id
       varchar password
@@ -173,7 +172,7 @@ erDiagram
       timestamp rdate
     }
 
-    CLASS {
+    `CLASS_TB` {
       int PK cno
       varchar title
       varchar subject
@@ -182,55 +181,51 @@ erDiagram
       varchar book
       timestamp duringclass
       timestamp end_duringclass
-      timestamp jdate
-      timestamp end_jdate
       timestamp rdate
       varchar name
       varchar orgfilename
-      timestamp class_start
-      timestamp class_late
       int hit
-      int FK uno        %% -> USER.uno (instructor)
+      int FK uno
       varchar random_number
       varchar newfilename
     }
 
-    APP_CLASS {
+    `APP_CLASS` {
       int PK acno
       timestamp rdate
       char(1) state
-      int FK uno        %% -> USER.uno (student)
-      int FK cno        %% -> CLASS.cno
+      int FK uno
+      int FK cno
     }
 
-    ATTENDANCE {
+    `ATTENDANCE` {
       int PK ano
-      varchar(10) attendance  %% 출석/지각/결석/병결/조퇴 등
+      varchar(10) attendance
       timestamp rdate
       char(1) state
-      int FK uno              %% -> USER.uno (student)
-      int FK cno              %% -> CLASS.cno
+      int FK uno
+      int FK cno
     }
 
-    LIBRARY {
+    `LIBRARY` {
       int PK lno
       varchar title
       text content
       timestamp rdate
       int hit
       char(1) state
-      int FK uno              %% -> USER.uno (writer)
+      int FK uno
     }
 
-    FILE {
+    `FILE_TB` {
       int PK fno
       varchar orgFileName
       varchar newFileName
-      int FK lno              %% -> LIBRARY.lno
-      int cno                 %% (column exists, no FK)
+      int FK lno
+      int cno
     }
 
-    NOTICE_BOARD {
+    `NOTICE_BOARD` {
       int PK nno
       varchar title
       text content
@@ -238,27 +233,16 @@ erDiagram
       int hit
       char(1) state
       char(1) topYn
-      int FK uno              %% -> USER.uno
+      int FK uno
     }
 
-    QNA_BOARD {
+    `QNA_BOARD` {
       int PK qno
       varchar title
       text content
       int hit
       timestamp rdate
-      char(1) state
-      int FK uno              %% -> USER.uno (author)
-    }
 
-    QNACOMMENT {
-      int PK qcno
-      varchar(100) content
-      timestamp rdate
-      char(1) state
-      int FK qno              %% -> QNA_BOARD.qno
-      int FK uno              %% -> USER.uno (commenter)
-    }
 
 ```
 ## 데이터 모델(VO 기준 개요)
