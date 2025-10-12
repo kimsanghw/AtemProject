@@ -143,7 +143,7 @@ Front Controller 패턴으로 공지/자료실/Q&A/강의/출결/마이페이지
 ```
 ---
 ## ERD
-
+```mermaid
 erDiagram
   USERS ||--o{ CLASSES : teaches
   USERS ||--o{ APP_CLASS : enrolls
@@ -254,7 +254,7 @@ erDiagram
     datetime rdate
   }
 
-
+```
 
 ---
 
