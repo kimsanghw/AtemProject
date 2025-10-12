@@ -262,48 +262,66 @@ URL 패턴은 `/모듈/핸들러.do` 형태이며, JSP는 `WEB-INF` 하위에 �
    WHERE ac.cno=? AND ac.state='E' AND u.state='E';
    ```
   
-POST(AJAX) 파라미터
-attendanceChange: 변경 상태(출석/지각/조퇴/병결/결석)
-ano: 출결 PK(없으면 -1 로 오며, 구현에서는 ano 기반으로 INSERT/UPDATE 분기)
-cno: 강의 번호 (유효성 검증: class 존재 확인)
-저장 로직
-attendance에 ano가 존재하면 UPDATE, 없으면 INSERT(CURDATE())
-응답: "success" 또는 "fail"
-JSP 포인트
-날짜 선택(input date) 변경 시 자동 submit → 해당 날짜 데이터 조회
-학생별 셀렉트 박스로 상태 변경 시 자동 AJAX 저장 (changeCheck())
-5) 출석체크(학생용, 인증코드 기반)
+- **POST(AJAX) 파라미터**
+- attendanceChange: 변경 상태(출석/지각/조퇴/병결/결석)
+- ano: 출결 PK(없으면 -1 로 오며, 구현에서는 ano 기반으로 INSERT/UPDATE 분기)
+- cno: 강의 번호 (유효성 검증: class 존재 확인)
+- **저장 로직**
+- attendance에 ano가 존재 → UPDATE
+- attendance에 ano가 미존재 → INSERT (CURDATE())
+- **응답: "success" 또는 "fail"**
+- **JSP 포인트**
+- 날짜 선택(input date) 변경 시 자동 submit → 해당 날짜 데이터 조회
+- 학생별 셀렉트 박스로 상태 변경 시 자동 AJAX 저장 (changeCheck())
+
+### 4) 인증코드 발급 (강사용)
+- ** URL: POST /attendance/updateRandom_number.do**
+- ** 입력: cno, random_number (클라이언트에서 6자리 생성)**
+- ** 동작: UPDATE class SET random_number = ? WHERE cno = ?**
+- ** UI 흐름: “인증코드 생성” 버튼 → 6자리 생성 → AJAX 저장 → 모달에 코드 표시**
+
+### 5) 출석체크 (학생용, 인증코드 기반)
 GET: GET /attendance/attendanceCheck.do → WEB-INF/attendance/attendanceCheck.jsp
-세션 loginUser의 id로 수강 중 강의를 조회, ClassVO(cno, random_number, title)를 세션에 vo 이름으로 저장
-페이지에는 FullCalendar + 인증코드 입력 폼
+세션의 loginUser.id로 수강 중인 강의 목록 조회
+ClassVO(cno, random_number, title)를 세션에 vo 이름으로 저장
+페이지에는 FullCalendar + 인증코드 입력 폼 표시
 POST (AJAX): POST /attendance/attendanceCheck.do
-입력: authCode(사용자 입력 코드), cno(히든)
-검증
-당일 attendance에 기존 기록 있는지 확인 (DATE(rdate)=CURDATE()) → 있으면 거절
-class.random_number 조회하여 authCode와 비교
-기록 규칙(시간에 따라 상태 자동 결정)
+입력값
+authCode: 사용자 입력 인증코드
+cno: 히든 필드로 전달되는 강의 번호
+검증 절차
+중복 출석 방지
+attendance 테이블에서 DATE(rdate)=CURDATE()로 기존 기록 확인
+이미 존재할 경우 “중복 출석”으로 거절
+인증코드 검증
+class.random_number 조회 후, 입력값(authCode)과 비교
+불일치 시 실패 처리
+시간대별 자동 상태 결정
 09:10 이전: 출석
 09:10 이후: 지각
-INSERT INTO attendance(attendance, uno, cno, rdate) VALUES (?, ?, ?, NOW())
+저장 쿼리
+INSERT INTO attendance(attendance, uno, cno, rdate)
+VALUES (?, ?, ?, NOW());
 JSON 응답 예시
-```json
 {
   "status": "success",
   "message": "출석 처리되었습니다.",
   "attendanceStatus": "출석",
   "time": "09:03:12"
 }
-```
-실패 시: status: "fail" + 메시지(인증코드 미입력/불일치/중복출석 등)
-인증코드 발급(강사용)
-URL: POST /attendance/updateRandom_number.do
-입력: cno, random_number (클라이언트에서 6자리 생성)
-동작: UPDATE class SET random_number=? WHERE cno=?
-JSP 예시: “인증코드 생성” 버튼 클릭 → 6자리 생성 → AJAX 저장 → 모달로 코드 표시
-6) 출석정보(개인 요약 캘린더)
-URL: GET /attendance/attendanceInfoView.do → WEB-INF/attendance/attendanceInfoView.jsp
-목적: 로그인 사용자의 날짜별 단일 상태 요약을 FullCalendar에 표시
-쿼리
+실패 시 응답
+status: "fail"
+message: 인증코드 미입력 / 불일치 / 중복출석 등 오류 사유
+JSP 포인트
+FullCalendar로 일정 표시
+인증코드 입력 폼 및 결과 메시지 표시
+
+
+### 6) 출석정보(개인 요약 캘린더)
+- ** URL: GET /attendance/attendanceInfoView.do → WEB-INF/attendance/attendanceInfoView.jsp **
+- ** 목적: 로그인 사용자의 날짜별 단일 상태 요약을 FullCalendar에 표시 **
+- **
+쿼리 **
 ```sql
 SELECT a.rdate, a.attendance AS status
   FROM attendance a
@@ -311,11 +329,11 @@ SELECT a.rdate, a.attendance AS status
   JOIN user u      ON a.uno=u.uno
  WHERE u.id=?
 ```
-우선순위 병합 로직(동일 날짜 중복 기록 시)
-출석 > 지각 > 결석 순으로 더 우선 상태만 남김
-JSP 포인트
-상태별 색상: 출석(초록), 지각(주황), 결석(빨강), 기타(회색)
-달력에는 날짜 텍스트 대신 상태만 표시
+- ** 우선순위 병합 로직(동일 날짜 중복 기록 시) **
+- ** 출석 > 지각 > 결석 순으로 더 우선 상태만 남김 **
+- ** JSP 포인트 ** 
+-상태별 색상: 출석(초록), 지각(주황), 결석(빨강), 기타(회색)
+-달력에는 날짜 텍스트 대신 상태만 표시
 
 ---
 
